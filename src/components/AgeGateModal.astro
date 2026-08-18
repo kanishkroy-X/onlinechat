@@ -1,0 +1,74 @@
+---
+---
+
+<div id="age-gate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-200">
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-200">
+    <!-- Icon / Badge -->
+    <div class="w-16 h-16 rounded-2xl gradient-accent flex items-center justify-center text-white font-extrabold text-2xl shadow-lg">
+      18+
+    </div>
+
+    <!-- Title & Description -->
+    <div class="flex flex-col gap-2">
+      <h2 class="text-2xl font-extrabold text-[var(--text-main)]">
+        Age Verification
+      </h2>
+      <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+        randomcaht.online is an anonymous stranger chat platform intended strictly for adults. You must be at least 18 years old to enter.
+      </p>
+    </div>
+
+    <!-- Question -->
+    <div class="p-3.5 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)] w-full text-sm font-bold text-[var(--text-main)]">
+      Are you 18 years of age or older?
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
+      <button
+        id="age-gate-accept"
+        type="button"
+        class="w-full gradient-accent gradient-accent-hover text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40 cursor-pointer text-sm"
+      >
+        Yes, I am 18 or older
+      </button>
+      <button
+        id="age-gate-decline"
+        type="button"
+        class="w-full py-3.5 px-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+      >
+        No, I am under 18
+      </button>
+    </div>
+
+    <div class="text-[11px] text-[var(--text-subtle)]">
+      By entering, you confirm you are 18+ and agree to our <a href="/terms" class="text-[#D55882] underline">Terms</a> and <a href="/privacy" class="text-[#D55882] underline">Privacy Policy</a>.
+    </div>
+  </div>
+</div>
+
+<script>
+  function initAgeGate() {
+    const modal = document.getElementById('age-gate-modal');
+    const acceptBtn = document.getElementById('age-gate-accept');
+    const declineBtn = document.getElementById('age-gate-decline');
+
+    const isVerified = localStorage.getItem('rc_age_verified_18');
+
+    if (!isVerified && modal) {
+      modal.classList.remove('hidden');
+    }
+
+    acceptBtn?.addEventListener('click', () => {
+      localStorage.setItem('rc_age_verified_18', 'true');
+      modal?.classList.add('hidden');
+    });
+
+    declineBtn?.addEventListener('click', () => {
+      alert('Access restricted. You must be at least 18 years old to use randomcaht.online.');
+      window.location.href = 'https://www.google.com';
+    });
+  }
+
+  initAgeGate();
+</script>

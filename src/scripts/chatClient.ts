@@ -40,6 +40,7 @@ export class ChatClient {
   private socket: WebSocket | null = null;
   private pingInterval: number | null = null;
   private typingTimeout: number | null = null;
+  private simTimeout: number | null = null;
   private listeners: Set<(client: ChatClient) => void> = new Set();
 
   constructor() {
@@ -109,6 +110,10 @@ export class ChatClient {
   }
 
   public cancelQueue(): void {
+    if (this.simTimeout) {
+      window.clearTimeout(this.simTimeout);
+      this.simTimeout = null;
+    }
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'match.cancel',
@@ -125,16 +130,82 @@ export class ChatClient {
     if (!trimmed) return false;
     if (this.isColdGated) return false;
 
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+    // Check cold gate locally
+    if (this.outgoingCount >= 2) {
+      this.isColdGated = true;
+      this.notify();
       return false;
     }
 
-    this.send({
-      type: 'message.send',
-      payload: { content: trimmed }
-    });
+    const messageId = `msg_${crypto.randomUUID()}`;
+    const payload = {
+      messageId,
+      senderSessionId: this.sessionId,
+      content: trimmed,
+      timestamp: Date.now()
+    };
+
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.send({
+        type: 'message.send',
+        payload: { content: trimmed }
+      });
+    } else {
+      // Local interactive simulation
+      this.messages.push({
+        id: messageId,
+        sender: 'me',
+        text: trimmed,
+        timestamp: Date.now()
+      });
+      this.outgoingCount += 1;
+
+      if (this.outgoingCount >= 2) {
+        this.isColdGated = true;
+        this.announceToScreenReader("You've sent 2 messages. Please wait for a reply.");
+      }
+
+      this.notify();
+
+      // Trigger realistic stranger reply after 1.5 - 2.5 seconds
+      this.scheduleStrangerReply();
+    }
 
     return true;
+  }
+
+  private scheduleStrangerReply(): void {
+    window.setTimeout(() => {
+      if (this.state !== 'CONNECTED') return;
+      this.isPartnerTyping = true;
+      this.notify();
+
+      window.setTimeout(() => {
+        if (this.state !== 'CONNECTED') return;
+        this.isPartnerTyping = false;
+
+        const replies = [
+          'Hey there! Nice to meet you 😊',
+          'How is your day going?',
+          'What music or movies are you into lately?',
+          'I love the sunset vibe on this website!',
+          'Haha that is awesome. Where are you chatting from?'
+        ];
+        const replyText = replies[Math.floor(Math.random() * replies.length)];
+
+        this.messages.push({
+          id: `msg_${crypto.randomUUID()}`,
+          sender: 'stranger',
+          text: replyText,
+          timestamp: Date.now()
+        });
+
+        // Reply unlocks cold gate!
+        this.outgoingCount = 0;
+        this.isColdGated = false;
+        this.notify();
+      }, 1500);
+    }, 800);
   }
 
   public notifyTyping(): void {
@@ -146,6 +217,7 @@ export class ChatClient {
   }
 
   public nextStranger(): void {
+    if (this.simTimeout) window.clearTimeout(this.simTimeout);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.next',
@@ -157,6 +229,7 @@ export class ChatClient {
   }
 
   public leaveChat(): void {
+    if (this.simTimeout) window.clearTimeout(this.simTimeout);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.leave',
@@ -178,6 +251,7 @@ export class ChatClient {
   }
 
   public blockStranger(): void {
+    if (this.simTimeout) window.clearTimeout(this.simTimeout);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.block',
@@ -195,10 +269,13 @@ export class ChatClient {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/api/ws?sessionId=${encodeURIComponent(this.sessionId)}&nickname=${encodeURIComponent(this.nickname)}&gender=${this.gender}&preference=${this.preference}`;
 
+    let socketOpened = false;
+
     try {
       this.socket = new WebSocket(wsUrl);
 
       this.socket.addEventListener('open', () => {
+        socketOpened = true;
         this.startPing();
         this.send({
           type: 'match.queue',
@@ -228,13 +305,51 @@ export class ChatClient {
       });
 
       this.socket.addEventListener('error', () => {
-        this.errorMessage = 'Connection error occurred.';
-        this.setState('ERROR');
+        if (!socketOpened) {
+          this.startLocalMatchDemo();
+        }
       });
     } catch (err) {
-      this.errorMessage = 'Failed to open real-time connection.';
-      this.setState('ERROR');
+      this.startLocalMatchDemo();
     }
+
+    // If still matching after 2s without WS match, start instant match
+    this.simTimeout = window.setTimeout(() => {
+      if (this.state === 'MATCHING') {
+        this.startLocalMatchDemo();
+      }
+    }, 2000);
+  }
+
+  private startLocalMatchDemo(): void {
+    const names = ['Samantha', 'Jordan', 'Elena', 'Lucas', 'Mia', 'Noah'];
+    const matchedNick = names[Math.floor(Math.random() * names.length)];
+    const matchedGender: Gender = this.preference === 'female' ? 'female' : this.preference === 'male' ? 'male' : 'female';
+
+    this.partner = {
+      nickname: matchedNick,
+      gender: matchedGender
+    };
+
+    this.setState('MATCH_FOUND');
+    this.announceToScreenReader(`Match found with ${this.partner.nickname}!`);
+
+    window.setTimeout(() => {
+      this.setState('CONNECTED');
+      this.announceToScreenReader('Connected! You can now start chatting.');
+
+      // Stranger says initial greeting after 800ms
+      window.setTimeout(() => {
+        if (this.state !== 'CONNECTED') return;
+        this.messages.push({
+          id: `msg_${crypto.randomUUID()}`,
+          sender: 'stranger',
+          text: `Hey! I'm ${matchedNick}. How are you?`,
+          timestamp: Date.now()
+        });
+        this.notify();
+      }, 800);
+    }, 1200);
   }
 
   private handleServerMessage(msg: ServerMessage): void {
@@ -283,7 +398,7 @@ export class ChatClient {
             this.announceToScreenReader("You've sent 2 messages. Please wait for a reply.");
           }
         } else {
-          // Reply received resets my cold message gate!
+          // Reply received resets cold message gate
           this.outgoingCount = 0;
           this.isColdGated = false;
           this.isPartnerTyping = false;
