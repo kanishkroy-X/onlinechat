@@ -1,38 +1,45 @@
 ---
 import { getTranslations } from '../i18n/translations';
 
-const t = getTranslations('en');
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = getTranslations(lang);
 ---
 
-<section class="w-full py-12 sm:py-16 border-t border-[var(--border-color)] bg-[var(--bg-page)]">
+<section class="w-full py-12 border-t border-[var(--border-color)] bg-[var(--bg-page)]">
   <div class="max-w-4xl mx-auto px-4">
-    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-sm flex flex-col md:flex-row items-center gap-8">
-      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl gradient-accent flex items-center justify-center shrink-0 shadow-md">
-        <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
+    <div class="p-6 sm:p-8 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-sm flex flex-col gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-[var(--text-main)]">
+            {t.safetyBanner.title}
+          </h3>
+          <p class="text-xs text-[var(--text-muted)]">
+            {t.safetyBanner.ageNotice}
+          </p>
+        </div>
       </div>
 
-      <div class="flex flex-col gap-3">
-        <h2 class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
-          {t.safetyBanner.title}
-        </h2>
-        <ul class="flex flex-col gap-2 text-sm text-[var(--text-muted)]">
-          <li class="flex items-start gap-2">
-            <span class="text-[#D55882] font-bold mt-0.5">•</span>
-            <span>{t.safetyBanner.tip1}</span>
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="text-[#D55882] font-bold mt-0.5">•</span>
-            <span>{t.safetyBanner.tip2}</span>
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="text-[#D55882] font-bold mt-0.5">•</span>
-            <span>{t.safetyBanner.tip3}</span>
-          </li>
-        </ul>
-        <div class="mt-2 pt-3 border-t border-[var(--border-subtle)] text-xs text-[var(--text-subtle)] font-medium">
-          {t.safetyBanner.ageNotice}
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[var(--text-muted)]">
+        <div class="flex items-start gap-2.5 p-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border-subtle)]">
+          <span class="text-[#FF808A] font-bold">•</span>
+          <span>{t.safetyBanner.tip1}</span>
+        </div>
+        <div class="flex items-start gap-2.5 p-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border-subtle)]">
+          <span class="text-[#FF808A] font-bold">•</span>
+          <span>{t.safetyBanner.tip2}</span>
+        </div>
+        <div class="flex items-start gap-2.5 p-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border-subtle)]">
+          <span class="text-[#FF808A] font-bold">•</span>
+          <span>{t.safetyBanner.tip3}</span>
         </div>
       </div>
     </div>

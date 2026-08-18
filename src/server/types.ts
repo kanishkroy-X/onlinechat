@@ -1,5 +1,7 @@
 export type Gender = 'male' | 'female';
 export type MatchPreference = 'male' | 'female' | 'anyone';
+export type Country = string;
+export type Language = string;
 
 export type SessionStatus =
   | 'idle'
@@ -15,6 +17,8 @@ export interface GuestSession {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  country: Country;
+  language: Language;
   status: SessionStatus;
   createdAt: number;
   lastSeenAt: number;
@@ -26,6 +30,8 @@ export interface QueueEntry {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  country: Country;
+  language: Language;
   queuedAt: number;
   socketId?: string;
 }
@@ -36,11 +42,15 @@ export interface ActiveMatch {
     sessionId: string;
     nickname: string;
     gender: Gender;
+    country: Country;
+    language: Language;
   };
   participantB: {
     sessionId: string;
     nickname: string;
     gender: Gender;
+    country: Country;
+    language: Language;
   };
   createdAt: number;
   lastActivityAt: number;
@@ -119,6 +129,8 @@ export interface QueuePayload {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  country: Country;
+  language: Language;
 }
 
 export interface ReportPayload {

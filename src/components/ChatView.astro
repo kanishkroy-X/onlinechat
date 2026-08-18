@@ -1,7 +1,12 @@
 ---
 import { getTranslations } from '../i18n/translations';
 
-const t = getTranslations('en');
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = getTranslations(lang);
 ---
 
 <div id="chat-view" class="hidden w-full flex-1 max-w-3xl mx-auto flex flex-col bg-[var(--bg-surface)] border-x border-[var(--border-color)] shadow-sm h-[calc(100dvh-4rem)]">
@@ -25,6 +30,10 @@ const t = getTranslations('en');
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>{t.chat.connectedStatus}</span>
         </div>
+        <div class="flex items-center gap-2 text-[10px] text-[var(--text-subtle)]">
+          <span id="chat-stranger-country" class="hidden"></span>
+          <span id="chat-stranger-language" class="hidden"></span>
+        </div>
       </div>
     </div>
 
@@ -33,7 +42,7 @@ const t = getTranslations('en');
       <button
         id="chat-next-btn"
         type="button"
-        class="gradient-accent gradient-accent-hover text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+        class="gradient-accent gradient-accent-hover text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition-all focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="13 17 18 12 13 7"></polyline>
@@ -45,7 +54,7 @@ const t = getTranslations('en');
       <button
         id="chat-menu-btn"
         type="button"
-        class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+        class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
         aria-label="More Chat Options"
       >
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -57,16 +66,16 @@ const t = getTranslations('en');
 
       <!-- Dropdown Menu -->
       <div id="chat-dropdown" class="hidden absolute right-4 top-16 z-30 w-48 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xl py-1.5 flex flex-col text-sm">
-        <button id="menu-report-btn" class="w-full px-4 py-2.5 text-left text-amber-600 dark:text-amber-400 hover:bg-[var(--bg-surface-elevated)] flex items-center gap-2.5 transition-colors">
+        <button id="menu-report-btn" class="w-full px-4 py-2.5 text-left text-amber-600 dark:text-amber-400 hover:bg-[var(--bg-surface-elevated)] flex items-center gap-2.5 transition-colors cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
           {t.chat.report}
         </button>
-        <button id="menu-block-btn" class="w-full px-4 py-2.5 text-left text-red-600 dark:text-red-400 hover:bg-[var(--bg-surface-elevated)] flex items-center gap-2.5 transition-colors">
+        <button id="menu-block-btn" class="w-full px-4 py-2.5 text-left text-red-600 dark:text-red-400 hover:bg-[var(--bg-surface-elevated)] flex items-center gap-2.5 transition-colors cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           {t.chat.block}
         </button>
         <div class="h-px bg-[var(--border-color)] my-1"></div>
-        <button id="menu-leave-btn" class="w-full px-4 py-2.5 text-left text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] flex items-center gap-2.5 transition-colors">
+        <button id="menu-leave-btn" class="w-full px-4 py-2.5 text-left text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] flex items-center gap-2.5 transition-colors cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           {t.chat.leave}
         </button>
@@ -75,10 +84,10 @@ const t = getTranslations('en');
   </div>
 
   <!-- Messages Scroll Area -->
-  <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 bg-[var(--bg-page)]">
+  <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 bg-[var(--bg-page)]" role="log" aria-live="polite">
     <!-- Welcome Notice -->
     <div class="text-center py-2 px-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs text-[var(--text-muted)] max-w-sm mx-auto shadow-sm">
-      Connected with a compatible stranger. Remember to never share passwords or personal info.
+      Connected with a compatible stranger. Remember to never share sensitive personal info.
     </div>
   </div>
 
@@ -100,7 +109,7 @@ const t = getTranslations('en');
     </div>
   </div>
 
-  <!-- Attachment Preview Box -->
+  <!-- Attachment Preview Container -->
   <div id="chat-media-preview-container" class="hidden px-3 pt-2 pb-1 border-t border-[var(--border-color)] bg-[var(--bg-surface)] flex items-center gap-3">
     <div class="relative group">
       <img id="chat-image-preview" src="" alt="Attachment preview" class="hidden w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] shadow-sm" />
@@ -108,7 +117,7 @@ const t = getTranslations('en');
       <button
         id="chat-remove-media-btn"
         type="button"
-        class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center text-xs shadow hover:bg-red-700 transition-colors"
+        class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center text-xs shadow hover:bg-red-700 transition-colors cursor-pointer"
         aria-label="Remove attachment"
       >
         &times;
@@ -116,11 +125,11 @@ const t = getTranslations('en');
     </div>
     <div class="flex flex-col text-xs text-[var(--text-muted)]">
       <span id="chat-media-name" class="font-medium truncate max-w-[200px]">image.png</span>
-      <span class="text-[10px] text-[var(--text-subtle)]">Attached media</span>
+      <span class="text-[10px] text-[var(--text-subtle)]">Attached photo / video</span>
     </div>
   </div>
 
-  <!-- Composer Area -->
+  <!-- Chat Composer Area with Attachment & Text -->
   <div class="p-3 border-t border-[var(--border-color)] bg-[var(--bg-surface)] shrink-0">
     <form id="chat-composer-form" class="flex items-center gap-2">
       <!-- Hidden File Input for Gallery / Photos / Videos -->
@@ -131,11 +140,11 @@ const t = getTranslations('en');
         class="hidden"
       />
 
-      <!-- Gallery / Attachment Button -->
+      <!-- Gallery / Photo Attachment Button -->
       <button
         id="chat-attach-btn"
         type="button"
-        class="w-11 h-11 flex items-center justify-center rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[#D55882] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A] shrink-0"
+        class="w-11 h-11 flex items-center justify-center rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[#D55882] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A] shrink-0 cursor-pointer"
         aria-label="Attach Photo or Video from Gallery"
         title="Share Image or Video from Gallery"
       >
@@ -153,6 +162,7 @@ const t = getTranslations('en');
         maxlength="1000"
         autocomplete="off"
         class="flex-1 px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all text-sm"
+        aria-label="Type your message"
       />
       <button
         id="chat-send-btn"
@@ -171,7 +181,7 @@ const t = getTranslations('en');
 
 <!-- Image Lightbox Modal -->
 <div id="chat-lightbox" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-  <button id="lightbox-close" class="absolute top-4 right-4 text-white hover:text-[#FF808A] transition-colors p-2">
+  <button id="lightbox-close" class="absolute top-4 right-4 text-white hover:text-[#FF808A] transition-colors p-2 cursor-pointer" aria-label="Close image preview">
     <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
   <img id="lightbox-img" src="" alt="Enlarged view" class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl" />

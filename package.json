@@ -7,8 +7,12 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "wrangler dev",
     "astro": "astro",
+    "deploy": "astro build && wrangler deploy",
+    "deploy:workers": "astro build && wrangler deploy",
+    "deploy:pages": "astro build && wrangler pages deploy dist --project-name randomcaht-online",
+    "deploy:preview": "astro build && wrangler deploy --temporary",
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "astro check"

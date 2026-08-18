@@ -1,7 +1,12 @@
 ---
 import { getTranslations } from '../i18n/translations';
 
-const t = getTranslations('en');
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = getTranslations(lang);
 ---
 
 <section class="w-full py-12 sm:py-16 border-t border-[var(--border-color)] bg-[var(--bg-surface)]">

@@ -1,42 +1,52 @@
 ---
 import { getTranslations } from '../i18n/translations';
 
-const t = getTranslations('en');
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = getTranslations(lang);
 ---
 
-<div id="matching-view" class="hidden w-full flex-1 flex flex-col items-center justify-center p-6 text-center">
-  <div class="max-w-md mx-auto flex flex-col items-center gap-6">
-    <!-- Pulsing Sunset Orb -->
-    <div class="relative flex items-center justify-center my-4">
-      <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full gradient-accent pulsing-orb shadow-2xl flex items-center justify-center">
-        <svg class="w-10 h-10 sm:w-12 sm:h-12 text-white animate-spin" style="animation-duration: 4s;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+<div id="matching-view" class="hidden w-full flex-1 max-w-md mx-auto flex flex-col items-center justify-center text-center p-6 my-auto">
+  <div class="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-8 shadow-xl flex flex-col items-center gap-6 animate-in fade-in zoom-in-95 duration-200">
+    <!-- Animated Radar Pulse -->
+    <div class="relative w-24 h-24 flex items-center justify-center my-2">
+      <div class="absolute inset-0 rounded-full bg-[#FF808A]/20 animate-ping"></div>
+      <div class="absolute inset-2 rounded-full bg-[#D55882]/30 animate-pulse"></div>
+      <div class="w-16 h-16 rounded-full gradient-accent flex items-center justify-center text-white shadow-lg shadow-[#D55882]/30 z-10">
+        <svg class="w-8 h-8 animate-spin" style="animation-duration: 4s;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
         </svg>
       </div>
-      <div class="absolute inset-0 rounded-full bg-[#FF808A] blur-xl opacity-40 -z-10 animate-pulse"></div>
     </div>
 
-    <!-- State text -->
+    <!-- Status Headings -->
     <div class="flex flex-col gap-2">
-      <h2 id="matching-title" class="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)]">
+      <h2 id="matching-status-title" class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
         {t.matching.title}
       </h2>
-      <p id="matching-subtitle" class="text-sm sm:text-base text-[var(--text-muted)]">
+      <p id="matching-status-subtitle" class="text-xs sm:text-sm text-[var(--text-muted)] max-w-xs">
         {t.matching.subtitle}
       </p>
     </div>
 
-    <!-- Match Preferences details -->
-    <div class="px-4 py-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs text-[var(--text-muted)] font-medium flex items-center gap-2">
+    <!-- Criteria Tag -->
+    <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-[var(--text-subtle)] bg-[var(--bg-page)] px-4 py-2 rounded-xl border border-[var(--border-color)]">
       <span>{t.matching.lookingFor}:</span>
-      <span id="matching-pref-display" class="font-bold text-[#D55882] capitalize">Anyone</span>
+      <span id="matching-pref-display" class="text-[var(--text-main)] capitalize">Anyone</span>
+      <div id="matching-pref-details" class="hidden flex items-center gap-1.5 border-l border-[var(--border-color)] pl-2">
+        <span id="matching-country-display" class="hidden"></span>
+        <span id="matching-language-display" class="hidden"></span>
+      </div>
     </div>
 
-    <!-- Cancel CTA -->
+    <!-- Cancel Button -->
     <button
       id="matching-cancel-btn"
       type="button"
-      class="mt-4 px-6 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-sm font-semibold text-[var(--text-main)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+      class="text-xs sm:text-sm font-semibold text-[var(--text-muted)] hover:text-red-500 py-2 px-4 rounded-xl border border-transparent hover:border-red-500/20 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-red-500/50"
     >
       {t.matching.cancel}
     </button>

@@ -1,4 +1,4 @@
-import type { Gender, MatchPreference, ServerMessage } from './types';
+import type { Gender, MatchPreference, Country, Language, ServerMessage } from './types';
 import { isCompatible } from './compatibility';
 import { validateNickname, validateMessage, validateReportReason } from './sanitizer';
 import { SlidingWindowRateLimiter } from './rateLimiter';
@@ -8,6 +8,8 @@ export interface ConnectedClient {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  country: Country;
+  language: Language;
   socket: WebSocket;
   currentMatchId?: string;
   outgoingCount: number;
@@ -48,6 +50,8 @@ export class ChatCoordinator {
     nickname: string,
     gender: Gender,
     preference: MatchPreference,
+    country: Country,
+    language: Language,
     socket: WebSocket
   ): ConnectedClient {
     const sanitizedNick = validateNickname(nickname).sanitizedValue || `User_${sessionId.slice(0, 5)}`;
@@ -56,6 +60,8 @@ export class ChatCoordinator {
       nickname: sanitizedNick,
       gender,
       preference,
+      country,
+      language,
       socket,
       outgoingCount: 0
     };
@@ -103,8 +109,8 @@ export class ChatCoordinator {
 
       if (
         isCompatible(
-          { gender: client.gender, preference: client.preference },
-          { gender: candidate.gender, preference: candidate.preference }
+          { gender: client.gender, preference: client.preference, country: client.country, language: client.language },
+          { gender: candidate.gender, preference: candidate.preference, country: candidate.country, language: candidate.language }
         )
       ) {
         matchedPartner = candidate;
@@ -130,7 +136,9 @@ export class ChatCoordinator {
         payload: {
           partner: {
             nickname: matchedPartner.nickname,
-            gender: matchedPartner.gender
+            gender: matchedPartner.gender,
+            country: matchedPartner.country,
+            language: matchedPartner.language
           }
         },
         timestamp: Date.now()
@@ -141,7 +149,9 @@ export class ChatCoordinator {
         payload: {
           partner: {
             nickname: client.nickname,
-            gender: client.gender
+            gender: client.gender,
+            country: client.country,
+            language: client.language
           }
         },
         timestamp: Date.now()
@@ -153,7 +163,9 @@ export class ChatCoordinator {
         payload: {
           partner: {
             nickname: matchedPartner.nickname,
-            gender: matchedPartner.gender
+            gender: matchedPartner.gender,
+            country: matchedPartner.country,
+            language: matchedPartner.language
           }
         },
         timestamp: Date.now()
@@ -164,7 +176,9 @@ export class ChatCoordinator {
         payload: {
           partner: {
             nickname: client.nickname,
-            gender: client.gender
+            gender: client.gender,
+            country: client.country,
+            language: client.language
           }
         },
         timestamp: Date.now()

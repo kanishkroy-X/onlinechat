@@ -31,9 +31,9 @@ describe('Chat Coordinator Integration & Cold Gate', () => {
     const wsB = new MockWebSocket();
 
     // Register User A (Male wanting Female)
-    coordinator.registerClient('sess_A', 'Alice', 'male', 'female', wsA as unknown as WebSocket);
+    coordinator.registerClient('sess_A', 'Alice', 'male', 'female', 'US', 'en', wsA as unknown as WebSocket);
     // Register User B (Female wanting Male)
-    coordinator.registerClient('sess_B', 'Bob', 'female', 'male', wsB as unknown as WebSocket);
+    coordinator.registerClient('sess_B', 'Bob', 'female', 'male', 'US', 'en', wsB as unknown as WebSocket);
 
     // Enqueue A
     coordinator.enqueue('sess_A');
@@ -97,8 +97,8 @@ describe('Chat Coordinator Integration & Cold Gate', () => {
     const wsA = new MockWebSocket();
     const wsB = new MockWebSocket();
 
-    coordinator.registerClient('sess_1', 'User1', 'male', 'anyone', wsA as unknown as WebSocket);
-    coordinator.registerClient('sess_2', 'User2', 'female', 'anyone', wsB as unknown as WebSocket);
+    coordinator.registerClient('sess_1', 'User1', 'male', 'anyone', 'anywhere', 'any', wsA as unknown as WebSocket);
+    coordinator.registerClient('sess_2', 'User2', 'female', 'anyone', 'anywhere', 'any', wsB as unknown as WebSocket);
 
     coordinator.enqueue('sess_1');
     coordinator.enqueue('sess_2');
@@ -118,7 +118,7 @@ describe('Chat Coordinator Integration & Cold Gate', () => {
 
   it('records report safely without breaking chat', () => {
     const wsA = new MockWebSocket();
-    coordinator.registerClient('sess_rep', 'Reporter', 'male', 'anyone', wsA as unknown as WebSocket);
+    coordinator.registerClient('sess_rep', 'Reporter', 'male', 'anyone', 'anywhere', 'any', wsA as unknown as WebSocket);
 
     coordinator.handleReport('sess_rep', 'spam', 'Sending spam links');
     const repMsg = wsA.messages.find(m => m.type === 'report.submitted');

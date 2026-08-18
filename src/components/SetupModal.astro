@@ -1,7 +1,13 @@
 ---
 import { getTranslations } from '../i18n/translations';
+import { COUNTRIES, LANGUAGES } from '../server/constants';
 
-const t = getTranslations('en');
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = getTranslations(lang);
 ---
 
 <div id="setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
@@ -14,7 +20,7 @@ const t = getTranslations('en');
       <button
         id="setup-close-btn"
         type="button"
-        class="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
         aria-label="Close setup"
       >
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -37,72 +43,112 @@ const t = getTranslations('en');
           name="nickname"
           maxlength="20"
           placeholder={t.setup.nicknamePlaceholder}
+          autocomplete="off"
           required
-          class="w-full px-4 py-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all"
+          class="w-full px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all text-sm"
         />
-        <span id="setup-nickname-error" class="hidden text-xs text-red-500 font-medium mt-0.5"></span>
+        <span id="setup-nickname-error" class="hidden text-xs text-red-500 font-medium"></span>
       </div>
 
-      <!-- Your Gender Segmented Control -->
-      <div class="flex flex-col gap-2">
-        <span class="text-sm font-semibold text-[var(--text-main)]">
+      <!-- Gender Selection -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-semibold text-[var(--text-main)]">
           {t.setup.genderLabel}
-        </span>
-        <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]">
+        </label>
+        <div class="grid grid-cols-2 gap-3 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
           <button
             type="button"
+            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
             data-gender="male"
-            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm"
           >
             {t.setup.male}
           </button>
           <button
             type="button"
+            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
             data-gender="female"
-            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]"
           >
             {t.setup.female}
           </button>
         </div>
       </div>
 
-      <!-- Match Preference Segmented Control -->
-      <div class="flex flex-col gap-2">
-        <span class="text-sm font-semibold text-[var(--text-main)]">
+      <!-- Match Preference -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-semibold text-[var(--text-main)]">
           {t.setup.preferenceLabel}
-        </span>
-        <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]">
+        </label>
+        <div class="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
           <button
             type="button"
+            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
             data-pref="anyone"
-            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm"
           >
             {t.setup.anyone}
           </button>
           <button
             type="button"
-            data-pref="female"
-            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]"
-          >
-            {t.setup.female}
-          </button>
-          <button
-            type="button"
+            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
             data-pref="male"
-            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]"
           >
             {t.setup.male}
           </button>
+          <button
+            type="button"
+            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+            data-pref="female"
+          >
+            {t.setup.female}
+          </button>
+        </div>
+      </div>
+
+      <!-- Optional Country / Language Filters -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Country Filter -->
+        <div class="flex flex-col gap-1.5">
+          <label for="setup-country" class="text-xs font-semibold text-[var(--text-muted)]">
+            {t.setup.countryLabel}
+          </label>
+          <select
+            id="setup-country"
+            name="country"
+            class="w-full px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] text-xs focus:outline-none focus:ring-2 focus:ring-[#D55882] transition-all cursor-pointer"
+          >
+            {COUNTRIES.map(c => (
+              <option value={c.code}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <!-- Language Filter -->
+        <div class="flex flex-col gap-1.5">
+          <label for="setup-language" class="text-xs font-semibold text-[var(--text-muted)]">
+            {t.setup.languageLabel}
+          </label>
+          <select
+            id="setup-language"
+            name="language"
+            class="w-full px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] text-xs focus:outline-none focus:ring-2 focus:ring-[#D55882] transition-all cursor-pointer"
+          >
+            {LANGUAGES.map(l => (
+              <option value={l.code}>{l.name}</option>
+            ))}
+          </select>
         </div>
       </div>
 
       <!-- Submit CTA -->
       <button
-        type="submit"
         id="setup-submit-btn"
-        class="w-full mt-2 gradient-accent gradient-accent-hover text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40 cursor-pointer"
+        type="submit"
+        class="mt-2 w-full gradient-accent gradient-accent-hover text-white font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-[#D55882]/25 hover:shadow-xl hover:shadow-[#D55882]/40 transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-4 focus-visible:ring-[#FF808A]/40"
       >
-        {t.setup.cta}
+        <span>{t.setup.cta}</span>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
       </button>
     </form>
   </div>

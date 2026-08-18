@@ -1,7 +1,12 @@
 ---
 import { getTranslations } from '../i18n/translations';
 
-const t = getTranslations('en');
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = getTranslations(lang);
 ---
 
 <section class="relative w-full overflow-hidden py-16 sm:py-24 flex flex-col items-center justify-center text-center px-4">
@@ -19,7 +24,7 @@ const t = getTranslations('en');
 
     <!-- Main Title -->
     <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-[var(--text-main)] leading-[1.15]">
-      Talk to someone <span class="text-gradient">new</span>.
+      {t.hero.headline}
     </h1>
 
     <!-- Subheadline -->
@@ -45,7 +50,7 @@ const t = getTranslations('en');
     <div class="flex items-center gap-6 text-xs text-[var(--text-subtle)] font-medium mt-3">
       <span class="flex items-center gap-1.5">
         <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        No Registration
+        {t.brand.noAccount}
       </span>
       <span class="flex items-center gap-1.5">
         <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>

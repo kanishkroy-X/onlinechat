@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { ChatCoordinator } from '../../server/coordinator';
-import type { Gender, MatchPreference, ClientMessage } from '../../server/types';
+import type { Gender, MatchPreference, Country, Language, ClientMessage } from '../../server/types';
 
 export const prerender = false;
 
@@ -15,6 +15,8 @@ export const GET: APIRoute = async ({ request }) => {
   const nickname = url.searchParams.get('nickname') || 'Stranger';
   const gender = (url.searchParams.get('gender') as Gender) || 'male';
   const preference = (url.searchParams.get('preference') as MatchPreference) || 'anyone';
+  const country = (url.searchParams.get('country') as Country) || 'anywhere';
+  const language = (url.searchParams.get('language') as Language) || 'any';
 
   // Cloudflare WebSocket Pair
   // @ts-expect-error WebSocketPair is standard in Cloudflare Workers
@@ -25,7 +27,7 @@ export const GET: APIRoute = async ({ request }) => {
   serverSocket.accept();
 
   const coordinator = ChatCoordinator.getInstance();
-  coordinator.registerClient(sessionId, nickname, gender, preference, serverSocket);
+  coordinator.registerClient(sessionId, nickname, gender, preference, country, language, serverSocket);
 
   serverSocket.addEventListener('message', (event: MessageEvent) => {
     try {

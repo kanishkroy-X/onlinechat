@@ -1,10 +1,13 @@
 import type {
   Gender,
   MatchPreference,
+  Country,
+  Language,
   ClientMessage,
   ServerMessage,
   ReportReason
 } from '../server/types';
+import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
 
 export type UIState =
   | 'LANDING'
@@ -32,7 +35,9 @@ export class ChatClient {
   public nickname: string = '';
   public gender: Gender = 'male';
   public preference: MatchPreference = 'anyone';
-  public partner: { nickname: string; gender: Gender } | null = null;
+  public country: Country = 'anywhere';
+  public language: Language = 'any';
+  public partner: { nickname: string; gender: Gender; country: Country; language: Language } | null = null;
   public messages: ChatMessageItem[] = [];
   public outgoingCount: number = 0;
   public isColdGated: boolean = false;
@@ -94,10 +99,12 @@ export class ChatClient {
     this.setState('LANDING');
   }
 
-  public enterQueue(nickname: string, gender: Gender, preference: MatchPreference): void {
+  public enterQueue(nickname: string, gender: Gender, preference: MatchPreference, country: Country, language: Language): void {
     this.nickname = nickname;
     this.gender = gender;
     this.preference = preference;
+    this.country = country;
+    this.language = language;
     this.partner = null;
     this.messages = [];
     this.outgoingCount = 0;
@@ -106,7 +113,7 @@ export class ChatClient {
     this.errorMessage = '';
 
     this.setState('MATCHING');
-    this.announceToScreenReader('Searching for a stranger to chat with...');
+    this.announceToScreenReader('Searching for a compatible stranger to chat with...');
 
     this.connectWebSocket();
   }
@@ -140,14 +147,6 @@ export class ChatClient {
     }
 
     const messageId = `msg_${crypto.randomUUID()}`;
-    const payload = {
-      messageId,
-      senderSessionId: this.sessionId,
-      content: trimmed,
-      mediaType,
-      mediaData,
-      timestamp: Date.now()
-    };
 
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
@@ -155,7 +154,7 @@ export class ChatClient {
         payload: { content: trimmed, mediaType, mediaData }
       });
     } else {
-      // Local interactive simulation
+      // Local interactive simulation fallback
       this.messages.push({
         id: messageId,
         sender: 'me',
@@ -231,7 +230,7 @@ export class ChatClient {
       });
     }
     this.closeSocket();
-    this.enterQueue(this.nickname, this.gender, this.preference);
+    this.enterQueue(this.nickname, this.gender, this.preference, this.country, this.language);
   }
 
   public leaveChat(): void {
@@ -273,7 +272,7 @@ export class ChatClient {
     this.closeSocket();
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/api/ws?sessionId=${encodeURIComponent(this.sessionId)}&nickname=${encodeURIComponent(this.nickname)}&gender=${this.gender}&preference=${this.preference}`;
+    const wsUrl = `${protocol}//${window.location.host}/api/ws?sessionId=${encodeURIComponent(this.sessionId)}&nickname=${encodeURIComponent(this.nickname)}&gender=${this.gender}&preference=${this.preference}&country=${encodeURIComponent(this.country)}&language=${encodeURIComponent(this.language)}`;
 
     let socketOpened = false;
 
@@ -288,7 +287,9 @@ export class ChatClient {
           payload: {
             nickname: this.nickname,
             gender: this.gender,
-            preference: this.preference
+            preference: this.preference,
+            country: this.country,
+            language: this.language
           }
         });
       });
@@ -319,22 +320,26 @@ export class ChatClient {
       this.startLocalMatchDemo();
     }
 
-    // If still matching after 2s without WS match, start instant match
+    // If still matching after 8s without WS match, start local match fallback for solo testing
     this.simTimeout = window.setTimeout(() => {
       if (this.state === 'MATCHING') {
         this.startLocalMatchDemo();
       }
-    }, 2000);
+    }, 8000);
   }
 
   private startLocalMatchDemo(): void {
-    const names = ['Samantha', 'Jordan', 'Elena', 'Lucas', 'Mia', 'Noah'];
+    const names = ['Samantha', 'Jordan', 'Elena', 'Lucas', 'Mia', 'Noah', 'Alex', 'Liam', 'Emma'];
     const matchedNick = names[Math.floor(Math.random() * names.length)];
     const matchedGender: Gender = this.preference === 'female' ? 'female' : this.preference === 'male' ? 'male' : 'female';
+    const matchedCountry = this.country === 'anywhere' ? 'US' : this.country;
+    const matchedLanguage = this.language === 'any' ? 'en' : this.language;
 
     this.partner = {
       nickname: matchedNick,
-      gender: matchedGender
+      gender: matchedGender,
+      country: matchedCountry,
+      language: matchedLanguage
     };
 
     this.setState('MATCH_FOUND');
@@ -366,16 +371,24 @@ export class ChatClient {
       }
 
       case 'match.found': {
-        const payload = msg.payload as { partner: { nickname: string; gender: Gender } };
+        const payload = msg.payload as { partner: { nickname: string; gender: Gender; country: Country; language: Language } };
         this.partner = payload.partner;
+        if (this.simTimeout) {
+          window.clearTimeout(this.simTimeout);
+          this.simTimeout = null;
+        }
         this.setState('MATCH_FOUND');
         this.announceToScreenReader(`Match found with ${this.partner.nickname}!`);
         break;
       }
 
       case 'chat.connected': {
-        const payload = msg.payload as { partner: { nickname: string; gender: Gender } };
+        const payload = msg.payload as { partner: { nickname: string; gender: Gender; country: Country; language: Language } };
         if (payload?.partner) this.partner = payload.partner;
+        if (this.simTimeout) {
+          window.clearTimeout(this.simTimeout);
+          this.simTimeout = null;
+        }
         this.setState('CONNECTED');
         this.announceToScreenReader('Connected! You can now start chatting.');
         break;
@@ -412,7 +425,7 @@ export class ChatClient {
           this.outgoingCount = 0;
           this.isColdGated = false;
           this.isPartnerTyping = false;
-          this.announceToScreenReader(`Message from ${this.partner?.nickname || 'Stranger'}: ${payload.content}`);
+          this.announceToScreenReader(`Message from ${this.partner?.nickname || 'Stranger'}: ${payload.content || 'Photo attachment'}`);
         }
 
         this.notify();

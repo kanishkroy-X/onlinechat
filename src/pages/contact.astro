@@ -2,10 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
 ---
 
-<BaseLayout title="Contact Us — randomcaht.online" description="Contact randomcaht.online support and safety team.">
-  <Header />
+<BaseLayout title="Contact Us — randomcaht.online" description="Contact randomcaht.online support and safety team." lang={currentLang}>
+  <Header lang={currentLang} />
 
   <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
     <div class="flex flex-col gap-6 text-[var(--text-muted)] text-sm leading-relaxed">
@@ -37,5 +38,5 @@ import Footer from '../components/Footer.astro';
     </div>
   </main>
 
-  <Footer />
+  <Footer lang={currentLang} />
 </BaseLayout>

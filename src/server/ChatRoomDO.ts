@@ -144,15 +144,32 @@ export class ChatRoomDO {
 
         // 3. Message validation & sanitization
         const rawPayload = msg.payload as SendMessagePayload;
-        const validation = validateMessage(rawPayload?.content);
-        if (!validation.isValid || !validation.sanitizedValue) {
+        const hasMedia = !!rawPayload?.mediaData;
+        const hasText = !!rawPayload?.content?.trim();
+
+        if (!hasMedia && !hasText) {
           this.sendToSocket(sessionId, {
             type: 'error',
             requestId: msg.requestId,
-            payload: { message: validation.error || 'Invalid message content' },
+            payload: { message: 'Message or media content is required' },
             timestamp: Date.now()
           });
           return;
+        }
+
+        let sanitizedText = '';
+        if (hasText) {
+          const validation = validateMessage(rawPayload.content);
+          if (!validation.isValid) {
+            this.sendToSocket(sessionId, {
+              type: 'error',
+              requestId: msg.requestId,
+              payload: { message: validation.error || 'Invalid message content' },
+              timestamp: Date.now()
+            });
+            return;
+          }
+          sanitizedText = validation.sanitizedValue || '';
         }
 
         // 4. Update cold gate state
@@ -168,7 +185,9 @@ export class ChatRoomDO {
         const messagePayload = {
           messageId,
           senderSessionId: sessionId,
-          content: validation.sanitizedValue,
+          content: sanitizedText,
+          mediaType: rawPayload.mediaType,
+          mediaData: rawPayload.mediaData,
           timestamp: Date.now()
         };
 

@@ -1,4 +1,4 @@
-import type { QueueEntry, Gender, MatchPreference } from './types';
+import type { QueueEntry, Gender, MatchPreference, Country, Language } from './types';
 import { isCompatible } from './compatibility';
 import { SlidingWindowRateLimiter } from './rateLimiter';
 
@@ -9,6 +9,8 @@ export interface MatchResult {
     sessionId: string;
     nickname: string;
     gender: Gender;
+    country: Country;
+    language: Language;
   };
 }
 
@@ -63,8 +65,8 @@ export class MatchmakerDO {
 
       // Check mutual compatibility
       if (isCompatible(
-        { gender: entry.gender, preference: entry.preference },
-        { gender: candidate.gender, preference: candidate.preference }
+        { gender: entry.gender, preference: entry.preference, country: entry.country, language: entry.language },
+        { gender: candidate.gender, preference: candidate.preference, country: candidate.country, language: candidate.language }
       )) {
         matchedCandidate = candidate;
         break;
@@ -87,7 +89,9 @@ export class MatchmakerDO {
         partner: {
           sessionId: matchedCandidate.sessionId,
           nickname: matchedCandidate.nickname,
-          gender: matchedCandidate.gender
+          gender: matchedCandidate.gender,
+          country: matchedCandidate.country,
+          language: matchedCandidate.language
         }
       };
     }

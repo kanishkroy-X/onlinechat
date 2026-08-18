@@ -12,38 +12,41 @@ import DisconnectNotice from '../components/DisconnectNotice.astro';
 import Modals from '../components/Modals.astro';
 
 export const prerender = false;
+
+const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
 ---
 
-<BaseLayout>
-  <Header />
+<BaseLayout lang={currentLang}>
+  <Header lang={currentLang} />
 
   <main id="app-main" class="flex-1 flex flex-col w-full relative">
     <!-- Landing State -->
     <div id="landing-view" class="w-full flex flex-col">
-      <LandingHero />
-      <HowItWorks />
-      <SafetyTrust />
+      <LandingHero lang={currentLang} />
+      <HowItWorks lang={currentLang} />
+      <SafetyTrust lang={currentLang} />
     </div>
 
     <!-- Active Interactive States -->
-    <MatchingView />
-    <ChatView />
-    <DisconnectNotice />
+    <MatchingView lang={currentLang} />
+    <ChatView lang={currentLang} />
+    <DisconnectNotice lang={currentLang} />
   </main>
 
   <!-- Modals & Overlays -->
-  <SetupModal />
-  <Modals />
+  <SetupModal lang={currentLang} />
+  <Modals lang={currentLang} />
 
   <div id="footer-container">
-    <Footer />
+    <Footer lang={currentLang} />
   </div>
 
   <!-- Interactive Client State Script -->
   <script>
     import { ChatClient } from '../scripts/chatClient';
     import { validateNickname } from '../server/sanitizer';
-    import type { Gender, MatchPreference, ReportReason } from '../server/types';
+    import type { Gender, MatchPreference, Country, Language, ReportReason } from '../server/types';
+    import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
 
     const client = new ChatClient();
 
@@ -68,6 +71,8 @@ export const prerender = false;
     const chatStrangerNick = document.getElementById('chat-stranger-nick');
     const chatStrangerAvatar = document.getElementById('chat-stranger-avatar');
     const chatStrangerGender = document.getElementById('chat-stranger-gender');
+    const chatStrangerCountry = document.getElementById('chat-stranger-country');
+    const chatStrangerLanguage = document.getElementById('chat-stranger-language');
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input') as HTMLInputElement;
     const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
@@ -78,7 +83,7 @@ export const prerender = false;
     const chatMenuBtn = document.getElementById('chat-menu-btn');
     const chatDropdown = document.getElementById('chat-dropdown');
 
-    // Gallery Attachment elements
+    // Attachment & Lightbox Elements
     const chatFileInput = document.getElementById('chat-file-input') as HTMLInputElement;
     const chatAttachBtn = document.getElementById('chat-attach-btn');
     const chatMediaPreviewContainer = document.getElementById('chat-media-preview-container');
@@ -121,6 +126,8 @@ export const prerender = false;
     // Form state
     let selectedGender: Gender = 'male';
     let selectedPreference: MatchPreference = 'anyone';
+    let selectedCountry: string = 'anywhere';
+    let selectedLanguage: string = 'any';
 
     // UI State Switcher
     function updateUI(c: ChatClient) {
@@ -143,6 +150,29 @@ export const prerender = false;
         footerContainer?.classList.add('hidden');
         setupModal?.classList.add('hidden');
         if (matchingPrefDisplay) matchingPrefDisplay.textContent = c.preference;
+        const matchingCountryDisplay = document.getElementById('matching-country-display');
+        const matchingLanguageDisplay = document.getElementById('matching-language-display');
+        const matchingPrefDetails = document.getElementById('matching-pref-details');
+        if (matchingCountryDisplay && c.country && c.country !== 'anywhere') {
+          matchingCountryDisplay.textContent = COUNTRY_NAMES[c.country] || c.country;
+          matchingCountryDisplay.classList.remove('hidden');
+        } else if (matchingCountryDisplay) {
+          matchingCountryDisplay.classList.add('hidden');
+        }
+        if (matchingLanguageDisplay && c.language && c.language !== 'any') {
+          matchingLanguageDisplay.textContent = LANGUAGE_NAMES[c.language] || c.language;
+          matchingLanguageDisplay.classList.remove('hidden');
+        } else if (matchingLanguageDisplay) {
+          matchingLanguageDisplay.classList.add('hidden');
+        }
+        if (matchingPrefDetails) {
+          const hasDetails = (c.country && c.country !== 'anywhere') || (c.language && c.language !== 'any');
+          if (hasDetails) {
+            matchingPrefDetails.classList.remove('hidden');
+          } else {
+            matchingPrefDetails.classList.add('hidden');
+          }
+        }
       } else if (c.state === 'MATCH_FOUND' || c.state === 'CONNECTING' || c.state === 'CONNECTED') {
         chatView?.classList.remove('hidden');
         footerContainer?.classList.add('hidden');
@@ -151,6 +181,22 @@ export const prerender = false;
         if (chatStrangerNick) chatStrangerNick.textContent = c.partner?.nickname || 'Stranger';
         if (chatStrangerAvatar) chatStrangerAvatar.textContent = (c.partner?.nickname || 'S').charAt(0).toUpperCase();
         if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
+        if (chatStrangerCountry) {
+          if (c.partner?.country && c.partner.country !== 'anywhere') {
+            chatStrangerCountry.textContent = COUNTRY_NAMES[c.partner.country] || c.partner.country;
+            chatStrangerCountry.classList.remove('hidden');
+          } else {
+            chatStrangerCountry.classList.add('hidden');
+          }
+        }
+        if (chatStrangerLanguage) {
+          if (c.partner?.language && c.partner.language !== 'any') {
+            chatStrangerLanguage.textContent = LANGUAGE_NAMES[c.partner.language] || c.partner.language;
+            chatStrangerLanguage.classList.remove('hidden');
+          } else {
+            chatStrangerLanguage.classList.add('hidden');
+          }
+        }
 
         renderMessages(c);
         renderColdGate(c);
@@ -259,9 +305,9 @@ export const prerender = false;
         if (!g) return;
         selectedGender = g;
         document.querySelectorAll('.gender-btn').forEach(b => {
-          b.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]';
+          b.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
         });
-        target.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm';
+        target.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
       });
     });
 
@@ -273,11 +319,28 @@ export const prerender = false;
         if (!p) return;
         selectedPreference = p;
         document.querySelectorAll('.pref-btn').forEach(b => {
-          b.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]';
+          b.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
         });
-        target.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm';
+        target.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
       });
     });
+
+    const countrySelect = document.getElementById('setup-country') as HTMLSelectElement;
+    const languageSelect = document.getElementById('setup-language') as HTMLSelectElement;
+
+    if (countrySelect) {
+      selectedCountry = countrySelect.value;
+      countrySelect.addEventListener('change', () => {
+        selectedCountry = countrySelect.value;
+      });
+    }
+
+    if (languageSelect) {
+      selectedLanguage = languageSelect.value;
+      languageSelect.addEventListener('change', () => {
+        selectedLanguage = languageSelect.value;
+      });
+    }
 
     // Setup Submit
     setupForm?.addEventListener('submit', e => {
@@ -293,7 +356,7 @@ export const prerender = false;
       }
       if (nicknameError) nicknameError.classList.add('hidden');
 
-      client.enterQueue(validation.sanitizedValue, selectedGender, selectedPreference);
+      client.enterQueue(validation.sanitizedValue, selectedGender, selectedPreference, selectedCountry, selectedLanguage);
     });
 
     // Matching Cancel
@@ -457,7 +520,7 @@ export const prerender = false;
 
     // Disconnect Actions
     disconnectFindBtn?.addEventListener('click', () => {
-      client.enterQueue(client.nickname, client.gender, client.preference);
+      client.enterQueue(client.nickname, client.gender, client.preference, client.country, client.language);
     });
     disconnectHomeBtn?.addEventListener('click', () => {
       client.setState('LANDING');
