@@ -179,7 +179,7 @@ export class ChatCoordinator {
     }
   }
 
-  public handleMessage(sessionId: string, rawContent: string): void {
+  public handleMessage(sessionId: string, rawContent?: string, mediaType?: 'image' | 'video', mediaData?: string): void {
     const client = this.clients.get(sessionId);
     if (!client || !client.currentMatchId) return;
 
@@ -205,11 +205,22 @@ export class ChatCoordinator {
       return;
     }
 
-    const validation = validateMessage(rawContent);
-    if (!validation.isValid || !validation.sanitizedValue) {
+    let sanitizedText = '';
+    if (rawContent && rawContent.trim()) {
+      const validation = validateMessage(rawContent);
+      if (!validation.isValid || !validation.sanitizedValue) {
+        this.send(client.socket, {
+          type: 'error',
+          payload: { message: validation.error || 'Invalid message' },
+          timestamp: Date.now()
+        });
+        return;
+      }
+      sanitizedText = validation.sanitizedValue;
+    } else if (!mediaData) {
       this.send(client.socket, {
         type: 'error',
-        payload: { message: validation.error || 'Invalid message' },
+        payload: { message: 'Message or media cannot be empty' },
         timestamp: Date.now()
       });
       return;
@@ -234,7 +245,9 @@ export class ChatCoordinator {
     const payload = {
       messageId,
       senderSessionId: sessionId,
-      content: validation.sanitizedValue,
+      content: sanitizedText,
+      mediaType,
+      mediaData,
       timestamp: Date.now()
     };
 

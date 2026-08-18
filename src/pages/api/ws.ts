@@ -50,8 +50,8 @@ export const GET: APIRoute = async ({ request }) => {
           break;
 
         case 'message.send': {
-          const payload = msg.payload as { content: string };
-          coordinator.handleMessage(sessionId, payload?.content || '');
+          const payload = msg.payload as { content?: string; mediaType?: 'image' | 'video'; mediaData?: string };
+          coordinator.handleMessage(sessionId, payload?.content, payload?.mediaType, payload?.mediaData);
           break;
         }
 

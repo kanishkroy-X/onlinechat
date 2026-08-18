@@ -110,7 +110,9 @@ export interface ServerMessage<T = unknown> {
 }
 
 export interface SendMessagePayload {
-  content: string;
+  content?: string;
+  mediaType?: 'image' | 'video';
+  mediaData?: string;
 }
 
 export interface QueuePayload {

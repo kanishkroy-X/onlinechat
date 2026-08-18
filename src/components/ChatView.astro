@@ -100,9 +100,52 @@ const t = getTranslations('en');
     </div>
   </div>
 
+  <!-- Attachment Preview Box -->
+  <div id="chat-media-preview-container" class="hidden px-3 pt-2 pb-1 border-t border-[var(--border-color)] bg-[var(--bg-surface)] flex items-center gap-3">
+    <div class="relative group">
+      <img id="chat-image-preview" src="" alt="Attachment preview" class="hidden w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] shadow-sm" />
+      <video id="chat-video-preview" src="" class="hidden w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] shadow-sm" muted></video>
+      <button
+        id="chat-remove-media-btn"
+        type="button"
+        class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center text-xs shadow hover:bg-red-700 transition-colors"
+        aria-label="Remove attachment"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="flex flex-col text-xs text-[var(--text-muted)]">
+      <span id="chat-media-name" class="font-medium truncate max-w-[200px]">image.png</span>
+      <span class="text-[10px] text-[var(--text-subtle)]">Attached media</span>
+    </div>
+  </div>
+
   <!-- Composer Area -->
   <div class="p-3 border-t border-[var(--border-color)] bg-[var(--bg-surface)] shrink-0">
     <form id="chat-composer-form" class="flex items-center gap-2">
+      <!-- Hidden File Input for Gallery / Photos / Videos -->
+      <input
+        id="chat-file-input"
+        type="file"
+        accept="image/*,video/*"
+        class="hidden"
+      />
+
+      <!-- Gallery / Attachment Button -->
+      <button
+        id="chat-attach-btn"
+        type="button"
+        class="w-11 h-11 flex items-center justify-center rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[#D55882] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A] shrink-0"
+        aria-label="Attach Photo or Video from Gallery"
+        title="Share Image or Video from Gallery"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </button>
+
       <input
         id="chat-input"
         type="text"
@@ -124,4 +167,12 @@ const t = getTranslations('en');
       </button>
     </form>
   </div>
+</div>
+
+<!-- Image Lightbox Modal -->
+<div id="chat-lightbox" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+  <button id="lightbox-close" class="absolute top-4 right-4 text-white hover:text-[#FF808A] transition-colors p-2">
+    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <img id="lightbox-img" src="" alt="Enlarged view" class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl" />
 </div>

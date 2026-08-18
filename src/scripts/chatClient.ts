@@ -20,7 +20,9 @@ export type UIState =
 export interface ChatMessageItem {
   id: string;
   sender: 'me' | 'stranger';
-  text: string;
+  text?: string;
+  mediaType?: 'image' | 'video';
+  mediaData?: string;
   timestamp: number;
 }
 
@@ -125,9 +127,9 @@ export class ChatClient {
     this.announceToScreenReader('Matchmaking cancelled.');
   }
 
-  public sendMessage(text: string): boolean {
-    const trimmed = text.trim();
-    if (!trimmed) return false;
+  public sendMessage(text?: string, mediaType?: 'image' | 'video', mediaData?: string): boolean {
+    const trimmed = text ? text.trim() : '';
+    if (!trimmed && !mediaData) return false;
     if (this.isColdGated) return false;
 
     // Check cold gate locally
@@ -142,13 +144,15 @@ export class ChatClient {
       messageId,
       senderSessionId: this.sessionId,
       content: trimmed,
+      mediaType,
+      mediaData,
       timestamp: Date.now()
     };
 
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'message.send',
-        payload: { content: trimmed }
+        payload: { content: trimmed, mediaType, mediaData }
       });
     } else {
       // Local interactive simulation
@@ -156,6 +160,8 @@ export class ChatClient {
         id: messageId,
         sender: 'me',
         text: trimmed,
+        mediaType,
+        mediaData,
         timestamp: Date.now()
       });
       this.outgoingCount += 1;
@@ -167,7 +173,7 @@ export class ChatClient {
 
       this.notify();
 
-      // Trigger realistic stranger reply after 1.5 - 2.5 seconds
+      // Trigger realistic stranger reply
       this.scheduleStrangerReply();
     }
 
@@ -379,7 +385,9 @@ export class ChatClient {
         const payload = msg.payload as {
           messageId: string;
           senderSessionId: string;
-          content: string;
+          content?: string;
+          mediaType?: 'image' | 'video';
+          mediaData?: string;
           timestamp: number;
         };
 
@@ -388,6 +396,8 @@ export class ChatClient {
           id: payload.messageId,
           sender: isMe ? 'me' : 'stranger',
           text: payload.content,
+          mediaType: payload.mediaType,
+          mediaData: payload.mediaData,
           timestamp: payload.timestamp
         });
 

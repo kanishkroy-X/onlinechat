@@ -78,6 +78,20 @@ export const prerender = false;
     const chatMenuBtn = document.getElementById('chat-menu-btn');
     const chatDropdown = document.getElementById('chat-dropdown');
 
+    // Gallery Attachment elements
+    const chatFileInput = document.getElementById('chat-file-input') as HTMLInputElement;
+    const chatAttachBtn = document.getElementById('chat-attach-btn');
+    const chatMediaPreviewContainer = document.getElementById('chat-media-preview-container');
+    const chatImagePreview = document.getElementById('chat-image-preview') as HTMLImageElement;
+    const chatVideoPreview = document.getElementById('chat-video-preview') as HTMLVideoElement;
+    const chatMediaName = document.getElementById('chat-media-name');
+    const chatRemoveMediaBtn = document.getElementById('chat-remove-media-btn');
+    const chatLightbox = document.getElementById('chat-lightbox');
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    let currentAttachedMedia: { type: 'image' | 'video'; data: string; name: string } | null = null;
+
     // Modals
     const modalNext = document.getElementById('modal-next');
     const modalNextCancel = document.getElementById('modal-next-cancel');
@@ -171,14 +185,44 @@ export const prerender = false;
       c.messages.forEach(msg => {
         const isMe = msg.sender === 'me';
         const wrapper = document.createElement('div');
-        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'}`;
+        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'}`;
 
         const bubble = document.createElement('div');
         bubble.className = isMe
-          ? 'px-4 py-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm'
-          : 'px-4 py-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm';
+          ? 'p-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm flex flex-col gap-2'
+          : 'p-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm flex flex-col gap-2';
 
-        bubble.textContent = msg.text;
+        // Render Media if present
+        if (msg.mediaData) {
+          if (msg.mediaType === 'video') {
+            const videoEl = document.createElement('video');
+            videoEl.src = msg.mediaData;
+            videoEl.controls = true;
+            videoEl.className = 'max-w-full rounded-xl max-h-60 object-contain bg-black';
+            bubble.appendChild(videoEl);
+          } else {
+            const imgEl = document.createElement('img');
+            imgEl.src = msg.mediaData;
+            imgEl.alt = 'Shared photo';
+            imgEl.className = 'max-w-full rounded-xl max-h-60 object-cover cursor-pointer hover:opacity-95 transition-opacity';
+            imgEl.addEventListener('click', () => {
+              if (lightboxImg && chatLightbox) {
+                lightboxImg.src = msg.mediaData!;
+                chatLightbox.classList.remove('hidden');
+              }
+            });
+            bubble.appendChild(imgEl);
+          }
+        }
+
+        // Render Text if present
+        if (msg.text) {
+          const textSpan = document.createElement('span');
+          textSpan.className = 'px-1 leading-relaxed';
+          textSpan.textContent = msg.text;
+          bubble.appendChild(textSpan);
+        }
+
         wrapper.appendChild(bubble);
         chatMessages.appendChild(wrapper);
       });
@@ -257,13 +301,84 @@ export const prerender = false;
       client.cancelQueue();
     });
 
+    // Gallery File Attachment handling
+    chatAttachBtn?.addEventListener('click', () => {
+      chatFileInput?.click();
+    });
+
+    chatFileInput?.addEventListener('change', () => {
+      const file = chatFileInput.files?.[0];
+      if (!file) return;
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File is too large. Please select a photo or video under 5MB.');
+        chatFileInput.value = '';
+        return;
+      }
+
+      const isVideo = file.type.startsWith('video/');
+      const reader = new FileReader();
+
+      reader.onload = e => {
+        const dataUrl = e.target?.result as string;
+        currentAttachedMedia = {
+          type: isVideo ? 'video' : 'image',
+          data: dataUrl,
+          name: file.name
+        };
+
+        if (chatMediaPreviewContainer && chatMediaName) {
+          chatMediaName.textContent = file.name;
+          chatMediaPreviewContainer.classList.remove('hidden');
+
+          if (isVideo && chatVideoPreview) {
+            chatVideoPreview.src = dataUrl;
+            chatVideoPreview.classList.remove('hidden');
+            chatImagePreview?.classList.add('hidden');
+          } else if (chatImagePreview) {
+            chatImagePreview.src = dataUrl;
+            chatImagePreview.classList.remove('hidden');
+            chatVideoPreview?.classList.add('hidden');
+          }
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    function clearAttachedMedia() {
+      currentAttachedMedia = null;
+      if (chatFileInput) chatFileInput.value = '';
+      if (chatMediaPreviewContainer) chatMediaPreviewContainer.classList.add('hidden');
+      if (chatImagePreview) chatImagePreview.src = '';
+      if (chatVideoPreview) chatVideoPreview.src = '';
+    }
+
+    chatRemoveMediaBtn?.addEventListener('click', clearAttachedMedia);
+
+    // Lightbox Close
+    lightboxClose?.addEventListener('click', () => {
+      chatLightbox?.classList.add('hidden');
+    });
+    chatLightbox?.addEventListener('click', e => {
+      if (e.target === chatLightbox) {
+        chatLightbox.classList.add('hidden');
+      }
+    });
+
     // Chat Message Sending
     chatComposerForm?.addEventListener('submit', e => {
       e.preventDefault();
-      if (!chatInput) return;
-      const text = chatInput.value;
-      if (client.sendMessage(text)) {
-        chatInput.value = '';
+      const text = chatInput ? chatInput.value : '';
+      const media = currentAttachedMedia;
+
+      if (!text.trim() && !media) return;
+
+      const sent = client.sendMessage(text, media?.type, media?.data);
+      if (sent) {
+        if (chatInput) chatInput.value = '';
+        clearAttachedMedia();
       }
     });
 
