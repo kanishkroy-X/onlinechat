@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const faqs = [
+  {
+    q: 'What is randomcaht.online?',
+    a: 'randomcaht.online is a free, web-based platform that instantly connects you with compatible strangers for real-time text conversations without requiring an account or download.'
+  },
+  {
+    q: 'Is randomcaht.online free?',
+    a: 'Yes, 100% free. There are no subscriptions, paywalls, or hidden fees.'
+  },
+  {
+    q: 'Do I need an account to chat?',
+    a: 'No. You do not need to register, provide an email, or create a password. You simply enter a temporary nickname and start chatting immediately.'
+  },
+  {
+    q: 'Is the chat anonymous?',
+    a: 'Yes, conversations are anonymous by default. We do not collect your personal identity. However, we advise all users never to share personal info (such as phone numbers or passwords) with strangers.'
+  },
+  {
+    q: 'How does random matching work?',
+    a: 'When you click "Find Stranger", our server-side matching engine pairs you atomically with another waiting user whose self-declared gender and chat preferences are mutually compatible.'
+  },
+  {
+    q: 'Can I choose who I match with?',
+    a: 'Yes. You can declare your gender (Male / Female) and specify whether you prefer to chat with Male, Female, or Anyone. A match only occurs when both users’ preferences are satisfied.'
+  },
+  {
+    q: 'How do I get another stranger?',
+    a: 'Simply click the "Next Stranger" button during an active chat. The current conversation will close immediately, and you will be queued for a new compatible stranger.'
+  },
+  {
+    q: 'Is chat history saved?',
+    a: 'No. All chat messages are ephemeral and exist only during your active session. We do not store permanent chat history.'
+  },
+  {
+    q: 'How do I report or block someone?',
+    a: 'Click the menu icon in the chat bar and select "Report" to report abuse, or "Block" to immediately disconnect and prevent further interaction.'
+  },
+  {
+    q: 'What is the minimum age to use the site?',
+    a: 'You must be at least 18 years old (or the legal age of majority in your jurisdiction) to use randomcaht.online.'
+  },
+  {
+    q: 'Is randomcaht.online safe?',
+    a: 'We enforce server-side rate limits, anti-spam protections, XSS sanitization, a 2-message cold message gate, and instant report/block features to protect our community.'
+  },
+  {
+    q: 'Does it work on mobile and tablet devices?',
+    a: 'Yes. randomcaht.online is built mobile-first and works seamlessly on phones, tablets, laptops, and desktop computers.'
+  },
+  {
+    q: 'What happens if a stranger disconnects?',
+    a: 'You will immediately see a "Stranger disconnected" notification with a "Find Another Stranger" button to quickly start a new chat.'
+  },
+  {
+    q: 'How is it different from Omegle or Chatroulette?',
+    a: 'randomcaht.online focuses exclusively on clean, fast, text-only communication with mutual preference matching and a modern sunset aesthetic without camera requirements.'
+  }
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': faqs.map(item => ({
+    '@type': 'Question',
+    'name': item.q,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': item.a
+    }
+  }))
+};
+---
+
+<BaseLayout title="Frequently Asked Questions — randomcaht.online" description="Common questions about anonymous matching, safety, preferences, and features on randomcaht.online.">
+  <Header />
+
+  <!-- JSON-LD FAQ structured data -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <main class="flex-1 max-w-4xl mx-auto px-4 py-12">
+    <div class="flex flex-col gap-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-3">
+          Frequently Asked Questions
+        </h1>
+        <p class="text-base text-[var(--text-muted)]">
+          Everything you need to know about randomcaht.online.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {faqs.map(item => (
+          <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm hover:border-[#D55882]/40 transition-colors">
+            <h2 class="font-bold text-base text-[var(--text-main)] flex items-start gap-2">
+              <span class="text-[#D55882] font-extrabold">Q.</span>
+              <span>{item.q}</span>
+            </h2>
+            <p class="text-sm text-[var(--text-muted)] leading-relaxed pl-5">
+              {item.a}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center pt-6 border-t border-[var(--border-color)]">
+        <a href="/" class="inline-flex items-center gap-2 font-bold text-lg text-gradient hover:opacity-90">
+          Start Chatting Now &rarr;
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,59 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<section class="w-full py-12 sm:py-16 border-t border-[var(--border-color)] bg-[var(--bg-surface)]">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-main)] mb-3">
+        {t.howItWorks.title}
+      </h2>
+      <p class="text-sm sm:text-base text-[var(--text-muted)]">
+        Start chatting with someone new in three effortless steps.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Step 1 -->
+      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]/50 flex flex-col gap-3 relative group hover:border-[#D55882]/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center text-white font-bold text-base shadow-sm">
+          1
+        </div>
+        <h3 class="text-lg font-bold text-[var(--text-main)]">
+          {t.howItWorks.step1Title}
+        </h3>
+        <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+          {t.howItWorks.step1Desc}
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]/50 flex flex-col gap-3 relative group hover:border-[#D55882]/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center text-white font-bold text-base shadow-sm">
+          2
+        </div>
+        <h3 class="text-lg font-bold text-[var(--text-main)]">
+          {t.howItWorks.step2Title}
+        </h3>
+        <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+          {t.howItWorks.step2Desc}
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]/50 flex flex-col gap-3 relative group hover:border-[#D55882]/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center text-white font-bold text-base shadow-sm">
+          3
+        </div>
+        <h3 class="text-lg font-bold text-[var(--text-main)]">
+          {t.howItWorks.step3Title}
+        </h3>
+        <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+          {t.howItWorks.step3Desc}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

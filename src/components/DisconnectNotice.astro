@@ -1,0 +1,47 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<div id="disconnect-view" class="hidden w-full flex-1 flex flex-col items-center justify-center p-6 text-center">
+  <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-lg">
+    <div class="w-16 h-16 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-subtle)]">
+      <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <h2 class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+        {t.chat.disconnected}
+      </h2>
+      <p class="text-sm text-[var(--text-muted)]">
+        Your conversation has ended. Would you like to match with someone new?
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full mt-2">
+      <button
+        id="disconnect-find-btn"
+        type="button"
+        class="w-full gradient-accent gradient-accent-hover text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40 cursor-pointer"
+      >
+        {t.chat.findAnother}
+      </button>
+      <button
+        id="disconnect-home-btn"
+        type="button"
+        class="w-full py-3.5 px-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-sm font-semibold text-[var(--text-main)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+      >
+        Go Home
+      </button>
+    </div>
+  </div>
+</div>

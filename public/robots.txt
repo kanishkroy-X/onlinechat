@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /safety
+Allow: /faq
+Allow: /privacy
+Allow: /terms
+Allow: /about
+Allow: /contact
+
+# Exclude internal/ephemeral API endpoints
+Disallow: /api/
+Disallow: /ws/
+
+Sitemap: https://randomcaht.online/sitemap.xml

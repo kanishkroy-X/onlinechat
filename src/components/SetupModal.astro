@@ -1,0 +1,109 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<div id="setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col gap-6 relative animate-in fade-in zoom-in-95 duration-200">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+        {t.setup.title}
+      </h2>
+      <button
+        id="setup-close-btn"
+        type="button"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+        aria-label="Close setup"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form id="setup-form" class="flex flex-col gap-5">
+      <!-- Nickname Input -->
+      <div class="flex flex-col gap-1.5">
+        <label for="setup-nickname" class="text-sm font-semibold text-[var(--text-main)]">
+          {t.setup.nicknameLabel}
+        </label>
+        <input
+          id="setup-nickname"
+          type="text"
+          name="nickname"
+          maxlength="20"
+          placeholder={t.setup.nicknamePlaceholder}
+          required
+          class="w-full px-4 py-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all"
+        />
+        <span id="setup-nickname-error" class="hidden text-xs text-red-500 font-medium mt-0.5"></span>
+      </div>
+
+      <!-- Your Gender Segmented Control -->
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-[var(--text-main)]">
+          {t.setup.genderLabel}
+        </span>
+        <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]">
+          <button
+            type="button"
+            data-gender="male"
+            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm"
+          >
+            {t.setup.male}
+          </button>
+          <button
+            type="button"
+            data-gender="female"
+            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]"
+          >
+            {t.setup.female}
+          </button>
+        </div>
+      </div>
+
+      <!-- Match Preference Segmented Control -->
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-[var(--text-main)]">
+          {t.setup.preferenceLabel}
+        </span>
+        <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)]">
+          <button
+            type="button"
+            data-pref="anyone"
+            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm"
+          >
+            {t.setup.anyone}
+          </button>
+          <button
+            type="button"
+            data-pref="female"
+            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]"
+          >
+            {t.setup.female}
+          </button>
+          <button
+            type="button"
+            data-pref="male"
+            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]"
+          >
+            {t.setup.male}
+          </button>
+        </div>
+      </div>
+
+      <!-- Submit CTA -->
+      <button
+        type="submit"
+        id="setup-submit-btn"
+        class="w-full mt-2 gradient-accent gradient-accent-hover text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40 cursor-pointer"
+      >
+        {t.setup.cta}
+      </button>
+    </form>
+  </div>
+</div>

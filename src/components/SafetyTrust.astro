@@ -1,0 +1,40 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<section class="w-full py-12 sm:py-16 border-t border-[var(--border-color)] bg-[var(--bg-page)]">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-sm flex flex-col md:flex-row items-center gap-8">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl gradient-accent flex items-center justify-center shrink-0 shadow-md">
+        <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <h2 class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+          {t.safetyBanner.title}
+        </h2>
+        <ul class="flex flex-col gap-2 text-sm text-[var(--text-muted)]">
+          <li class="flex items-start gap-2">
+            <span class="text-[#D55882] font-bold mt-0.5">•</span>
+            <span>{t.safetyBanner.tip1}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-[#D55882] font-bold mt-0.5">•</span>
+            <span>{t.safetyBanner.tip2}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-[#D55882] font-bold mt-0.5">•</span>
+            <span>{t.safetyBanner.tip3}</span>
+          </li>
+        </ul>
+        <div class="mt-2 pt-3 border-t border-[var(--border-subtle)] text-xs text-[var(--text-subtle)] font-medium">
+          {t.safetyBanner.ageNotice}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

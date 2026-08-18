@@ -1,0 +1,100 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<!-- Next Stranger Confirmation Modal -->
+<div id="modal-next" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 shadow-2xl flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex flex-col gap-2 text-center">
+      <h3 class="text-lg font-bold text-[var(--text-main)]">{t.modals.nextTitle}</h3>
+      <p class="text-xs sm:text-sm text-[var(--text-muted)]">{t.modals.nextDesc}</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="modal-next-cancel" type="button" class="flex-1 py-3 px-4 rounded-xl border border-[var(--border-color)] text-sm font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors">
+        {t.modals.stay}
+      </button>
+      <button id="modal-next-confirm" type="button" class="flex-1 py-3 px-4 rounded-xl gradient-accent text-white text-sm font-bold shadow-sm hover:opacity-95 transition-opacity">
+        {t.modals.confirmNext}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Leave Chat Confirmation Modal -->
+<div id="modal-leave" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 shadow-2xl flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex flex-col gap-2 text-center">
+      <h3 class="text-lg font-bold text-[var(--text-main)]">{t.modals.leaveTitle}</h3>
+      <p class="text-xs sm:text-sm text-[var(--text-muted)]">{t.modals.leaveDesc}</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="modal-leave-cancel" type="button" class="flex-1 py-3 px-4 rounded-xl border border-[var(--border-color)] text-sm font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors">
+        {t.modals.stay}
+      </button>
+      <button id="modal-leave-confirm" type="button" class="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-sm transition-colors">
+        {t.modals.confirmLeave}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Report Stranger Modal -->
+<div id="modal-report" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 sm:p-7 shadow-2xl flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-bold text-[var(--text-main)]">{t.modals.reportTitle}</h3>
+      <button id="modal-report-close" class="text-[var(--text-subtle)] hover:text-[var(--text-main)]">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <form id="report-form" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-semibold text-[var(--text-main)]">{t.modals.reportReasonLabel}</label>
+        <select id="report-reason-select" required class="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]">
+          <option value="harassment">{t.modals.reasons.harassment}</option>
+          <option value="spam">{t.modals.reasons.spam}</option>
+          <option value="sexual_inappropriate">{t.modals.reasons.sexual_inappropriate}</option>
+          <option value="threats">{t.modals.reasons.threats}</option>
+          <option value="hate_abuse">{t.modals.reasons.hate_abuse}</option>
+          <option value="scam_fraud">{t.modals.reasons.scam_fraud}</option>
+          <option value="other">{t.modals.reasons.other}</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-semibold text-[var(--text-main)]">{t.modals.reportDetailsLabel}</label>
+        <textarea id="report-details-input" rows="3" maxlength="500" placeholder={t.modals.reportDetailsPlaceholder} class="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"></textarea>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <button id="modal-report-cancel" type="button" class="flex-1 py-2.5 px-4 rounded-xl border border-[var(--border-color)] text-sm font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors">
+          {t.modals.cancel}
+        </button>
+        <button id="modal-report-submit" type="submit" class="flex-1 py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold shadow-sm transition-colors">
+          {t.modals.submitReport}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Block Stranger Modal -->
+<div id="modal-block" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 shadow-2xl flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex flex-col gap-2 text-center">
+      <h3 class="text-lg font-bold text-[var(--text-main)]">{t.modals.blockTitle}</h3>
+      <p class="text-xs sm:text-sm text-[var(--text-muted)]">{t.modals.blockDesc}</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="modal-block-cancel" type="button" class="flex-1 py-3 px-4 rounded-xl border border-[var(--border-color)] text-sm font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors">
+        {t.modals.cancel}
+      </button>
+      <button id="modal-block-confirm" type="button" class="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-sm transition-colors">
+        {t.modals.confirmBlock}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<header class="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)]/80 backdrop-blur-md sticky top-0 z-40 transition-colors">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <!-- Brand Wordmark -->
+    <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
+      <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        </svg>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-bold text-lg tracking-tight leading-none text-[var(--text-main)]">
+          randomcaht<span class="text-[#FF808A]">.online</span>
+        </span>
+        <span class="text-[10px] uppercase font-semibold tracking-wider text-[var(--text-subtle)] leading-tight">
+          Anonymous Chat
+        </span>
+      </div>
+    </a>
+
+    <!-- Actions & Controls -->
+    <div class="flex items-center gap-3">
+      <nav class="hidden sm:flex items-center gap-4 text-sm font-medium text-[var(--text-muted)] mr-2">
+        <a href="/safety" class="hover:text-[var(--text-main)] transition-colors py-1 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          {t.nav.safety}
+        </a>
+        <a href="/faq" class="hover:text-[var(--text-main)] transition-colors py-1 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          {t.nav.faq}
+        </a>
+      </nav>
+
+      <!-- Theme Switcher Button -->
+      <button
+        id="theme-toggle"
+        type="button"
+        class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+        aria-label="Toggle Theme (Light / Dark / System)"
+      >
+        <!-- Sun icon (for dark mode) -->
+        <svg class="w-4.5 h-4.5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+        <!-- Moon icon (for light mode) -->
+        <svg class="w-4.5 h-4.5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  import { getStoredTheme, applyTheme } from '../scripts/theme';
+
+  const themeBtn = document.getElementById('theme-toggle');
+  themeBtn?.addEventListener('click', () => {
+    const current = getStoredTheme();
+    const next = current === 'dark' ? 'light' : current === 'light' ? 'system' : 'dark';
+    applyTheme(next);
+  });
+</script>

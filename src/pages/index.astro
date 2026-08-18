@@ -1,0 +1,351 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LandingHero from '../components/LandingHero.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import SafetyTrust from '../components/SafetyTrust.astro';
+import SetupModal from '../components/SetupModal.astro';
+import MatchingView from '../components/MatchingView.astro';
+import ChatView from '../components/ChatView.astro';
+import DisconnectNotice from '../components/DisconnectNotice.astro';
+import Modals from '../components/Modals.astro';
+
+export const prerender = false;
+---
+
+<BaseLayout>
+  <Header />
+
+  <main id="app-main" class="flex-1 flex flex-col w-full relative">
+    <!-- Landing State -->
+    <div id="landing-view" class="w-full flex flex-col">
+      <LandingHero />
+      <HowItWorks />
+      <SafetyTrust />
+    </div>
+
+    <!-- Active Interactive States -->
+    <MatchingView />
+    <ChatView />
+    <DisconnectNotice />
+  </main>
+
+  <!-- Modals & Overlays -->
+  <SetupModal />
+  <Modals />
+
+  <div id="footer-container">
+    <Footer />
+  </div>
+
+  <!-- Interactive Client State Script -->
+  <script>
+    import { ChatClient } from '../scripts/chatClient';
+    import { validateNickname } from '../server/sanitizer';
+    import type { Gender, MatchPreference, ReportReason } from '../server/types';
+
+    const client = new ChatClient();
+
+    // DOM Elements
+    const landingView = document.getElementById('landing-view');
+    const matchingView = document.getElementById('matching-view');
+    const chatView = document.getElementById('chat-view');
+    const disconnectView = document.getElementById('disconnect-view');
+    const setupModal = document.getElementById('setup-modal');
+    const footerContainer = document.getElementById('footer-container');
+
+    // Hero / Triggers
+    const heroStartBtn = document.getElementById('hero-start-btn');
+    const setupCloseBtn = document.getElementById('setup-close-btn');
+    const setupForm = document.getElementById('setup-form') as HTMLFormElement;
+    const nicknameInput = document.getElementById('setup-nickname') as HTMLInputElement;
+    const nicknameError = document.getElementById('setup-nickname-error');
+    const matchingCancelBtn = document.getElementById('matching-cancel-btn');
+    const matchingPrefDisplay = document.getElementById('matching-pref-display');
+
+    // Chat elements
+    const chatStrangerNick = document.getElementById('chat-stranger-nick');
+    const chatStrangerAvatar = document.getElementById('chat-stranger-avatar');
+    const chatStrangerGender = document.getElementById('chat-stranger-gender');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input') as HTMLInputElement;
+    const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
+    const chatComposerForm = document.getElementById('chat-composer-form') as HTMLFormElement;
+    const coldGateBanner = document.getElementById('cold-gate-banner');
+    const chatTypingIndicator = document.getElementById('chat-typing-indicator');
+    const chatNextBtn = document.getElementById('chat-next-btn');
+    const chatMenuBtn = document.getElementById('chat-menu-btn');
+    const chatDropdown = document.getElementById('chat-dropdown');
+
+    // Modals
+    const modalNext = document.getElementById('modal-next');
+    const modalNextCancel = document.getElementById('modal-next-cancel');
+    const modalNextConfirm = document.getElementById('modal-next-confirm');
+
+    const modalLeave = document.getElementById('modal-leave');
+    const modalLeaveCancel = document.getElementById('modal-leave-cancel');
+    const modalLeaveConfirm = document.getElementById('modal-leave-confirm');
+    const menuLeaveBtn = document.getElementById('menu-leave-btn');
+
+    const modalReport = document.getElementById('modal-report');
+    const modalReportClose = document.getElementById('modal-report-close');
+    const modalReportCancel = document.getElementById('modal-report-cancel');
+    const reportForm = document.getElementById('report-form') as HTMLFormElement;
+    const reportReasonSelect = document.getElementById('report-reason-select') as HTMLSelectElement;
+    const reportDetailsInput = document.getElementById('report-details-input') as HTMLTextAreaElement;
+    const menuReportBtn = document.getElementById('menu-report-btn');
+
+    const modalBlock = document.getElementById('modal-block');
+    const modalBlockCancel = document.getElementById('modal-block-cancel');
+    const modalBlockConfirm = document.getElementById('modal-block-confirm');
+    const menuBlockBtn = document.getElementById('menu-block-btn');
+
+    const disconnectFindBtn = document.getElementById('disconnect-find-btn');
+    const disconnectHomeBtn = document.getElementById('disconnect-home-btn');
+
+    // Form state
+    let selectedGender: Gender = 'male';
+    let selectedPreference: MatchPreference = 'anyone';
+
+    // UI State Switcher
+    function updateUI(c: ChatClient) {
+      // Hide all main state views
+      landingView?.classList.add('hidden');
+      matchingView?.classList.add('hidden');
+      chatView?.classList.add('hidden');
+      disconnectView?.classList.add('hidden');
+
+      if (c.state === 'LANDING') {
+        landingView?.classList.remove('hidden');
+        footerContainer?.classList.remove('hidden');
+        setupModal?.classList.add('hidden');
+      } else if (c.state === 'SETUP') {
+        landingView?.classList.remove('hidden');
+        setupModal?.classList.remove('hidden');
+        nicknameInput?.focus();
+      } else if (c.state === 'MATCHING') {
+        matchingView?.classList.remove('hidden');
+        footerContainer?.classList.add('hidden');
+        setupModal?.classList.add('hidden');
+        if (matchingPrefDisplay) matchingPrefDisplay.textContent = c.preference;
+      } else if (c.state === 'MATCH_FOUND' || c.state === 'CONNECTING' || c.state === 'CONNECTED') {
+        chatView?.classList.remove('hidden');
+        footerContainer?.classList.add('hidden');
+        setupModal?.classList.add('hidden');
+
+        if (chatStrangerNick) chatStrangerNick.textContent = c.partner?.nickname || 'Stranger';
+        if (chatStrangerAvatar) chatStrangerAvatar.textContent = (c.partner?.nickname || 'S').charAt(0).toUpperCase();
+        if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
+
+        renderMessages(c);
+        renderColdGate(c);
+
+        if (c.isPartnerTyping) {
+          chatTypingIndicator?.classList.remove('hidden');
+        } else {
+          chatTypingIndicator?.classList.add('hidden');
+        }
+      } else if (c.state === 'DISCONNECTED') {
+        disconnectView?.classList.remove('hidden');
+        footerContainer?.classList.remove('hidden');
+        setupModal?.classList.add('hidden');
+      } else if (c.state === 'RATE_LIMITED' || c.state === 'ERROR') {
+        alert(c.errorMessage || 'An error occurred.');
+        c.setState('LANDING');
+      }
+    }
+
+    function renderMessages(c: ChatClient) {
+      if (!chatMessages) return;
+
+      // Keep welcome banner and append new messages
+      const existingCount = chatMessages.querySelectorAll('.message-bubble').length;
+      if (existingCount === c.messages.length) return;
+
+      // Re-render message list
+      const welcome = chatMessages.firstElementChild;
+      chatMessages.innerHTML = '';
+      if (welcome) chatMessages.appendChild(welcome);
+
+      c.messages.forEach(msg => {
+        const isMe = msg.sender === 'me';
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'}`;
+
+        const bubble = document.createElement('div');
+        bubble.className = isMe
+          ? 'px-4 py-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm'
+          : 'px-4 py-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm';
+
+        bubble.textContent = msg.text;
+        wrapper.appendChild(bubble);
+        chatMessages.appendChild(wrapper);
+      });
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function renderColdGate(c: ChatClient) {
+      if (c.isColdGated) {
+        coldGateBanner?.classList.remove('hidden');
+        if (chatSendBtn) chatSendBtn.disabled = true;
+      } else {
+        coldGateBanner?.classList.add('hidden');
+        if (chatSendBtn) chatSendBtn.disabled = false;
+      }
+    }
+
+    client.subscribe(updateUI);
+
+    // Landing Triggers
+    heroStartBtn?.addEventListener('click', () => {
+      client.startSetup();
+    });
+
+    setupCloseBtn?.addEventListener('click', () => {
+      client.cancelSetup();
+    });
+
+    // Gender selection
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const target = e.currentTarget as HTMLButtonElement;
+        const g = target.dataset.gender as Gender;
+        if (!g) return;
+        selectedGender = g;
+        document.querySelectorAll('.gender-btn').forEach(b => {
+          b.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]';
+        });
+        target.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm';
+      });
+    });
+
+    // Preference selection
+    document.querySelectorAll('.pref-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const target = e.currentTarget as HTMLButtonElement;
+        const p = target.dataset.pref as MatchPreference;
+        if (!p) return;
+        selectedPreference = p;
+        document.querySelectorAll('.pref-btn').forEach(b => {
+          b.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)]';
+        });
+        target.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm';
+      });
+    });
+
+    // Setup Submit
+    setupForm?.addEventListener('submit', e => {
+      e.preventDefault();
+      const rawNick = nicknameInput.value;
+      const validation = validateNickname(rawNick);
+      if (!validation.isValid || !validation.sanitizedValue) {
+        if (nicknameError) {
+          nicknameError.textContent = validation.error || 'Invalid nickname';
+          nicknameError.classList.remove('hidden');
+        }
+        return;
+      }
+      if (nicknameError) nicknameError.classList.add('hidden');
+
+      client.enterQueue(validation.sanitizedValue, selectedGender, selectedPreference);
+    });
+
+    // Matching Cancel
+    matchingCancelBtn?.addEventListener('click', () => {
+      client.cancelQueue();
+    });
+
+    // Chat Message Sending
+    chatComposerForm?.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!chatInput) return;
+      const text = chatInput.value;
+      if (client.sendMessage(text)) {
+        chatInput.value = '';
+      }
+    });
+
+    chatInput?.addEventListener('input', () => {
+      client.notifyTyping();
+    });
+
+    // Dropdown toggle
+    chatMenuBtn?.addEventListener('click', () => {
+      chatDropdown?.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', e => {
+      if (chatDropdown && !chatDropdown.contains(e.target as Node) && e.target !== chatMenuBtn) {
+        chatDropdown.classList.add('hidden');
+      }
+    });
+
+    // Next Stranger Modal
+    chatNextBtn?.addEventListener('click', () => {
+      modalNext?.classList.remove('hidden');
+    });
+    modalNextCancel?.addEventListener('click', () => {
+      modalNext?.classList.add('hidden');
+    });
+    modalNextConfirm?.addEventListener('click', () => {
+      modalNext?.classList.add('hidden');
+      client.nextStranger();
+    });
+
+    // Leave Modal
+    menuLeaveBtn?.addEventListener('click', () => {
+      chatDropdown?.classList.add('hidden');
+      modalLeave?.classList.remove('hidden');
+    });
+    modalLeaveCancel?.addEventListener('click', () => {
+      modalLeave?.classList.add('hidden');
+    });
+    modalLeaveConfirm?.addEventListener('click', () => {
+      modalLeave?.classList.add('hidden');
+      client.leaveChat();
+    });
+
+    // Report Modal
+    menuReportBtn?.addEventListener('click', () => {
+      chatDropdown?.classList.add('hidden');
+      modalReport?.classList.remove('hidden');
+    });
+    modalReportClose?.addEventListener('click', () => {
+      modalReport?.classList.add('hidden');
+    });
+    modalReportCancel?.addEventListener('click', () => {
+      modalReport?.classList.add('hidden');
+    });
+    reportForm?.addEventListener('submit', e => {
+      e.preventDefault();
+      const reason = reportReasonSelect.value as ReportReason;
+      const details = reportDetailsInput.value;
+      client.submitReport(reason, details);
+      modalReport?.classList.add('hidden');
+      alert('Report submitted. Thank you.');
+    });
+
+    // Block Modal
+    menuBlockBtn?.addEventListener('click', () => {
+      chatDropdown?.classList.add('hidden');
+      modalBlock?.classList.remove('hidden');
+    });
+    modalBlockCancel?.addEventListener('click', () => {
+      modalBlock?.classList.add('hidden');
+    });
+    modalBlockConfirm?.addEventListener('click', () => {
+      modalBlock?.classList.add('hidden');
+      client.blockStranger();
+    });
+
+    // Disconnect Actions
+    disconnectFindBtn?.addEventListener('click', () => {
+      client.enterQueue(client.nickname, client.gender, client.preference);
+    });
+    disconnectHomeBtn?.addEventListener('click', () => {
+      client.setState('LANDING');
+    });
+  </script>
+</BaseLayout>

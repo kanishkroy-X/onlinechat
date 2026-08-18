@@ -1,0 +1,60 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<section class="relative w-full overflow-hidden py-16 sm:py-24 flex flex-col items-center justify-center text-center px-4">
+  <!-- Subtle Sunset Gradient Background Aura -->
+  <div class="absolute inset-0 -z-10 opacity-35 dark:opacity-20 pointer-events-none flex items-center justify-center">
+    <div class="w-[600px] h-[450px] rounded-full bg-gradient-to-tr from-[#7F376D] via-[#D55882] to-[#FF808A] blur-[120px]"></div>
+  </div>
+
+  <div class="max-w-3xl mx-auto flex flex-col items-center gap-6">
+    <!-- Value Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)]/80 shadow-sm text-xs font-semibold text-[var(--text-muted)] backdrop-blur-sm">
+      <span class="w-2 h-2 rounded-full bg-[#FF808A] animate-pulse"></span>
+      <span>{t.hero.badge}</span>
+    </div>
+
+    <!-- Main Title -->
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-[var(--text-main)] leading-[1.15]">
+      Talk to someone <span class="text-gradient">new</span>.
+    </h1>
+
+    <!-- Subheadline -->
+    <p class="text-base sm:text-xl text-[var(--text-muted)] max-w-2xl font-normal leading-relaxed">
+      {t.hero.subheadline}
+    </p>
+
+    <!-- Primary CTA Button -->
+    <div class="mt-4 flex flex-col sm:flex-row items-center gap-4">
+      <button
+        id="hero-start-btn"
+        type="button"
+        class="gradient-accent gradient-accent-hover text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lg shadow-[#D55882]/25 hover:shadow-xl hover:shadow-[#D55882]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-3 cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40"
+      >
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>{t.hero.cta}</span>
+      </button>
+    </div>
+
+    <!-- Trust signals below CTA -->
+    <div class="flex items-center gap-6 text-xs text-[var(--text-subtle)] font-medium mt-3">
+      <span class="flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        No Registration
+      </span>
+      <span class="flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        100% Free
+      </span>
+      <span class="flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Mutual Matching
+      </span>
+    </div>
+  </div>
+</section>

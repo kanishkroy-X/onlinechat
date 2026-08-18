@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="About Us — randomcaht.online" description="About randomcaht.online, our vision, and design philosophy.">
+  <Header />
+
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
+    <div class="flex flex-col gap-6 text-[var(--text-muted)] text-sm leading-relaxed">
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-2">
+          About randomcaht.online
+        </h1>
+        <p class="text-base text-[var(--text-muted)]">
+          Reimagining spontaneous human connection on the modern web.
+        </p>
+      </div>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">Our Mission</h2>
+        <p>
+          randomcaht.online was created to provide a refreshingly simple, safe, and privacy-conscious space where anyone can have a spontaneous, real-time text conversation with another person anywhere in the world.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">Zero Friction, Zero Profiles</h2>
+        <p>
+          We believe the best conversations happen without the baggage of permanent profiles, follower counts, or public algorithms. By stripping away accounts, passwords, and data collection, we put the focus entirely back on the dialogue.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">Sunset Design Philosophy</h2>
+        <p>
+          Our interface is built around a warm, calming sunset aesthetic designed to feel welcoming, elegant, and distraction-free across mobile phones, tablets, and desktop computers alike.
+        </p>
+      </section>
+
+      <div class="pt-4 border-t border-[var(--border-color)]">
+        <a href="/" class="font-semibold text-[#D55882] hover:underline">&larr; Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

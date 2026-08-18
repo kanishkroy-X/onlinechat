@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build and cache outputs
+dist/
+.astro/
+.wrangler/
+.mf/
+
+# Environment files
+.env
+.env.production
+.env.local
+*.env
+
+# System / OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage & artifacts
+coverage/
+test-results/
+playwright-report/

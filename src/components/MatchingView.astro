@@ -1,0 +1,44 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+const t = getTranslations('en');
+---
+
+<div id="matching-view" class="hidden w-full flex-1 flex flex-col items-center justify-center p-6 text-center">
+  <div class="max-w-md mx-auto flex flex-col items-center gap-6">
+    <!-- Pulsing Sunset Orb -->
+    <div class="relative flex items-center justify-center my-4">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full gradient-accent pulsing-orb shadow-2xl flex items-center justify-center">
+        <svg class="w-10 h-10 sm:w-12 sm:h-12 text-white animate-spin" style="animation-duration: 4s;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+      </div>
+      <div class="absolute inset-0 rounded-full bg-[#FF808A] blur-xl opacity-40 -z-10 animate-pulse"></div>
+    </div>
+
+    <!-- State text -->
+    <div class="flex flex-col gap-2">
+      <h2 id="matching-title" class="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)]">
+        {t.matching.title}
+      </h2>
+      <p id="matching-subtitle" class="text-sm sm:text-base text-[var(--text-muted)]">
+        {t.matching.subtitle}
+      </p>
+    </div>
+
+    <!-- Match Preferences details -->
+    <div class="px-4 py-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs text-[var(--text-muted)] font-medium flex items-center gap-2">
+      <span>{t.matching.lookingFor}:</span>
+      <span id="matching-pref-display" class="font-bold text-[#D55882] capitalize">Anyone</span>
+    </div>
+
+    <!-- Cancel CTA -->
+    <button
+      id="matching-cancel-btn"
+      type="button"
+      class="mt-4 px-6 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-sm font-semibold text-[var(--text-main)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+    >
+      {t.matching.cancel}
+    </button>
+  </div>
+</div>

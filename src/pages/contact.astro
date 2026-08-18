@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Contact Us — randomcaht.online" description="Contact randomcaht.online support and safety team.">
+  <Header />
+
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
+    <div class="flex flex-col gap-6 text-[var(--text-muted)] text-sm leading-relaxed">
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-2">
+          Contact Us
+        </h1>
+        <p class="text-base text-[var(--text-muted)]">
+          Have feedback, questions, or safety concerns? We're here to help.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">Direct Email Support</h2>
+        <p>
+          For general inquiries, abuse reports, or legal notices, please reach out to our team at:
+        </p>
+        <div class="p-4 rounded-xl bg-[var(--bg-page)] border border-[var(--border-color)] text-base font-mono font-bold text-[#D55882]">
+          contact@randomcaht.online
+        </div>
+        <p class="text-xs text-[var(--text-subtle)]">
+          We aim to respond to all safety and urgent inquiries within 24–48 hours.
+        </p>
+      </div>
+
+      <div class="pt-4 border-t border-[var(--border-color)]">
+        <a href="/" class="font-semibold text-[#D55882] hover:underline">&larr; Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

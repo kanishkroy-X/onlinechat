@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="404 — Page Not Found | randomcaht.online">
+  <Header />
+
+  <main class="flex-1 flex flex-col items-center justify-center text-center p-6 my-12">
+    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-lg">
+      <div class="text-6xl font-extrabold text-gradient">
+        404
+      </div>
+      <div class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold text-[var(--text-main)]">
+          Page Not Found
+        </h1>
+        <p class="text-sm text-[var(--text-muted)]">
+          The page you are looking for does not exist or has been moved.
+        </p>
+      </div>
+      <a
+        href="/"
+        class="gradient-accent gradient-accent-hover text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all"
+      >
+        Return to Home & Start Chat
+      </a>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

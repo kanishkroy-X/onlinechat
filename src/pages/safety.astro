@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Safety Guidelines — randomcaht.online" description="Essential safety guidelines and age policy for randomcaht.online.">
+  <Header />
+
+  <main class="flex-1 max-w-4xl mx-auto px-4 py-12">
+    <div class="flex flex-col gap-8">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold uppercase tracking-wider mb-3">
+          Safety Center
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
+          Safety & Community Guidelines
+        </h1>
+        <p class="text-base text-[var(--text-muted)] mt-2">
+          Your safety is our top priority. Please read these guidelines before starting a conversation.
+        </p>
+      </div>
+
+      <!-- Age Policy Box -->
+      <div class="p-6 rounded-2xl border border-rose-500/30 bg-rose-500/5 flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
+          <svg class="w-5 h-5 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Strict Minimum Age Policy (18+)
+        </h2>
+        <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+          You must be at least 18 years old (or the legal age of majority in your jurisdiction) to use randomcaht.online. We strictly prohibit minors from accessing or using this service.
+        </p>
+      </div>
+
+      <!-- Golden Rules -->
+      <div class="flex flex-col gap-6">
+        <h2 class="text-2xl font-bold text-[var(--text-main)]">Essential Safety Rules</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2">
+            <h3 class="font-bold text-base text-[var(--text-main)] flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg gradient-accent flex items-center justify-center text-white text-xs">1</span>
+              Keep Personal Info Private
+            </h3>
+            <p class="text-sm text-[var(--text-muted)]">
+              Never share your real name, address, phone number, passwords, social media handles, or banking details with strangers.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2">
+            <h3 class="font-bold text-base text-[var(--text-main)] flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg gradient-accent flex items-center justify-center text-white text-xs">2</span>
+              Beware of External Links & Scams
+            </h3>
+            <p class="text-sm text-[var(--text-muted)]">
+              Do not click suspicious links or download files sent by strangers. Anyone requesting money or gift cards is committing a scam.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2">
+            <h3 class="font-bold text-base text-[var(--text-main)] flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg gradient-accent flex items-center justify-center text-white text-xs">3</span>
+              Use Report & Block Controls
+            </h3>
+            <p class="text-sm text-[var(--text-muted)]">
+              If someone makes you uncomfortable, is abusive, sends spam, or violates our terms, use the in-chat <strong>Report</strong> and <strong>Block</strong> features immediately.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2">
+            <h3 class="font-bold text-base text-[var(--text-main)] flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg gradient-accent flex items-center justify-center text-white text-xs">4</span>
+              Zero Tolerance for Exploitation
+            </h3>
+            <p class="text-sm text-[var(--text-muted)]">
+              We maintain zero tolerance for harassment, hate speech, threats, and illegal content. Violations are recorded and blocked.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anonymity Disclaimer -->
+      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-sm text-[var(--text-muted)] leading-relaxed">
+        <h3 class="font-bold text-base text-[var(--text-main)] mb-2">Important Notice on Anonymity</h3>
+        <p>
+          While randomcaht.online does not require an account or registration, you should never assume that content shared with a stranger cannot be recorded, screenshotted, or saved by that person. Always protect your privacy.
+        </p>
+      </div>
+
+      <div>
+        <a href="/" class="inline-flex items-center gap-2 font-semibold text-[#D55882] hover:underline">
+          &larr; Back to Home & Start Chat
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Terms of Service — randomcaht.online" description="Terms and conditions of use for randomcaht.online.">
+  <Header />
+
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
+    <div class="flex flex-col gap-6 text-[var(--text-muted)] text-sm leading-relaxed">
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-2">
+          Terms of Service
+        </h1>
+        <p class="text-xs text-[var(--text-subtle)]">
+          Effective Date: February 2025
+        </p>
+      </div>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">1. Acceptance of Terms</h2>
+        <p>
+          By accessing or using randomcaht.online ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the Service.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">2. Minimum Age Requirement (18+)</h2>
+        <p>
+          You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to use the Service. Use of the Service by minors is strictly prohibited.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">3. Prohibited Conduct</h2>
+        <p>You agree not to engage in any of the following prohibited activities:</p>
+        <ul class="list-disc pl-5 flex flex-col gap-1">
+          <li>Transmitting unlawful, harassing, threatening, hateful, defamatory, or abusive content.</li>
+          <li>Sending automated spam, commercial solicitations, or deceptive phishing links.</li>
+          <li>Transmitting sexually explicit or exploitative content involving minors (which will be reported to law enforcement immediately).</li>
+          <li>Attempting to bypass server-side rate limits, message controls, or security filters.</li>
+          <li>Impersonating administrators, staff, or automated system accounts.</li>
+        </ul>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">4. Disclaimers & Limitation of Liability</h2>
+        <p>
+          The Service is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind. You communicate with strangers at your own discretion and risk. randomcaht.online is not liable for user-generated content or interactions.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">5. Termination and Blocking</h2>
+        <p>
+          We reserve the right to restrict, rate limit, or block access to the Service for any user who violates these Terms or poses a security risk to the community.
+        </p>
+      </section>
+
+      <div class="pt-4 border-t border-[var(--border-color)]">
+        <a href="/" class="font-semibold text-[#D55882] hover:underline">&larr; Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

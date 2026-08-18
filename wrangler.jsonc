@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "randomcaht-online",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2025-02-14",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MATCHMAKER",
+        "class_name": "MatchmakerDO"
+      },
+      {
+        "name": "CHAT_ROOM",
+        "class_name": "ChatRoomDO"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["MatchmakerDO", "ChatRoomDO"]
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
