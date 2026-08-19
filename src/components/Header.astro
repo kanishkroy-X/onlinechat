@@ -9,40 +9,68 @@ const { lang = 'en' } = Astro.props;
 const t = getTranslations(lang);
 ---
 
-<header class="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)]/80 backdrop-blur-md sticky top-0 z-40 transition-colors">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-    <!-- Brand Wordmark -->
-    <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
-      <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+<header class="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)]/90 backdrop-blur-md sticky top-0 z-40 transition-colors">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+    <!-- Left: Mobile Menu Trigger + Brand Wordmark -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Mobile Drawer Toggle [ ☰ ] -->
+      <button
+        id="mobile-menu-toggle"
+        type="button"
+        class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-main)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
+        aria-label="Open Navigation Menu"
+        aria-expanded="false"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-bold text-lg tracking-tight leading-none text-[var(--text-main)]">
-          randomcaht<span class="text-[#FF808A]">.online</span>
-        </span>
-        <div class="flex items-center gap-1.5 mt-0.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-600 dark:text-emerald-400 leading-tight">
-            Online
-          </span>
+      </button>
+
+      <!-- Brand Logo -->
+      <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
+        <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+          </svg>
         </div>
-      </div>
-    </a>
+        <div class="flex flex-col">
+          <span class="font-bold text-lg tracking-tight leading-none text-[var(--text-main)]">
+            randomcaht<span class="text-[#FF808A]">.online</span>
+          </span>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-600 dark:text-emerald-400 leading-tight">
+              Online
+            </span>
+          </div>
+        </div>
+      </a>
+    </div>
 
-    <!-- Actions & Controls -->
-    <div class="flex items-center gap-2.5 sm:gap-3">
-      <nav class="hidden md:flex items-center gap-4 text-sm font-medium text-[var(--text-muted)] mr-1">
-        <a href="/safety" class="hover:text-[var(--text-main)] transition-colors py-1 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-          {t.nav.safety}
-        </a>
-        <a href="/faq" class="hover:text-[var(--text-main)] transition-colors py-1 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-          {t.nav.faq}
-        </a>
-      </nav>
+    <!-- Center: Desktop Navigation Links -->
+    <nav class="hidden md:flex items-center gap-5 text-sm font-medium text-[var(--text-muted)]">
+      <a href="/start" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+        Start Chat
+      </a>
+      <a href="/how-it-works" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+        How It Works
+      </a>
+      <a href="/chat-rooms" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+        Chat Topics
+      </a>
+      <a href="/safety" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+        {t.nav.safety}
+      </a>
+      <a href="/faq" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+        {t.nav.faq}
+      </a>
+    </nav>
 
-      <!-- International Language Switcher -->
+    <!-- Right: Language Switcher, Theme Toggle & Start Chat Button -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Language Switcher -->
       <div class="relative" id="lang-switcher-container">
         <button
           id="lang-toggle-btn"
@@ -52,7 +80,6 @@ const t = getTranslations(lang);
           aria-expanded="false"
           aria-haspopup="true"
         >
-          <!-- Globe icon -->
           <svg class="w-4 h-4 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10" />
             <line x1="2" y1="12" x2="22" y2="12" />
@@ -62,14 +89,14 @@ const t = getTranslations(lang);
           <svg class="w-3 h-3 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
 
-        <!-- Dropdown Menu for all 10 International Languages -->
+        <!-- Dropdown Menu for Languages -->
         <div
           id="lang-dropdown-menu"
           class="hidden absolute right-0 top-11 z-50 w-52 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl py-2 flex flex-col max-h-80 overflow-y-auto"
           role="menu"
         >
           <div class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-[var(--text-subtle)] border-b border-[var(--border-color)] mb-1">
-            Select Language / اختر اللغة
+            Select Language
           </div>
           {SUPPORTED_LANGUAGES.map(item => (
             <button
@@ -95,23 +122,67 @@ const t = getTranslations(lang);
         class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
         aria-label="Toggle Theme (Light / Dark / System)"
       >
-        <!-- Sun icon (for dark mode) -->
         <svg class="w-4.5 h-4.5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2" />
-          <path d="M12 20v2" />
-          <path d="m4.93 4.93 1.41 1.41" />
-          <path d="m17.66 17.66 1.41 1.41" />
-          <path d="M2 12h2" />
-          <path d="M20 12h2" />
-          <path d="m6.34 17.66-1.41 1.41" />
-          <path d="m19.07 4.93-1.41 1.41" />
+          <path d="M12 2v2" /><path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" /><path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
         </svg>
-        <!-- Moon icon (for light mode) -->
         <svg class="w-4.5 h-4.5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
         </svg>
       </button>
+
+      <!-- Primary Start Chat Header Button -->
+      <a
+        href="/start"
+        class="hidden sm:inline-flex gradient-accent gradient-accent-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm hover:shadow-md transition-all items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+      >
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>Start Chat</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Slide-out Drawer Navigation -->
+  <div id="mobile-nav-drawer" class="hidden md:hidden fixed inset-0 top-16 z-50 bg-[var(--bg-page)]/98 backdrop-blur-xl border-t border-[var(--border-color)] p-6 flex flex-col justify-between overflow-y-auto animate-modal-in">
+    <nav class="flex flex-col gap-4 text-base font-semibold text-[var(--text-main)]">
+      <a href="/start" class="flex items-center justify-between p-3 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-[#FF808A] font-bold">
+        <span>Start Chat</span>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="/how-it-works" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+        <span>How It Works</span>
+        <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="/chat-rooms" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+        <span>Chat Topics</span>
+        <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="/safety" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+        <span>{t.nav.safety}</span>
+        <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="/faq" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+        <span>{t.nav.faq}</span>
+        <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </nav>
+
+    <div class="pt-6 border-t border-[var(--border-color)] flex flex-col gap-3 text-xs text-[var(--text-muted)]">
+      <div class="flex items-center justify-between">
+        <span>18+ Adults Only Platform</span>
+        <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold">18+</span>
+      </div>
+      <div class="flex flex-wrap gap-3 pt-2 text-[11px]">
+        <a href="/privacy" class="hover:underline">Privacy</a>
+        <a href="/terms" class="hover:underline">Terms</a>
+        <a href="/cookies" class="hover:underline">Cookies</a>
+        <a href="/contact" class="hover:underline">Contact</a>
+      </div>
     </div>
   </div>
 </header>
@@ -146,16 +217,21 @@ const t = getTranslations(lang);
       const target = e.currentTarget as HTMLButtonElement;
       const lang = target.dataset.lang || 'en';
       
-      // 1. Store in localStorage
       localStorage.setItem('rc_language', lang);
-      
-      // 2. Set Cookie so Astro SSR reads it on every page request
       document.cookie = `rc_language=${lang};path=/;max-age=31536000;SameSite=Lax`;
 
-      // 3. Navigate with the new language parameter for immediate reload
       const url = new URL(window.location.href);
       url.searchParams.set('lang', lang);
       window.location.href = url.toString();
     });
+  });
+
+  // Mobile Drawer Toggle
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileDrawer = document.getElementById('mobile-nav-drawer');
+
+  mobileToggle?.addEventListener('click', () => {
+    const isHidden = mobileDrawer?.classList.toggle('hidden');
+    mobileToggle.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
   });
 </script>

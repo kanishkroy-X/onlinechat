@@ -83,8 +83,8 @@ const t = getTranslations(lang);
     </div>
   </div>
 
-  <!-- Messages Scroll Area -->
-  <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 bg-[var(--bg-page)]" role="log" aria-live="polite">
+  <!-- Messages Scroll Area with Sunset Waves Backdrop -->
+  <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 sunset-chat-waves relative" role="log" aria-live="polite">
     <!-- Welcome Notice -->
     <div class="text-center py-2 px-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs text-[var(--text-muted)] max-w-sm mx-auto shadow-sm">
       Connected with a compatible stranger. Remember to never share sensitive personal info.
@@ -92,11 +92,11 @@ const t = getTranslations(lang);
   </div>
 
   <!-- Typing Indicator -->
-  <div id="chat-typing-indicator" class="hidden px-4 py-1.5 text-xs text-[var(--text-muted)] italic flex items-center gap-2 bg-[var(--bg-page)]">
-    <div class="flex items-center gap-1">
-      <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce"></span>
-      <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce" style="animation-delay: 0.15s;"></span>
-      <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce" style="animation-delay: 0.3s;"></span>
+  <div id="chat-typing-indicator" class="hidden px-4 py-1.5 text-xs text-[var(--text-muted)] italic flex items-center gap-2 bg-[var(--bg-page)] animate-in fade-in duration-150">
+    <div class="flex items-center gap-1 bg-[var(--bg-surface-elevated)] px-2.5 py-1 rounded-full border border-[var(--border-subtle)]">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] typing-dot"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] typing-dot"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] typing-dot"></span>
     </div>
     <span>{t.chat.typing}</span>
   </div>

@@ -11,14 +11,15 @@ const t = getTranslations(lang);
 
 <div id="matching-view" class="hidden w-full flex-1 max-w-md mx-auto flex flex-col items-center justify-center text-center p-6 my-auto">
   <div class="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-8 shadow-xl flex flex-col items-center gap-6 animate-in fade-in zoom-in-95 duration-200">
-    <!-- Animated Radar Pulse -->
-    <div class="relative w-24 h-24 flex items-center justify-center my-2">
-      <div class="absolute inset-0 rounded-full bg-[#FF808A]/20 animate-ping"></div>
-      <div class="absolute inset-2 rounded-full bg-[#D55882]/30 animate-pulse"></div>
-      <div class="w-16 h-16 rounded-full gradient-accent flex items-center justify-center text-white shadow-lg shadow-[#D55882]/30 z-10">
-        <svg class="w-8 h-8 animate-spin" style="animation-duration: 4s;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-        </svg>
+    <!-- Sunset System v2: Floating Glowing Node & Expanding Ripple Waves -->
+    <div class="relative w-36 h-36 flex items-center justify-center my-4">
+      <div class="absolute inset-0 rounded-full sunset-ripple-ring"></div>
+      <div class="absolute inset-0 rounded-full sunset-ripple-ring" style="animation-delay: 1000ms;"></div>
+      <div class="absolute inset-0 rounded-full sunset-ripple-ring" style="animation-delay: 2000ms;"></div>
+      
+      <!-- Central Floating Glowing Orb with Peach/Coral Bloom -->
+      <div class="w-14 h-14 rounded-full sunset-radar-orb flex items-center justify-center text-white z-10 animate-float-slow">
+        <div class="w-4 h-4 rounded-full bg-[#FFBF92] blur-[2px] opacity-90"></div>
       </div>
     </div>
 

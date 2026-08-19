@@ -9,26 +9,55 @@ const { lang = 'en' } = Astro.props;
 const t = getTranslations(lang);
 ---
 
-<footer class="w-full border-t border-[var(--border-color)] bg-[var(--bg-surface)] py-8 px-4 mt-auto">
-  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[var(--text-muted)]">
-    <!-- Brand / Copyright -->
-    <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-      <span class="font-bold text-[var(--text-main)]">randomcaht.online</span>
-      <span>&copy; {new Date().getFullYear()} {t.footer.allRightsReserved}</span>
-      <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold">18+ Only</span>
+<footer class="w-full border-t border-[var(--border-color)] bg-[var(--bg-surface)] py-12 px-4 mt-auto">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-muted)]">
+    <!-- Brand Info & 18+ Badge -->
+    <div class="flex flex-col gap-3">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg gradient-accent flex items-center justify-center text-white font-bold text-xs">
+          RC
+        </div>
+        <span class="font-bold text-base text-[var(--text-main)]">randomcaht<span class="text-[#FF808A]">.online</span></span>
+      </a>
+      <p class="text-xs text-[var(--text-subtle)] leading-relaxed">
+        Free, anonymous-by-default random text chat for adults. Meet compatible strangers without accounts or passwords.
+      </p>
+      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold w-fit">
+        <span>18+ Adults Only</span>
+      </div>
     </div>
 
-    <!-- Navigation Links -->
-    <nav class="flex flex-wrap items-center justify-center gap-4 text-[var(--text-muted)]">
-      <a href="/safety" class="hover:text-[var(--text-main)] transition-colors">{t.nav.safety}</a>
+    <!-- Product Links -->
+    <div class="flex flex-col gap-2.5">
+      <span class="font-bold text-sm text-[var(--text-main)] uppercase tracking-wider text-[11px]">Product</span>
+      <a href="/start" class="hover:text-[var(--text-main)] transition-colors">Start Chat</a>
+      <a href="/how-it-works" class="hover:text-[var(--text-main)] transition-colors">How It Works</a>
+      <a href="/chat-rooms" class="hover:text-[var(--text-main)] transition-colors">Chat Topics</a>
       <a href="/faq" class="hover:text-[var(--text-main)] transition-colors">{t.nav.faq}</a>
+    </div>
+
+    <!-- Safety & Moderation -->
+    <div class="flex flex-col gap-2.5">
+      <span class="font-bold text-sm text-[var(--text-main)] uppercase tracking-wider text-[11px]">Safety & Trust</span>
+      <a href="/safety" class="hover:text-[var(--text-main)] transition-colors">{t.nav.safety}</a>
+      <a href="/safety#report" class="hover:text-[var(--text-main)] transition-colors">Report a User</a>
       <a href="/privacy" class="hover:text-[var(--text-main)] transition-colors">{t.nav.privacy}</a>
-      <a href="/terms" class="hover:text-[var(--text-main)] transition-colors">{t.nav.terms}</a>
+      <a href="/cookies" class="hover:text-[var(--text-main)] transition-colors">Cookie Policy</a>
+    </div>
+
+    <!-- Company & Legal -->
+    <div class="flex flex-col gap-2.5">
+      <span class="font-bold text-sm text-[var(--text-main)] uppercase tracking-wider text-[11px]">Legal & Support</span>
       <a href="/about" class="hover:text-[var(--text-main)] transition-colors">{t.nav.about}</a>
       <a href="/contact" class="hover:text-[var(--text-main)] transition-colors">{t.nav.contact}</a>
-    </nav>
+      <a href="/terms" class="hover:text-[var(--text-main)] transition-colors">{t.nav.terms}</a>
+      <a href="/profile" class="hover:text-[var(--text-main)] text-[var(--text-subtle)] transition-colors">Profile (Preview)</a>
+    </div>
   </div>
-  <div class="max-w-6xl mx-auto mt-4 text-center text-[10px] text-[var(--text-subtle)]">
-    {t.footer.disclaimer}
+
+  <!-- Bottom Bar: Copyright & Disclaimer -->
+  <div class="max-w-6xl mx-auto pt-6 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[var(--text-subtle)] text-center sm:text-left">
+    <span>&copy; {new Date().getFullYear()} randomcaht.online &bull; All rights reserved.</span>
+    <span>{t.footer.disclaimer}</span>
   </div>
 </footer>

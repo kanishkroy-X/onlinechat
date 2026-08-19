@@ -1,0 +1,210 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getTranslations } from '../i18n/translations';
+import { COUNTRIES, LANGUAGES } from '../server/constants';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title="Start Chat — randomcaht.online"
+  description="Instant anonymous random text chat. Choose your temporary nickname, gender, and preference to connect with a compatible stranger."
+  canonical="https://randomcaht.online/start"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full max-w-xl mx-auto px-4 py-10 flex flex-col justify-center">
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-xl flex flex-col gap-6 relative animate-modal-in">
+      <!-- Header -->
+      <div class="flex flex-col gap-1 text-center sm:text-left border-b border-[var(--border-subtle)] pb-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit mx-auto sm:mx-0">
+          Guest Setup &bull; No Account Needed
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-main)] tracking-tight mt-2">
+          Start Conversation
+        </h1>
+        <p class="text-xs sm:text-sm text-[var(--text-muted)]">
+          Set up your temporary session persona to meet someone new.
+        </p>
+      </div>
+
+      <!-- Setup Form -->
+      <form id="standalone-setup-form" class="flex flex-col gap-5">
+        <!-- Nickname -->
+        <div class="flex flex-col gap-1.5">
+          <label for="start-nickname" class="text-sm font-semibold text-[var(--text-main)]">
+            Choose a Nickname
+          </label>
+          <input
+            id="start-nickname"
+            type="text"
+            name="nickname"
+            maxlength="20"
+            placeholder="e.g. RandomUser123"
+            autocomplete="off"
+            required
+            class="w-full px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all text-sm"
+          />
+          <span id="start-nickname-error" class="hidden text-xs text-red-500 font-medium"></span>
+        </div>
+
+        <!-- Your Gender -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-[var(--text-main)]">
+            Your Gender
+          </label>
+          <div class="grid grid-cols-2 gap-3 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
+            <button
+              type="button"
+              id="btn-gender-male"
+              class="gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
+              data-gender="male"
+            >
+              Male
+            </button>
+            <button
+              type="button"
+              id="btn-gender-female"
+              class="gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              data-gender="female"
+            >
+              Female
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat With (Preference) -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-[var(--text-main)]">
+            Chat With
+          </label>
+          <div class="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
+            <button
+              type="button"
+              class="pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
+              data-pref="anyone"
+            >
+              Anyone
+            </button>
+            <button
+              type="button"
+              class="pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              data-pref="male"
+            >
+              Male
+            </button>
+            <button
+              type="button"
+              class="pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              data-pref="female"
+            >
+              Female
+            </button>
+          </div>
+        </div>
+
+        <!-- 18+ Age & Safety Checkbox -->
+        <div class="flex items-start gap-3 p-3 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)] mt-1">
+          <input
+            id="start-age-confirm"
+            type="checkbox"
+            required
+            checked
+            class="mt-1 w-4 h-4 rounded text-[#D55882] focus:ring-[#FF808A] border-[var(--border-color)] cursor-pointer"
+          />
+          <label for="start-age-confirm" class="text-xs text-[var(--text-muted)] leading-relaxed cursor-pointer select-none">
+            I confirm that I am <strong class="text-[var(--text-main)]">18 years of age or older</strong> and agree to follow the
+            <a href="/terms" class="text-[#FF808A] underline hover:opacity-80">Terms</a> &
+            <a href="/safety" class="text-[#FF808A] underline hover:opacity-80">Safety Guidelines</a>.
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          id="start-submit-btn"
+          type="submit"
+          class="w-full gradient-accent gradient-accent-hover text-white font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-[#D55882]/25 hover:shadow-xl hover:shadow-[#D55882]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2.5 cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40 mt-2"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>START CHAT</span>
+        </button>
+      </form>
+
+      <!-- Safety Notice Footer -->
+      <div class="text-center text-[11px] text-[var(--text-subtle)] leading-relaxed border-t border-[var(--border-subtle)] pt-4">
+        RandomChat is intended strictly for adults 18+. Never share passwords, financial details, or sensitive personal documents with strangers.
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+<script>
+  let selectedGender = 'male';
+  let selectedPref = 'anyone';
+
+  const form = document.getElementById('standalone-setup-form') as HTMLFormElement;
+  const nickInput = document.getElementById('start-nickname') as HTMLInputElement;
+  const nickError = document.getElementById('start-nickname-error');
+  const genderBtns = document.querySelectorAll('.gender-opt-btn');
+  const prefBtns = document.querySelectorAll('.pref-opt-btn');
+
+  // Pre-fill nickname if available
+  const savedNick = localStorage.getItem('rc_nickname');
+  if (savedNick && nickInput) {
+    nickInput.value = savedNick;
+  } else if (nickInput) {
+    nickInput.value = 'Stranger' + Math.floor(1000 + Math.random() * 9000);
+  }
+
+  // Gender Buttons Toggle
+  genderBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      selectedGender = target.dataset.gender || 'male';
+      genderBtns.forEach(b => {
+        b.className = 'gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
+      });
+      target.className = 'gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
+    });
+  });
+
+  // Preference Buttons Toggle
+  prefBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      selectedPref = target.dataset.pref || 'anyone';
+      prefBtns.forEach(b => {
+        b.className = 'pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
+      });
+      target.className = 'pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
+    });
+  });
+
+  // Form Submit Handler
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nickname = nickInput.value.trim();
+    if (!nickname || nickname.length < 2 || nickname.length > 20) {
+      if (nickError) {
+        nickError.textContent = 'Nickname must be between 2 and 20 characters.';
+        nickError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    localStorage.setItem('rc_nickname', nickname);
+    localStorage.setItem('rc_gender', selectedGender);
+    localStorage.setItem('rc_pref', selectedPref);
+
+    // Navigate to homepage/chat session with query parameters
+    window.location.href = `/?autostart=true&nick=${encodeURIComponent(nickname)}&gender=${selectedGender}&pref=${selectedPref}`;
+  });
+</script>

@@ -1,0 +1,80 @@
+---
+import { getTranslations } from '../i18n/translations';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'en' } = Astro.props;
+---
+
+<div
+  id="cookie-consent-banner"
+  class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-modal-in"
+  role="region"
+  aria-label="Cookie consent banner"
+>
+  <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)]/95 backdrop-blur-xl p-5 shadow-2xl flex flex-col gap-3.5">
+    <div class="flex items-start gap-3">
+      <div class="w-9 h-9 rounded-xl bg-[#FF808A]/15 text-[#FF808A] flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 2a10 10 0 0 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+          <path d="M8.5 8.5v.01" />
+          <path d="M7.5 15.5v.01" />
+          <path d="M12 16v.01" />
+          <path d="M16 14v.01" />
+        </svg>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-sm font-bold text-[var(--text-main)]">Cookie & Privacy Preferences</h3>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+          We use essential session cookies to enable matchmaking and anonymous chat. Optional analytics help us improve platform performance. Read our
+          <a href="/cookie-policy" class="text-[#FF808A] underline hover:opacity-80 transition-opacity">Cookie Policy</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2.5 pt-1">
+      <button
+        id="cookie-essential-btn"
+        type="button"
+        class="px-3 py-1.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] text-xs font-semibold transition-colors cursor-pointer"
+      >
+        Essential Only
+      </button>
+      <button
+        id="cookie-accept-all-btn"
+        type="button"
+        class="gradient-accent gradient-accent-hover text-white px-4 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+      >
+        Accept All
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function initCookieConsent() {
+    const banner = document.getElementById('cookie-consent-banner');
+    const acceptBtn = document.getElementById('cookie-accept-all-btn');
+    const essentialBtn = document.getElementById('cookie-essential-btn');
+
+    const consent = localStorage.getItem('rc_cookie_consent');
+    if (!consent && banner) {
+      setTimeout(() => {
+        banner.classList.remove('hidden');
+      }, 1000);
+    }
+
+    acceptBtn?.addEventListener('click', () => {
+      localStorage.setItem('rc_cookie_consent', 'all');
+      banner?.classList.add('hidden');
+    });
+
+    essentialBtn?.addEventListener('click', () => {
+      localStorage.setItem('rc_cookie_consent', 'essential');
+      banner?.classList.add('hidden');
+    });
+  })();
+</script>

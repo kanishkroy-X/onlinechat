@@ -11,11 +11,14 @@ const t = getTranslations(lang);
 
 <div id="disconnect-view" class="hidden w-full flex-1 max-w-md mx-auto flex flex-col items-center justify-center text-center p-6 my-auto">
   <div class="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-8 shadow-xl flex flex-col items-center gap-6 animate-in fade-in zoom-in-95 duration-200">
-    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-        <line x1="12" y1="2" x2="12" y2="12"></line>
-      </svg>
+    <!-- Sunset v2: Gentle Dual Glow Transition (Fading past match, Emerging new match) -->
+    <div class="relative w-32 h-16 flex items-center justify-between px-4 my-2">
+      <!-- Fading Left Glow -->
+      <div class="w-8 h-8 rounded-full bg-[#D55882]/30 blur-[4px]"></div>
+      <!-- Undulating wave line -->
+      <div class="flex-1 h-0.5 mx-2 bg-gradient-to-r from-[#D55882]/20 via-[#FF808A]/40 to-[#FFBF92]/60 rounded-full"></div>
+      <!-- Emerging Right Glow -->
+      <div class="w-10 h-10 rounded-full sunset-radar-orb animate-pulse"></div>
     </div>
 
     <div class="flex flex-col gap-2">

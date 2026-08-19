@@ -21,6 +21,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://randomcaht.online/cookie-policy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://randomcaht.online/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

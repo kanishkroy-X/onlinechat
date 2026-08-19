@@ -231,7 +231,7 @@ const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchP
       c.messages.forEach(msg => {
         const isMe = msg.sender === 'me';
         const wrapper = document.createElement('div');
-        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'}`;
+        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'} animate-bubble-in`;
 
         const bubble = document.createElement('div');
         bubble.className = isMe

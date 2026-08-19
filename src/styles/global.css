@@ -60,6 +60,18 @@
   }
 }
 
+/* Motion System Tokens (Emil Kowalski Physics Easing) */
+:root {
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sunset Design System v2 Gradient & Atmospheric Tokens */
+.gradient-sunset-full {
+  background: linear-gradient(180deg, #492351 0%, #7F376D 24%, #D55882 48%, #FF808A 68%, #FFBF92 84%, #F6E5D9 100%);
+}
+
 .gradient-sunset-hero {
   background: linear-gradient(180deg, #492351 0%, #7F376D 24%, #D55882 48%, #FF808A 68%, #FFBF92 84%, #F6E5D9 100%);
 }
@@ -82,6 +94,61 @@
   -webkit-text-fill-color: transparent;
 }
 
+/* Sunset Glowing Wave Background for Chat View */
+.sunset-chat-waves {
+  background: 
+    radial-gradient(ellipse at 50% 100%, rgba(255, 128, 138, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 10% 20%, rgba(127, 55, 109, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 90% 40%, rgba(213, 88, 130, 0.12) 0%, transparent 50%),
+    var(--bg-page);
+  position: relative;
+}
+
+.sunset-chat-waves::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 50% 120%, rgba(255, 191, 146, 0.12) 0%, transparent 70%);
+  pointer-events-none;
+}
+
+/* Concentric Radar Orb & Water Surface Ripples */
+.sunset-radar-orb {
+  background: radial-gradient(circle, #FF808A 0%, #D55882 65%, #7F376D 100%);
+  box-shadow: 0 0 28px rgba(255, 128, 138, 0.6), inset 0 0 10px rgba(255, 191, 146, 0.8);
+}
+
+.sunset-ripple-ring {
+  border: 1px solid rgba(255, 128, 138, 0.4);
+  animation: sunset-ripple-anim 3s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+}
+
+@keyframes sunset-ripple-anim {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Tactile Micro-Interactions */
+.interactive-tactile {
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s var(--ease-spring);
+}
+.interactive-tactile:hover {
+  transform: translateY(-2px);
+}
+.interactive-tactile:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Pulsing & Floating Animations */
 .pulsing-orb {
   animation: pulse-glow 3s infinite ease-in-out;
 }
@@ -95,6 +162,89 @@
     transform: scale(1.08);
     opacity: 1;
     filter: drop-shadow(0 0 18px rgba(255, 128, 138, 0.6));
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+/* Chat Message Spring Entry */
+.animate-bubble-in {
+  animation: bubble-spring-in 0.28s var(--ease-spring) forwards;
+}
+
+@keyframes bubble-spring-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Radar Ripple Wave for Matchmaking */
+.animate-radar-wave {
+  animation: radar-ripple 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+@keyframes radar-ripple {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* Typing Indicator Wave */
+.typing-dot {
+  animation: typing-dot-bounce 1.4s ease-in-out infinite;
+}
+.typing-dot:nth-child(1) { animation-delay: 0ms; }
+.typing-dot:nth-child(2) { animation-delay: 200ms; }
+.typing-dot:nth-child(3) { animation-delay: 400ms; }
+
+@keyframes typing-dot-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* Fade Scale In Modal Animation */
+.animate-modal-in {
+  animation: modal-spring-in 0.3s var(--ease-spring) forwards;
+}
+
+@keyframes modal-spring-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -115,4 +265,16 @@ html.dark ::-webkit-scrollbar-thumb {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(213, 88, 130, 0.5);
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

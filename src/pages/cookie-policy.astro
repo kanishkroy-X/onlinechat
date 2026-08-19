@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getTranslations } from '../i18n/translations';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title="Cookie Policy — randomcaht.online"
+  description="Read how randomcaht.online uses cookies and ephemeral session data to provide a safe, anonymous text chat experience."
+  canonical="https://randomcaht.online/cookie-policy"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-12">
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-sm flex flex-col gap-8">
+      <!-- Page Header -->
+      <div class="border-b border-[var(--border-color)] pb-6 flex flex-col gap-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit">
+          Legal & Transparency
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+          Cookie Policy
+        </h1>
+        <p class="text-xs text-[var(--text-subtle)]">
+          Last Updated: February 2026 &bull; randomcaht.online
+        </p>
+      </div>
+
+      <!-- Content Sections -->
+      <div class="prose dark:prose-invert max-w-none text-sm text-[var(--text-muted)] space-y-6 leading-relaxed">
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">1. Introduction</h2>
+          <p>
+            At <strong>randomcaht.online</strong>, we believe privacy is a fundamental human right. Our platform is designed to be anonymous-by-default with zero account registration, no passwords, and no permanent chat history. This Cookie Policy explains what cookies and local storage technologies we use, why we use them, and how you can manage your preferences.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">2. What Are Cookies & Local Storage?</h2>
+          <p>
+            Cookies are small text files placed on your device by websites you visit. Similar client-side technologies include <code>localStorage</code> and <code>sessionStorage</code> in your browser. These tools enable websites to remember your settings (such as Dark/Light theme mode or interface language) and securely manage temporary session states.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">3. Categories of Cookies We Use</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose my-4">
+            <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <h3 class="font-bold text-sm text-[var(--text-main)]">Strictly Necessary (Essential)</h3>
+              </div>
+              <p class="text-xs text-[var(--text-muted)]">
+                Required for core website functionality: managing your anonymous guest session token, maintaining your active matchmaking queue status, and preventing duplicate connection races. These cannot be disabled.
+              </p>
+              <span class="text-[10px] text-[var(--text-subtle)] font-mono">Example: rc_session_id, rc_theme</span>
+            </div>
+
+            <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                <h3 class="font-bold text-sm text-[var(--text-main)]">Analytics & Performance (Optional)</h3>
+              </div>
+              <p class="text-xs text-[var(--text-muted)]">
+                Aggregated, anonymized telemetry (via Google Analytics gtag.js) used exclusively to evaluate site performance, bounce rates, and traffic volume. No personal identifying information (PII) is transmitted.
+              </p>
+              <span class="text-[10px] text-[var(--text-subtle)] font-mono">Example: _ga, _ga_*</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">4. Third-Party Technologies</h2>
+          <p>
+            We do not permit third-party behavioral advertising networks or tracking pixels on our platform. The only third-party services utilized are:
+          </p>
+          <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm">
+            <li><strong>Cloudflare:</strong> Edge security, DDoS mitigation, and WebSocket delivery.</li>
+            <li><strong>Google Analytics:</strong> Aggregated anonymous web traffic telemetry.</li>
+          </ul>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">5. Managing Your Cookie Choices</h2>
+          <p>
+            You can modify your cookie settings at any time through our bottom Cookie Banner or by clearing your browser's site cookies and local storage. You can also configure your browser to block or alert you about cookies entirely.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">6. Contact Us</h2>
+          <p>
+            If you have questions regarding this Cookie Policy or our privacy practices, please contact our team at:
+            <br />
+            <a href="mailto:privacy@randomcaht.online" class="text-[#FF808A] font-semibold underline">privacy@randomcaht.online</a>
+          </p>
+        </section>
+      </div>
+
+      <!-- Back to Chat CTA -->
+      <div class="pt-6 border-t border-[var(--border-color)] flex justify-between items-center">
+        <a href="/" class="gradient-accent gradient-accent-hover text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-xl shadow transition-all">
+          &larr; Return to Chat
+        </a>
+        <a href="/privacy" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] underline transition-colors">
+          View Privacy Policy &rarr;
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

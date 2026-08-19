@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import ChatView from '../components/ChatView.astro';
+import Modals from '../components/Modals.astro';
+import { getTranslations } from '../i18n/translations';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title="Live Chat — randomcaht.online"
+  description="Real-time anonymous text chat with a compatible stranger. 100% private, no accounts, no history."
+  canonical="https://randomcaht.online/chat"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full flex flex-col items-center justify-center p-0 sm:p-4">
+    <div class="w-full max-w-3xl flex-1 flex flex-col bg-[var(--bg-surface)] sm:border border-[var(--border-color)] sm:rounded-3xl shadow-xl overflow-hidden h-[calc(100dvh-4rem)] sm:h-[82vh]">
+      <!-- Chat View Component -->
+      <ChatView lang={lang} />
+    </div>
+  </main>
+
+  <Modals lang={lang} />
+</BaseLayout>
+
+<script>
+  import { ChatClient } from '../scripts/chatClient';
+
+  // If chat view is loaded standalone, automatically connect or redirect to /start if no persona is configured
+  const nick = localStorage.getItem('rc_nickname') || 'Stranger' + Math.floor(1000 + Math.random() * 9000);
+  const gender = localStorage.getItem('rc_gender') || 'male';
+  const pref = localStorage.getItem('rc_pref') || 'anyone';
+
+  const chatView = document.getElementById('chat-view');
+  if (chatView) {
+    chatView.classList.remove('hidden');
+  }
+
+  const client = new ChatClient({
+    nickname: nick,
+    gender: gender as any,
+    preference: pref as any,
+    onStateChange: () => {},
+    onMessage: () => {},
+    onError: () => {}
+  });
+
+  client.start();
+</script>

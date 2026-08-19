@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import AgeGateModal from '../components/AgeGateModal.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 
 interface Props {
   title?: string;
@@ -84,6 +85,9 @@ const isRtl = currentLang === 'ar';
 
     <!-- 18+ Age Verification Modal -->
     <AgeGateModal />
+
+    <!-- Cookie Consent Banner -->
+    <CookieConsent lang={currentLang} />
 
     <slot />
 
