@@ -294,7 +294,14 @@ const t = getTranslations(lang);
   modalNextCancel?.addEventListener('click', () => modalNext?.classList.add('hidden'));
   modalNextConfirm?.addEventListener('click', () => {
     modalNext?.classList.add('hidden');
-    client.nextStranger();
+    if (chatMessages) {
+      chatMessages.classList.add('animate-slide-left-out');
+      setTimeout(() => {
+        client.nextStranger();
+      }, 220);
+    } else {
+      client.nextStranger();
+    }
   });
 
   menuLeaveBtn?.addEventListener('click', () => {
@@ -340,22 +347,95 @@ const t = getTranslations(lang);
     window.location.href = '/';
   });
 
-  // Voice Call Modal
+  // Voice Call Audio-Reactive Modal
   const voiceModal = document.getElementById('voice-call-modal');
   const voiceTimer = document.getElementById('voice-call-timer');
   const voiceMuteBtn = document.getElementById('voice-mute-btn');
   const voiceSpeakerBtn = document.getElementById('voice-speaker-btn');
   const voiceEndBtn = document.getElementById('voice-end-btn');
+  const voiceMutedBadge = document.getElementById('voice-muted-badge');
+  const ring1 = document.getElementById('voice-ring-1');
+  const ring2 = document.getElementById('voice-ring-2');
+  const ring3 = document.getElementById('voice-ring-3');
+  const centerOrb = document.getElementById('voice-center-orb');
 
   let voiceInterval: number | null = null;
   let voiceSeconds = 0;
   let isMuted = false;
   let isSpeakerOn = true;
+  let audioCtx: AudioContext | null = null;
+  let audioStream: MediaStream | null = null;
+  let animationFrameId: number | null = null;
+
+  async function startAudioVisualizer() {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(audioStream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        function renderFrame() {
+          if (!voiceModal || voiceModal.classList.contains('hidden')) return;
+          animationFrameId = requestAnimationFrame(renderFrame);
+
+          if (isMuted) {
+            if (ring1) ring1.style.transform = 'scale(1)';
+            if (ring2) ring2.style.transform = 'scale(1)';
+            if (ring3) ring3.style.transform = 'scale(1)';
+            if (centerOrb) centerOrb.style.transform = 'scale(1)';
+            return;
+          }
+
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          const average = sum / dataArray.length;
+          const boost = Math.min(1 + (average / 128) * 0.35, 1.45);
+
+          if (ring1) ring1.style.transform = `scale(${boost * 1.05})`;
+          if (ring2) ring2.style.transform = `scale(${boost * 1.15})`;
+          if (ring3) ring3.style.transform = `scale(${boost * 1.25})`;
+          if (centerOrb) centerOrb.style.transform = `scale(${1 + (average / 128) * 0.15})`;
+        }
+        renderFrame();
+      }
+    } catch (err) {
+      // Fallback
+    }
+  }
+
+  function stopAudioVisualizer() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    if (audioStream) {
+      audioStream.getTracks().forEach(t => t.stop());
+      audioStream = null;
+    }
+    if (audioCtx) {
+      audioCtx.close();
+      audioCtx = null;
+    }
+    if (ring1) ring1.style.transform = 'scale(1)';
+    if (ring2) ring2.style.transform = 'scale(1)';
+    if (ring3) ring3.style.transform = 'scale(1)';
+    if (centerOrb) centerOrb.style.transform = 'scale(1)';
+  }
 
   function openVoiceModal() {
     if (chatDropdown) chatDropdown.classList.add('hidden');
     voiceModal?.classList.remove('hidden');
     voiceSeconds = 0;
+    isMuted = false;
+    voiceMutedBadge?.classList.add('hidden');
     if (voiceTimer) voiceTimer.textContent = '00:00';
     if (voiceInterval) clearInterval(voiceInterval);
     voiceInterval = window.setInterval(() => {
@@ -364,6 +444,8 @@ const t = getTranslations(lang);
       const secs = String(voiceSeconds % 60).padStart(2, '0');
       if (voiceTimer) voiceTimer.textContent = `${mins}:${secs}`;
     }, 1000);
+
+    startAudioVisualizer();
   }
 
   function closeVoiceModal() {
@@ -372,6 +454,7 @@ const t = getTranslations(lang);
       clearInterval(voiceInterval);
       voiceInterval = null;
     }
+    stopAudioVisualizer();
   }
 
   document.getElementById('chat-voice-call-btn')?.addEventListener('click', openVoiceModal);
@@ -384,6 +467,11 @@ const t = getTranslations(lang);
     isMuted = !isMuted;
     voiceMuteBtn.classList.toggle('bg-red-500/20', isMuted);
     voiceMuteBtn.classList.toggle('text-red-400', isMuted);
+    if (isMuted) {
+      voiceMutedBadge?.classList.remove('hidden');
+    } else {
+      voiceMutedBadge?.classList.add('hidden');
+    }
   });
 
   voiceSpeakerBtn?.addEventListener('click', () => {

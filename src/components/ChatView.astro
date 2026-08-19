@@ -548,12 +548,12 @@ const t = getTranslations(lang);
     <!-- Multi-Ring Soundwave Radar Visualizer -->
     <div class="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center my-2 z-10">
       <!-- Animated Ripple Waves -->
-      <div class="absolute inset-0 rounded-full border border-[var(--color-sunset-pink)]/30 animate-radar-wave"></div>
-      <div class="absolute inset-4 rounded-full border border-[var(--color-vice-cyan)]/40 animate-radar-wave" style="animation-delay: 0.6s;"></div>
-      <div class="absolute inset-8 rounded-full border border-[var(--color-neon-purple)]/50 animate-radar-wave" style="animation-delay: 1.2s;"></div>
+      <div id="voice-ring-1" class="absolute inset-0 rounded-full border border-[var(--color-sunset-pink)]/30 animate-radar-wave transition-transform duration-75"></div>
+      <div id="voice-ring-2" class="absolute inset-4 rounded-full border border-[var(--color-vice-cyan)]/40 animate-radar-wave transition-transform duration-75" style="animation-delay: 0.6s;"></div>
+      <div id="voice-ring-3" class="absolute inset-8 rounded-full border border-[var(--color-neon-purple)]/50 animate-radar-wave transition-transform duration-75" style="animation-delay: 1.2s;"></div>
 
       <!-- Center Audio Orb -->
-      <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-[#FF5CA8] via-[#BC6CFF] to-[#00F0FF] p-1 shadow-2xl pulsing-orb">
+      <div id="voice-center-orb" class="w-24 h-24 rounded-full bg-gradient-to-tr from-[#FF5CA8] via-[#BC6CFF] to-[#00F0FF] p-1 shadow-2xl pulsing-orb transition-transform duration-75">
         <div class="w-full h-full rounded-full bg-[var(--bg-surface)] flex items-center justify-center text-white">
           <svg class="w-10 h-10 text-[var(--color-vice-cyan)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
@@ -567,7 +567,10 @@ const t = getTranslations(lang);
     <!-- Call Duration Timer -->
     <div class="flex flex-col items-center gap-1 z-10">
       <span id="voice-call-timer" class="font-mono text-2xl font-black tracking-wider text-[var(--text-main)]">00:00</span>
-      <span class="text-[11px] text-[var(--text-subtle)]">Encrypted Peer-to-Peer Audio</span>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] text-[var(--text-subtle)]">Encrypted Peer-to-Peer Audio</span>
+        <span id="voice-muted-badge" class="hidden text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">Muted</span>
+      </div>
     </div>
 
     <!-- Control Buttons Toolbar -->
