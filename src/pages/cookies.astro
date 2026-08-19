@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getTranslations } from '../i18n/translations';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title="Cookie Policy & Settings — randomcaht.online"
+  description="Learn about our minimal cookie usage and manage your anonymous session preferences on randomcaht.online."
+  canonical="https://randomcaht.online/cookies"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-12">
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-sm flex flex-col gap-8">
+      <!-- Page Header -->
+      <div class="border-b border-[var(--border-color)] pb-6 flex flex-col gap-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit">
+          Privacy & Transparency
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+          Cookie Policy & Settings
+        </h1>
+        <p class="text-xs text-[var(--text-subtle)]">
+          Last Updated: February 2026 &bull; randomcaht.online
+        </p>
+      </div>
+
+      <!-- Quick Toggle Settings Card -->
+      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="font-bold text-sm text-[var(--text-main)]">Your Cookie Choice</span>
+          <span id="current-cookie-status" class="text-xs text-[var(--text-muted)]">Active setting: Essential session cookies only</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="reset-cookie-btn" type="button" class="px-4 py-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-xs font-semibold text-[var(--text-main)] transition-colors cursor-pointer">
+            Reset Preferences
+          </button>
+        </div>
+      </div>
+
+      <!-- Content Sections -->
+      <div class="prose dark:prose-invert max-w-none text-sm text-[var(--text-muted)] space-y-6 leading-relaxed">
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">1. Overview</h2>
+          <p>
+            RandomChat uses minimal, privacy-respecting client storage to enable real-time text matching and preserve your interface theme (Dark/Light) and language preferences.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">2. Categories of Storage We Use</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
+            <div class="p-4 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col gap-1.5">
+              <span class="font-bold text-xs text-[var(--text-main)]">Essential Session Tokens</span>
+              <p class="text-xs text-[var(--text-muted)]">
+                Temporary tokens used exclusively to route your active WebSocket connection and enforce rate limits.
+              </p>
+            </div>
+            <div class="p-4 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col gap-1.5">
+              <span class="font-bold text-xs text-[var(--text-main)]">Local UI Preferences</span>
+              <p class="text-xs text-[var(--text-muted)]">
+                Stored in your browser's <code>localStorage</code> to remember your selected theme and language.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">3. Third-Party Trackers</h2>
+          <p>
+            We do not use advertising tracking cookies, behavioral tracking pixels, or third-party data broker networks.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+<script>
+  const statusEl = document.getElementById('current-cookie-status');
+  const resetBtn = document.getElementById('reset-cookie-btn');
+
+  const current = localStorage.getItem('rc_cookie_consent');
+  if (statusEl) {
+    statusEl.textContent = `Active setting: ${current === 'all' ? 'All Cookies (Essential + Performance)' : 'Essential session cookies only'}`;
+  }
+
+  resetBtn?.addEventListener('click', () => {
+    localStorage.removeItem('rc_cookie_consent');
+    alert('Cookie preferences reset. The consent banner will appear on your next visit.');
+    window.location.reload();
+  });
+</script>

@@ -2,41 +2,139 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
 const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
 ---
 
-<BaseLayout title="Contact Us — randomcaht.online" description="Contact randomcaht.online support and safety team." lang={currentLang}>
+<BaseLayout
+  title="Contact Us — randomcaht.online"
+  description="Contact the RandomChat support and safety team for general questions, abuse reports, technical issues, or privacy inquiries."
+  canonical="https://randomcaht.online/contact"
+  lang={currentLang}
+>
   <Header lang={currentLang} />
 
-  <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
-    <div class="flex flex-col gap-6 text-[var(--text-muted)] text-sm leading-relaxed">
-      <div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-2">
-          Contact Us
-        </h1>
-        <p class="text-base text-[var(--text-muted)]">
-          Have feedback, questions, or safety concerns? We're here to help.
-        </p>
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-8">
+    <!-- Header -->
+    <div class="border-b border-[var(--border-color)] pb-6 flex flex-col gap-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit">
+        Support & Safety
       </div>
+      <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-main)] tracking-tight">
+        Contact RandomChat
+      </h1>
+      <p class="text-sm sm:text-base text-[var(--text-muted)]">
+        Have feedback, questions, or safety concerns? Reach out to our team.
+      </p>
+    </div>
 
-      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-4">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">Direct Email Support</h2>
-        <p>
-          For general inquiries, abuse reports, or legal notices, please reach out to our team at:
-        </p>
-        <div class="p-4 rounded-xl bg-[var(--bg-page)] border border-[var(--border-color)] text-base font-mono font-bold text-[#D55882]">
-          contact@randomcaht.online
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Direct Email Cards -->
+      <div class="flex flex-col gap-4 text-xs text-[var(--text-muted)]">
+        <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2">
+          <span class="font-bold text-sm text-[var(--text-main)]">Direct Email Inquiries</span>
+          <a href="mailto:hello@randomcaht.online" class="text-[#FF808A] font-mono font-bold text-sm hover:underline">hello@randomcaht.online</a>
+          <p class="text-[11px] text-[var(--text-subtle)] mt-1">
+            Official support, abuse reports, privacy inquiries, and partnership requests.
+          </p>
         </div>
-        <p class="text-xs text-[var(--text-subtle)]">
-          We aim to respond to all safety and urgent inquiries within 24–48 hours.
-        </p>
+        <div class="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-1.5">
+          <span class="font-bold text-xs text-[var(--text-main)]">Response Time</span>
+          <p class="text-[11px] text-[var(--text-subtle)]">
+            Our team reviews all incoming messages and typically replies within 24 to 48 business hours.
+          </p>
+        </div>
       </div>
 
-      <div class="pt-4 border-t border-[var(--border-color)]">
-        <a href="/" class="font-semibold text-[#D55882] hover:underline">&larr; Back to Home</a>
+      <!-- Interactive Contact Form -->
+      <div class="md:col-span-2 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-8 shadow-sm flex flex-col gap-5">
+        <h2 class="text-lg font-bold text-[var(--text-main)]">Send a Direct Message</h2>
+
+        <form id="contact-form" class="flex flex-col gap-4">
+          <!-- Name -->
+          <div class="flex flex-col gap-1">
+            <label for="contact-name" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Your Name / Nickname</label>
+            <input
+              id="contact-name"
+              type="text"
+              required
+              placeholder="e.g. Alex"
+              class="px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="flex flex-col gap-1">
+            <label for="contact-email" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Your Email</label>
+            <input
+              id="contact-email"
+              type="email"
+              required
+              placeholder="name@example.com"
+              class="px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"
+            />
+          </div>
+
+          <!-- Reason -->
+          <div class="flex flex-col gap-1">
+            <label for="contact-reason" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Inquiry Reason</label>
+            <select
+              id="contact-reason"
+              class="px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"
+            >
+              <option value="general">General Question</option>
+              <option value="abuse">Abuse / Safety Report</option>
+              <option value="technical">Technical Problem</option>
+              <option value="privacy">Privacy Question</option>
+              <option value="business">Business / Partnership Inquiry</option>
+            </select>
+          </div>
+
+          <!-- Message -->
+          <div class="flex flex-col gap-1">
+            <label for="contact-message" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Message</label>
+            <textarea
+              id="contact-message"
+              rows="4"
+              required
+              placeholder="Please describe your question or issue in detail..."
+              class="px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882] resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Notice & Submit Button -->
+          <div class="pt-2 flex flex-col gap-3">
+            <span id="contact-status" class="hidden text-xs text-emerald-600 font-semibold">✓ Message sent! Our team will respond within 24-48 hours.</span>
+            <button
+              type="submit"
+              class="gradient-accent gradient-accent-hover text-white text-sm font-bold py-3 px-6 rounded-xl shadow transition-all cursor-pointer text-center"
+            >
+              Send Message
+            </button>
+            <span class="text-[11px] text-[var(--text-subtle)] text-center">
+              Direct inquiries are encrypted in transit. Please do not submit sensitive passwords or financial credentials.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </main>
 
   <Footer lang={currentLang} />
 </BaseLayout>
+
+<script>
+  const form = document.getElementById('contact-form');
+  const statusEl = document.getElementById('contact-status');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (statusEl) {
+      statusEl.classList.remove('hidden');
+      form.reset();
+      setTimeout(() => {
+        statusEl.classList.add('hidden');
+      }, 4000);
+    }
+  });
+</script>

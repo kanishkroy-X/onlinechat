@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getTranslations } from '../../i18n/translations';
+
+const lang = 'en';
+const t = getTranslations(lang);
+
+const TOPICS = [
+  { slug: 'general', title: 'General Chat', desc: 'Open conversations about everyday life, thoughts, and casual discussions.', icon: '💬' },
+  { slug: 'technology', title: 'Technology', desc: 'Discuss AI, software, hardware, programming, gadgets, and tech news.', icon: '💻' },
+  { slug: 'gaming', title: 'Gaming', desc: 'Talk about PC, console, esports, indie games, and your favorite walkthroughs.', icon: '🎮' },
+  { slug: 'music', title: 'Music', desc: 'Share song recommendations, favorite artists, albums, and instruments.', icon: '🎵' },
+  { slug: 'movies', title: 'Movies & TV', desc: 'Discussions around cinema, trending series, classic films, and reviews.', icon: '🎬' },
+  { slug: 'sports', title: 'Sports', desc: 'Football, basketball, cricket, athletics, and major sporting tournaments.', icon: '⚽' },
+  { slug: 'fitness', title: 'Fitness & Health', desc: 'Workouts, nutrition, wellness, training routines, and healthy habits.', icon: '🏃' },
+  { slug: 'travel', title: 'Travel & Cultures', desc: 'Stories from different cities, travel itineraries, cultures, and wanderlust.', icon: '✈️' },
+  { slug: 'books', title: 'Books & Literature', desc: 'Book club discussions, sci-fi novels, philosophy, and poetry.', icon: '📚' },
+  { slug: 'anime', title: 'Anime & Manga', desc: 'Seasonal anime releases, favorite series, manga chapters, and adaptations.', icon: '✨' },
+  { slug: 'study', title: 'Study & Career', desc: 'Academic motivation, study techniques, productivity, and career growth.', icon: '🎓' },
+  { slug: 'photography', title: 'Photography & Art', desc: 'Camera gear, digital art, visual aesthetics, and creative projects.', icon: '📷' }
+];
+---
+
+<BaseLayout
+  title="Chat Topics & Discoveries — randomcaht.online"
+  description="Explore conversational topics on RandomChat. Choose a theme to inspire your next stranger conversation."
+  canonical="https://randomcaht.online/chat-rooms"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-12 flex flex-col gap-10">
+    <!-- Page Header -->
+    <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold">
+        Conversation Starters
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-main)] tracking-tight">
+        Chat Topics
+      </h1>
+      <p class="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
+        Choose a topic to discover conversations around shared interests and mutual passions.
+      </p>
+    </div>
+
+    <!-- Topics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      {TOPICS.map(topic => (
+        <a
+          href={`/chat-rooms/${topic.slug}`}
+          class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-[#D55882]/50 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all group interactive-tactile"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-2xl">{topic.icon}</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[var(--bg-page)] text-[var(--text-subtle)] group-hover:text-[#FF808A] transition-colors">
+              Coming Soon
+            </span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <h2 class="text-lg font-bold text-[var(--text-main)] group-hover:text-[#FF808A] transition-colors">
+              {topic.title}
+            </h2>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+              {topic.desc}
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Informational Note -->
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 text-center text-xs text-[var(--text-muted)] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Looking for instant general matchmaking right now?</span>
+      </div>
+      <a
+        href="/start"
+        class="gradient-accent gradient-accent-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition-all shrink-0"
+      >
+        Start Random Chat &rarr;
+      </a>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

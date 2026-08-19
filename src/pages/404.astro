@@ -6,28 +6,43 @@ import Footer from '../components/Footer.astro';
 const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
 ---
 
-<BaseLayout title="404 — Page Not Found | randomcaht.online" lang={currentLang}>
+<BaseLayout title="404 — Something Went Off Track | randomcaht.online" lang={currentLang}>
   <Header lang={currentLang} />
 
   <main class="flex-1 flex flex-col items-center justify-center text-center p-6 my-12">
-    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-lg">
-      <div class="text-6xl font-extrabold text-gradient">
-        404
+    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 sm:p-10 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-xl animate-modal-in">
+      <!-- Sunset Disconnected Orb Graphic -->
+      <div class="relative w-24 h-24 flex items-center justify-center my-1">
+        <div class="w-12 h-12 rounded-full bg-[#7F376D]/20 border border-[#D55882]/40 flex items-center justify-center">
+          <div class="w-4 h-4 rounded-full bg-[#D55882]/60 blur-[2px]"></div>
+        </div>
+        <div class="absolute top-1 right-1 w-6 h-6 rounded-full bg-[#FF808A]/30 blur-[4px]"></div>
       </div>
+
       <div class="flex flex-col gap-2">
-        <h1 class="text-2xl font-bold text-[var(--text-main)]">
-          Page Not Found
+        <span class="text-xs font-bold uppercase tracking-widest text-[#FF808A]">Error 404</span>
+        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-main)]">
+          Something went off track.
         </h1>
-        <p class="text-sm text-[var(--text-muted)]">
-          The page you are looking for does not exist or has been moved.
+        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+          The conversation you're looking for isn't here. Let's get you connected with someone new.
         </p>
       </div>
-      <a
-        href="/"
-        class="gradient-accent gradient-accent-hover text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all cursor-pointer"
-      >
-        Return to Home & Start Chat
-      </a>
+
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
+        <a
+          href="/"
+          class="w-full py-3 px-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold text-[var(--text-main)] transition-colors text-center"
+        >
+          Back Home
+        </a>
+        <a
+          href="/start"
+          class="w-full gradient-accent gradient-accent-hover text-white text-xs font-bold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition-all text-center"
+        >
+          Start Chat
+        </a>
+      </div>
     </div>
   </main>
 

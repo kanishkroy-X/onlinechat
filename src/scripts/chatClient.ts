@@ -47,7 +47,6 @@ export class ChatClient {
   private socket: WebSocket | null = null;
   private pingInterval: number | null = null;
   private typingTimeout: number | null = null;
-  private simTimeout: number | null = null;
   private listeners: Set<(client: ChatClient) => void> = new Set();
 
   constructor() {
@@ -99,7 +98,7 @@ export class ChatClient {
     this.setState('LANDING');
   }
 
-  public enterQueue(nickname: string, gender: Gender, preference: MatchPreference, country: Country, language: Language): void {
+  public enterQueue(nickname: string, gender: Gender, preference: MatchPreference, country: Country = 'anywhere', language: Language = 'any'): void {
     this.nickname = nickname;
     this.gender = gender;
     this.preference = preference;
@@ -119,10 +118,6 @@ export class ChatClient {
   }
 
   public cancelQueue(): void {
-    if (this.simTimeout) {
-      window.clearTimeout(this.simTimeout);
-      this.simTimeout = null;
-    }
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'match.cancel',
@@ -146,71 +141,15 @@ export class ChatClient {
       return false;
     }
 
-    const messageId = `msg_${crypto.randomUUID()}`;
-
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'message.send',
         payload: { content: trimmed, mediaType, mediaData }
       });
-    } else {
-      // Local interactive simulation fallback
-      this.messages.push({
-        id: messageId,
-        sender: 'me',
-        text: trimmed,
-        mediaType,
-        mediaData,
-        timestamp: Date.now()
-      });
-      this.outgoingCount += 1;
-
-      if (this.outgoingCount >= 2) {
-        this.isColdGated = true;
-        this.announceToScreenReader("You've sent 2 messages. Please wait for a reply.");
-      }
-
-      this.notify();
-
-      // Trigger realistic stranger reply
-      this.scheduleStrangerReply();
+      return true;
     }
 
-    return true;
-  }
-
-  private scheduleStrangerReply(): void {
-    window.setTimeout(() => {
-      if (this.state !== 'CONNECTED') return;
-      this.isPartnerTyping = true;
-      this.notify();
-
-      window.setTimeout(() => {
-        if (this.state !== 'CONNECTED') return;
-        this.isPartnerTyping = false;
-
-        const replies = [
-          'Hey there! Nice to meet you 😊',
-          'How is your day going?',
-          'What music or movies are you into lately?',
-          'I love the sunset vibe on this website!',
-          'Haha that is awesome. Where are you chatting from?'
-        ];
-        const replyText = replies[Math.floor(Math.random() * replies.length)];
-
-        this.messages.push({
-          id: `msg_${crypto.randomUUID()}`,
-          sender: 'stranger',
-          text: replyText,
-          timestamp: Date.now()
-        });
-
-        // Reply unlocks cold gate!
-        this.outgoingCount = 0;
-        this.isColdGated = false;
-        this.notify();
-      }, 1500);
-    }, 800);
+    return false;
   }
 
   public notifyTyping(): void {
@@ -222,7 +161,6 @@ export class ChatClient {
   }
 
   public nextStranger(): void {
-    if (this.simTimeout) window.clearTimeout(this.simTimeout);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.next',
@@ -234,7 +172,6 @@ export class ChatClient {
   }
 
   public leaveChat(): void {
-    if (this.simTimeout) window.clearTimeout(this.simTimeout);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.leave',
@@ -249,23 +186,27 @@ export class ChatClient {
   public submitReport(reason: ReportReason, details?: string): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
-        type: 'chat.report',
+        type: 'safety.report',
         payload: { reason, details }
       });
     }
+    this.leaveChat();
   }
 
-  public blockStranger(): void {
-    if (this.simTimeout) window.clearTimeout(this.simTimeout);
+  public blockPartner(): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
-        type: 'chat.block',
+        type: 'safety.block',
         payload: {}
       });
     }
-    this.closeSocket();
-    this.setState('DISCONNECTED');
-    this.announceToScreenReader('Stranger blocked.');
+    this.leaveChat();
+  }
+
+  private send(message: ClientMessage): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify(message));
+    }
   }
 
   private connectWebSocket(): void {
@@ -274,13 +215,10 @@ export class ChatClient {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/api/ws?sessionId=${encodeURIComponent(this.sessionId)}&nickname=${encodeURIComponent(this.nickname)}&gender=${this.gender}&preference=${this.preference}&country=${encodeURIComponent(this.country)}&language=${encodeURIComponent(this.language)}`;
 
-    let socketOpened = false;
-
     try {
       this.socket = new WebSocket(wsUrl);
 
       this.socket.addEventListener('open', () => {
-        socketOpened = true;
         this.startPing();
         this.send({
           type: 'match.queue',
@@ -311,56 +249,12 @@ export class ChatClient {
         }
       });
 
-      this.socket.addEventListener('error', () => {
-        if (!socketOpened) {
-          this.startLocalMatchDemo();
-        }
+      this.socket.addEventListener('error', (err) => {
+        console.error('WebSocket connection error', err);
       });
     } catch (err) {
-      this.startLocalMatchDemo();
+      console.error('WebSocket initialization error', err);
     }
-
-    // If still matching after 8s without WS match, start local match fallback for solo testing
-    this.simTimeout = window.setTimeout(() => {
-      if (this.state === 'MATCHING') {
-        this.startLocalMatchDemo();
-      }
-    }, 8000);
-  }
-
-  private startLocalMatchDemo(): void {
-    const names = ['Samantha', 'Jordan', 'Elena', 'Lucas', 'Mia', 'Noah', 'Alex', 'Liam', 'Emma'];
-    const matchedNick = names[Math.floor(Math.random() * names.length)];
-    const matchedGender: Gender = this.preference === 'female' ? 'female' : this.preference === 'male' ? 'male' : 'female';
-    const matchedCountry = this.country === 'anywhere' ? 'US' : this.country;
-    const matchedLanguage = this.language === 'any' ? 'en' : this.language;
-
-    this.partner = {
-      nickname: matchedNick,
-      gender: matchedGender,
-      country: matchedCountry,
-      language: matchedLanguage
-    };
-
-    this.setState('MATCH_FOUND');
-    this.announceToScreenReader(`Match found with ${this.partner.nickname}!`);
-
-    window.setTimeout(() => {
-      this.setState('CONNECTED');
-      this.announceToScreenReader('Connected! You can now start chatting.');
-
-      // Stranger says initial greeting after 800ms
-      window.setTimeout(() => {
-        if (this.state !== 'CONNECTED') return;
-        this.messages.push({
-          id: `msg_${crypto.randomUUID()}`,
-          sender: 'stranger',
-          text: `Hey! I'm ${matchedNick}. How are you?`,
-          timestamp: Date.now()
-        });
-        this.notify();
-      }, 800);
-    }, 1200);
   }
 
   private handleServerMessage(msg: ServerMessage): void {
@@ -373,10 +267,6 @@ export class ChatClient {
       case 'match.found': {
         const payload = msg.payload as { partner: { nickname: string; gender: Gender; country: Country; language: Language } };
         this.partner = payload.partner;
-        if (this.simTimeout) {
-          window.clearTimeout(this.simTimeout);
-          this.simTimeout = null;
-        }
         this.setState('MATCH_FOUND');
         this.announceToScreenReader(`Match found with ${this.partner.nickname}!`);
         break;
@@ -385,10 +275,6 @@ export class ChatClient {
       case 'chat.connected': {
         const payload = msg.payload as { partner: { nickname: string; gender: Gender; country: Country; language: Language } };
         if (payload?.partner) this.partner = payload.partner;
-        if (this.simTimeout) {
-          window.clearTimeout(this.simTimeout);
-          this.simTimeout = null;
-        }
         this.setState('CONNECTED');
         this.announceToScreenReader('Connected! You can now start chatting.');
         break;
@@ -453,44 +339,34 @@ export class ChatClient {
         break;
       }
 
-      case 'chat.partner_disconnected':
       case 'chat.ended': {
         this.setState('DISCONNECTED');
         this.announceToScreenReader('Stranger disconnected.');
         break;
       }
 
-      case 'rate_limit.reached': {
-        const payload = msg.payload as { message: string };
-        this.errorMessage = payload.message || 'Rate limit reached.';
+      case 'error.rate_limited': {
+        const payload = msg.payload as { retryAfterSeconds?: number };
+        this.errorMessage = `You are sending messages too quickly. Please wait ${payload.retryAfterSeconds || 10} seconds.`;
         this.setState('RATE_LIMITED');
         break;
       }
 
-      case 'report.submitted': {
-        this.announceToScreenReader('Report submitted successfully.');
-        break;
-      }
-
-      case 'error': {
+      case 'error.generic': {
         const payload = msg.payload as { message: string };
-        this.errorMessage = payload.message || 'An error occurred.';
-        this.notify();
+        this.errorMessage = payload.message || 'An unexpected error occurred.';
+        this.setState('ERROR');
         break;
       }
-    }
-  }
-
-  private send(msg: ClientMessage): void {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(msg));
     }
   }
 
   private startPing(): void {
     this.stopPing();
     this.pingInterval = window.setInterval(() => {
-      this.send({ type: 'ping', payload: {} });
+      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        this.send({ type: 'system.ping', payload: {} });
+      }
     }, 25000);
   }
 
@@ -504,10 +380,13 @@ export class ChatClient {
   private closeSocket(): void {
     this.stopPing();
     if (this.socket) {
-      try {
-        this.socket.close();
-      } catch (e) {}
+      this.socket.close();
       this.socket = null;
     }
+  }
+
+  public getPartnerDisplayString(): string {
+    if (!this.partner) return 'Stranger';
+    return this.partner.nickname;
   }
 }

@@ -5,113 +5,87 @@ import Footer from '../components/Footer.astro';
 
 const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
 
-const faqs = [
-  {
-    q: 'What is randomcaht.online?',
-    a: 'randomcaht.online is a free, web-based platform that instantly connects you with compatible strangers for real-time text conversations without requiring an account or download.'
-  },
-  {
-    q: 'Is randomcaht.online free?',
-    a: 'Yes, 100% free. There are no subscriptions, paywalls, or hidden fees.'
-  },
-  {
-    q: 'Do I need an account to chat?',
-    a: 'No. You do not need to register, provide an email, or create a password. You simply enter a temporary nickname and start chatting immediately.'
-  },
-  {
-    q: 'Is the chat anonymous?',
-    a: 'Yes, conversations are anonymous by default. We do not collect your personal identity. However, we advise all users never to share personal info (such as phone numbers or passwords) with strangers.'
-  },
-  {
-    q: 'How does random matching work?',
-    a: 'When you click "Find Stranger", our server-side matching engine pairs you atomically with another waiting user whose self-declared gender and chat preferences are mutually compatible.'
-  },
-  {
-    q: 'Can I choose who I match with?',
-    a: 'Yes. You can declare your gender (Male / Female) and specify whether you prefer to chat with Male, Female, or Anyone. A match only occurs when both users’ preferences are satisfied.'
-  },
-  {
-    q: 'How do I get another stranger?',
-    a: 'Simply click the "Next Stranger" button during an active chat. The current conversation will close immediately, and you will be queued for a new compatible stranger.'
-  },
-  {
-    q: 'Is chat history saved?',
-    a: 'No. All chat messages are ephemeral and exist only during your active session. We do not store permanent chat history.'
-  },
-  {
-    q: 'How do I report or block someone?',
-    a: 'Click the menu icon in the chat bar and select "Report" to report abuse, or "Block" to immediately disconnect and prevent further interaction.'
-  },
-  {
-    q: 'What is the minimum age to use the site?',
-    a: 'You must be at least 18 years old (or the legal age of majority in your jurisdiction) to use randomcaht.online.'
-  },
-  {
-    q: 'Is randomcaht.online safe?',
-    a: 'We enforce server-side rate limits, anti-spam protections, XSS sanitization, a 2-message cold message gate, and instant report/block features to protect our community.'
-  },
-  {
-    q: 'Does it work on mobile and tablet devices?',
-    a: 'Yes. randomcaht.online is built mobile-first and works seamlessly on phones, tablets, laptops, and desktop computers.'
-  },
-  {
-    q: 'What happens if a stranger disconnects?',
-    a: 'You will immediately see a "Stranger disconnected" notification with a "Find Another Stranger" button to quickly start a new chat.'
-  },
-  {
-    q: 'How is it different from Omegle or Chatroulette?',
-    a: 'randomcaht.online focuses exclusively on clean, fast, text-only communication with mutual preference matching and a modern sunset aesthetic without camera requirements.'
-  }
+const FAQS = [
+  { q: 'What is RandomChat?', a: 'RandomChat (randomcaht.online) is a free, anonymous-by-default random text chat website that connects adults for spontaneous, one-on-one real-time conversations without accounts or registration.' },
+  { q: 'Do I need an account to use RandomChat?', a: 'No. RandomChat requires no email, password, phone number, or profile creation. You enter a temporary nickname, pick your preferences, and start chatting instantly.' },
+  { q: 'Is RandomChat completely free?', a: 'Yes. RandomChat is 100% free with no paid subscriptions, hidden fees, premium tiers, or credits.' },
+  { q: 'How does the matchmaking system work?', a: 'Matching is performed server-side with strict mutual compatibility. For example, if you are Male looking for Female, you will only be paired with a Female user whose preference includes Male.' },
+  { q: 'Can I choose who I chat with?', a: 'You can select your gender (Male/Female) and your matching preference (Male/Female/Anyone). The matchmaker only connects you when both users agree on the criteria.' },
+  { q: 'Can I skip or leave a conversation at any time?', a: 'Yes. You can click "Next Stranger" or "Leave" at any time. This immediately disconnects the current session and lets you find a fresh partner.' },
+  { q: 'How do I report someone for inappropriate behavior?', a: 'Click the menu icon (⋯) at the top of the chat window and select "Report". Choose the reason (Spam, Harassment, Underage, Inappropriate Content) and submit.' },
+  { q: 'How do I block someone?', a: 'In the chat menu (⋯), select "Block". This immediately severs the connection and places a mutual cooldown to ensure you will not be paired with that session again.' },
+  { q: 'Is RandomChat private?', a: 'RandomChat is anonymous-by-default because we do not collect personal identities. However, we advise all users never to share personal, financial, or sensitive information, as the other participant could screenshot or record text.' },
+  { q: 'Does RandomChat store my chat messages?', a: 'No. Messages are processed in ephemeral memory inside Cloudflare Durable Objects and are deleted the moment the chat room closes or both participants disconnect.' },
+  { q: 'Why is RandomChat strictly 18+?', a: 'To protect minors and ensure a safe, mature environment for adult conversation, RandomChat enforces a strict 18+ minimum age policy across all features.' },
+  { q: 'Can I use RandomChat on mobile devices?', a: 'Yes. RandomChat is fully responsive and optimized for all mobile smartphones and tablets with smooth touch controls and responsive virtual keyboard support.' },
+  { q: 'What should I do if someone makes me uncomfortable?', a: 'Immediately leave the conversation using "Next Stranger" or "Block". You can also file a report via the chat menu.' }
 ];
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  'mainEntity': faqs.map(item => ({
-    '@type': 'Question',
-    'name': item.q,
-    'acceptedAnswer': {
-      '@type': 'Answer',
-      'text': item.a
+const schemaJson = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": FAQS.map(faq => ({
+    "@type": "Question",
+    "name": faq.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.a
     }
   }))
 };
 ---
 
-<BaseLayout title="Frequently Asked Questions — randomcaht.online" description="Common questions about anonymous matching, safety, preferences, and features on randomcaht.online." lang={currentLang}>
+<BaseLayout
+  title="Frequently Asked Questions (FAQ) — randomcaht.online"
+  description="Common questions about anonymous matching, privacy, safety, 18+ policy, and chat features on randomcaht.online."
+  canonical="https://randomcaht.online/faq"
+  lang={currentLang}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
   <Header lang={currentLang} />
 
-  <!-- JSON-LD FAQ structured data -->
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-
-  <main class="flex-1 max-w-4xl mx-auto px-4 py-12">
-    <div class="flex flex-col gap-8">
-      <div class="text-center max-w-2xl mx-auto">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-3">
-          Frequently Asked Questions
-        </h1>
-        <p class="text-base text-[var(--text-muted)]">
-          Everything you need to know about randomcaht.online.
-        </p>
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-10">
+    <div class="text-center max-w-xl mx-auto flex flex-col items-center gap-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold">
+        Help & Support
       </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-main)] tracking-tight">
+        Frequently Asked Questions
+      </h1>
+      <p class="text-sm text-[var(--text-muted)]">
+        Everything you need to know about RandomChat, privacy, and matchmaking.
+      </p>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {faqs.map(item => (
-          <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm hover:border-[#D55882]/40 transition-colors">
-            <h2 class="font-bold text-base text-[var(--text-main)] flex items-start gap-2">
-              <span class="text-[#D55882] font-extrabold">Q.</span>
-              <span>{item.q}</span>
-            </h2>
-            <p class="text-sm text-[var(--text-muted)] leading-relaxed pl-5">
-              {item.a}
-            </p>
+    <!-- Accordion List -->
+    <div class="flex flex-col gap-3.5">
+      {FAQS.map((faq, idx) => (
+        <details class="group p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-sm transition-all open:border-[#D55882]/40">
+          <summary class="flex items-center justify-between font-bold text-sm sm:text-base text-[var(--text-main)] cursor-pointer list-none select-none">
+            <span>{faq.q}</span>
+            <span class="w-6 h-6 rounded-full bg-[var(--bg-page)] border border-[var(--border-color)] flex items-center justify-center text-xs text-[var(--text-muted)] group-open:rotate-180 transition-transform shrink-0 ml-2">
+              &darr;
+            </span>
+          </summary>
+          <div class="mt-3.5 pt-3.5 border-t border-[var(--border-subtle)] text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            {faq.a}
           </div>
-        ))}
-      </div>
+        </details>
+      ))}
+    </div>
 
-      <div class="text-center pt-6 border-t border-[var(--border-color)]">
-        <a href="/" class="inline-flex items-center gap-2 font-bold text-lg text-gradient hover:opacity-90">
-          Start Chatting Now &rarr;
+    <!-- CTA Box -->
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-8 text-center flex flex-col items-center gap-4 shadow-sm">
+      <h2 class="text-xl font-bold text-[var(--text-main)]">Still have questions?</h2>
+      <p class="text-xs sm:text-sm text-[var(--text-muted)] max-w-md">
+        Feel free to review our Safety Center guidelines or get in touch with our team directly.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="/safety" class="px-5 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold text-[var(--text-main)] transition-colors">
+          Safety Center
+        </a>
+        <a href="/contact" class="gradient-accent gradient-accent-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition-all">
+          Contact Support
         </a>
       </div>
     </div>

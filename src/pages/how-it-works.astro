@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getTranslations } from '../i18n/translations';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title="How RandomChat Works — Fast, Anonymous, No Accounts"
+  description="Learn how RandomChat pairs you with compatible strangers for instant text conversations in four effortless steps."
+  canonical="https://randomcaht.online/how-it-works"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-12 flex flex-col gap-12">
+    <!-- Hero Intro -->
+    <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold">
+        Simple &bull; Instant &bull; Anonymous
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-main)] tracking-tight">
+        How RandomChat Works
+      </h1>
+      <p class="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
+        Connect with someone new in four effortless steps. No downloads, no passwords, no profiles.
+      </p>
+    </div>
+
+    <!-- 4 Step Progression Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <!-- Step 01 -->
+      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm interactive-tactile">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-2xl gradient-accent flex items-center justify-center text-white shadow-md">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <span class="text-3xl font-black text-[var(--border-color)]">01</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">Choose Preferences</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            Pick a temporary nickname, declare your gender, and specify whether you want to chat with men, women, or anyone.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 02 -->
+      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm interactive-tactile">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-2xl gradient-accent flex items-center justify-center text-white shadow-md">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="2"></circle>
+              <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+            </svg>
+          </div>
+          <span class="text-3xl font-black text-[var(--border-color)]">02</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">Find a Stranger</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            Our server-side matchmaker pairs you instantly with another user whose preferences mutually align with yours.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 03 -->
+      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm interactive-tactile">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-2xl gradient-accent flex items-center justify-center text-white shadow-md">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <span class="text-3xl font-black text-[var(--border-color)]">03</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">Start Talking</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            Enjoy low-latency, encrypted real-time text chat. The cold-message gate ensures conversations remain mutually active and respectful.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 04 -->
+      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm interactive-tactile">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-2xl gradient-accent flex items-center justify-center text-white shadow-md">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="13 17 18 12 13 7"></polyline>
+              <polyline points="6 17 11 12 6 7"></polyline>
+            </svg>
+          </div>
+          <span class="text-3xl font-black text-[var(--border-color)]">04</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-xl font-bold text-[var(--text-main)]">Next Stranger</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+            Whenever you are ready, tap "Next Stranger" to immediately leave the room and find a fresh conversation partner.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Pillars Feature Box -->
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-8 shadow-sm flex flex-col gap-6">
+      <h2 class="text-2xl font-bold text-[var(--text-main)] text-center sm:text-left">
+        The Principles Behind RandomChat
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs sm:text-sm text-[var(--text-muted)]">
+        <div class="flex flex-col gap-2">
+          <span class="font-bold text-[var(--text-main)] text-base">Zero Friction</span>
+          <p class="leading-relaxed">No email confirmations, phone numbers, or account logins. Open the site and start chatting in seconds.</p>
+        </div>
+        <div class="flex flex-col gap-2">
+          <span class="font-bold text-[var(--text-main)] text-base">Ephemeral Privacy</span>
+          <p class="leading-relaxed">Messages exist only in temporary memory while the room is open and vanish as soon as either participant leaves.</p>
+        </div>
+        <div class="flex flex-col gap-2">
+          <span class="font-bold text-[var(--text-main)] text-base">Community Safety</span>
+          <p class="leading-relaxed">18+ only policy, active rate limiting, anti-spam cold gates, and one-click report & block tools.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call to Action Banner -->
+    <div class="rounded-3xl gradient-accent p-8 sm:p-12 text-center text-white flex flex-col items-center gap-4 shadow-xl">
+      <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Ready to Meet Someone New?
+      </h2>
+      <p class="text-sm sm:text-base max-w-md opacity-90 leading-relaxed">
+        Join hundreds of active conversationalists right now without signing up.
+      </p>
+      <a
+        href="/start"
+        class="mt-2 bg-white text-[#492351] hover:bg-white/95 font-bold text-base px-8 py-3.5 rounded-2xl shadow-lg hover:scale-105 transition-all"
+      >
+        Start Chatting Now
+      </a>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>

@@ -6,6 +6,41 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://randomcaht.online/start</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/how-it-works</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/chat-rooms</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/chat-rooms/general</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/chat-rooms/technology</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/chat-rooms/gaming</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/chat-rooms/music</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://randomcaht.online/safety</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -16,12 +51,17 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://randomcaht.online/privacy</loc>
+    <loc>https://randomcaht.online/about</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://randomcaht.online/cookie-policy</loc>
+    <loc>https://randomcaht.online/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://randomcaht.online/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -31,13 +71,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://randomcaht.online/about</loc>
+    <loc>https://randomcaht.online/cookies</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://randomcaht.online/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
 </urlset>

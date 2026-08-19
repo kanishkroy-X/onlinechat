@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getTranslations } from '../../i18n/translations';
+
+const lang = 'en';
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title="Edit Profile (Future Preview) — randomcaht.online"
+  description="Edit your conversational profile preferences."
+  canonical="https://randomcaht.online/profile/edit"
+  lang={lang}
+>
+  <Header lang={lang} />
+
+  <main class="flex-1 w-full max-w-2xl mx-auto px-4 py-12 flex flex-col gap-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-black text-[var(--text-main)]">Edit Profile</h1>
+      <a href="/profile" class="text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">&larr; Back to Profile</a>
+    </div>
+
+    <!-- Edit Form Card -->
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-sm flex flex-col gap-6">
+      <form id="profile-edit-form" class="flex flex-col gap-5">
+        <!-- Nickname -->
+        <div class="flex flex-col gap-1.5">
+          <label for="edit-username" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Username</label>
+          <input
+            id="edit-username"
+            type="text"
+            value="RandomUser123"
+            maxlength="20"
+            required
+            class="px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"
+          />
+        </div>
+
+        <!-- Gender & Age -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Gender</label>
+            <select id="edit-gender" class="px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]">
+              <option value="male" selected>Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-age" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Age (18+)</label>
+            <input
+              id="edit-age"
+              type="number"
+              min="18"
+              max="99"
+              value="24"
+              required
+              class="px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"
+            />
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="flex flex-col gap-1.5">
+          <label for="edit-country" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">Country</label>
+          <input
+            id="edit-country"
+            type="text"
+            value="United States"
+            class="px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882]"
+          />
+        </div>
+
+        <!-- About Me -->
+        <div class="flex flex-col gap-1.5">
+          <label for="edit-bio" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">About Me (Bio)</label>
+          <textarea
+            id="edit-bio"
+            rows="3"
+            maxlength="200"
+            class="px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[#D55882] resize-none"
+          >Passionate about open-source technology, indie sci-fi movies, and ambient electronic music.</textarea>
+          <span class="text-[10px] text-[var(--text-subtle)] text-right">Max 200 characters</span>
+        </div>
+
+        <!-- Save Button -->
+        <div class="pt-2 flex items-center justify-between">
+          <span id="save-status-msg" class="hidden text-xs text-emerald-600 font-semibold">✓ Profile changes saved locally!</span>
+          <button
+            type="submit"
+            id="save-profile-btn"
+            class="gradient-accent gradient-accent-hover text-white text-sm font-bold px-6 py-3 rounded-xl shadow transition-all ml-auto cursor-pointer"
+          >
+            Save Profile
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('profile-edit-form');
+  const statusMsg = document.getElementById('save-status-msg');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (statusMsg) {
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => {
+        statusMsg.classList.add('hidden');
+      }, 3000);
+    }
+  });
+</script>
