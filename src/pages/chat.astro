@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import ChatView from '../components/ChatView.astro';
 import Modals from '../components/Modals.astro';
+import DisconnectNotice from '../components/DisconnectNotice.astro';
+import MatchingView from '../components/MatchingView.astro';
 import { getTranslations } from '../i18n/translations';
 
 const lang = 'en';
@@ -17,11 +19,17 @@ const t = getTranslations(lang);
 >
   <Header lang={lang} />
 
-  <main class="flex-1 w-full flex flex-col items-center justify-center p-0 sm:p-4">
-    <div class="w-full max-w-3xl flex-1 flex flex-col bg-[var(--bg-surface)] sm:border border-[var(--border-color)] sm:rounded-3xl shadow-xl overflow-hidden h-[calc(100dvh-4rem)] sm:h-[82vh]">
-      <!-- Chat View Component -->
-      <ChatView lang={lang} />
+  <main class="flex-1 w-full flex flex-col items-center justify-center p-0 sm:p-2 lg:p-4">
+    <!-- Matching State Overlay -->
+    <div id="standalone-matching-container" class="w-full flex justify-center">
+      <MatchingView lang={lang} />
     </div>
+
+    <!-- Chat View Component -->
+    <ChatView lang={lang} />
+
+    <!-- Disconnect State Notice -->
+    <DisconnectNotice lang={lang} />
   </main>
 
   <Modals lang={lang} />
@@ -29,25 +37,403 @@ const t = getTranslations(lang);
 
 <script>
   import { ChatClient } from '../scripts/chatClient';
+  import type { Gender, MatchPreference, Country, Language, ReportReason } from '../server/types';
+  import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
 
-  // If chat view is loaded standalone, automatically connect or redirect to /start if no persona is configured
   const nick = localStorage.getItem('rc_nickname') || 'Stranger' + Math.floor(1000 + Math.random() * 9000);
-  const gender = localStorage.getItem('rc_gender') || 'male';
-  const pref = localStorage.getItem('rc_pref') || 'anyone';
+  const gender = (localStorage.getItem('rc_gender') || 'male') as Gender;
+  const pref = (localStorage.getItem('rc_pref') || 'anyone') as MatchPreference;
+  const country = (localStorage.getItem('rc_country') || 'anywhere') as Country;
+  const language = (localStorage.getItem('rc_language') || 'any') as Language;
 
+  const client = new ChatClient();
+
+  // DOM Elements
+  const matchingContainer = document.getElementById('standalone-matching-container');
+  const matchingView = document.getElementById('matching-view');
   const chatView = document.getElementById('chat-view');
-  if (chatView) {
-    chatView.classList.remove('hidden');
+  const disconnectView = document.getElementById('disconnect-view');
+
+  const chatStrangerNick = document.getElementById('chat-stranger-nick');
+  const chatStrangerAvatar = document.getElementById('chat-stranger-avatar');
+  const chatStrangerGender = document.getElementById('chat-stranger-gender');
+  const chatStrangerCountry = document.getElementById('chat-stranger-country');
+  const chatStrangerLanguage = document.getElementById('chat-stranger-language');
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input') as HTMLInputElement;
+  const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
+  const chatComposerForm = document.getElementById('chat-composer-form') as HTMLFormElement;
+  const coldGateBanner = document.getElementById('cold-gate-banner');
+  const chatTypingIndicator = document.getElementById('chat-typing-indicator');
+  const chatNextBtn = document.getElementById('chat-next-btn');
+  const chatMenuBtn = document.getElementById('chat-menu-btn');
+  const chatDropdown = document.getElementById('chat-dropdown');
+
+  // Modals
+  const modalNext = document.getElementById('modal-next');
+  const modalNextCancel = document.getElementById('modal-next-cancel');
+  const modalNextConfirm = document.getElementById('modal-next-confirm');
+  const modalLeave = document.getElementById('modal-leave');
+  const modalLeaveCancel = document.getElementById('modal-leave-cancel');
+  const modalLeaveConfirm = document.getElementById('modal-leave-confirm');
+  const menuLeaveBtn = document.getElementById('menu-leave-btn');
+  const modalReport = document.getElementById('modal-report');
+  const modalReportClose = document.getElementById('modal-report-close');
+  const modalReportCancel = document.getElementById('modal-report-cancel');
+  const reportForm = document.getElementById('report-form') as HTMLFormElement;
+  const reportReasonSelect = document.getElementById('report-reason-select') as HTMLSelectElement;
+  const reportDetailsInput = document.getElementById('report-details-input') as HTMLTextAreaElement;
+  const menuReportBtn = document.getElementById('menu-report-btn');
+  const modalBlock = document.getElementById('modal-block');
+  const modalBlockCancel = document.getElementById('modal-block-cancel');
+  const modalBlockConfirm = document.getElementById('modal-block-confirm');
+  const menuBlockBtn = document.getElementById('menu-block-btn');
+
+  // Media
+  const chatFileInput = document.getElementById('chat-file-input') as HTMLInputElement;
+  const chatAttachBtn = document.getElementById('chat-attach-btn');
+  const chatMediaPreviewContainer = document.getElementById('chat-media-preview-container');
+  const chatImagePreview = document.getElementById('chat-image-preview') as HTMLImageElement;
+  const chatVideoPreview = document.getElementById('chat-video-preview') as HTMLVideoElement;
+  const chatMediaName = document.getElementById('chat-media-name');
+  const chatRemoveMediaBtn = document.getElementById('chat-remove-media-btn');
+  const chatLightbox = document.getElementById('chat-lightbox');
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  let currentAttachedMedia: { type: 'image' | 'video'; data: string; name: string } | null = null;
+
+  function updateUI(c: ChatClient) {
+    if (c.state === 'MATCHING') {
+      matchingView?.classList.remove('hidden');
+      chatView?.classList.add('hidden');
+      disconnectView?.classList.add('hidden');
+    } else if (c.state === 'MATCH_FOUND' || c.state === 'CONNECTING' || c.state === 'CONNECTED') {
+      matchingView?.classList.add('hidden');
+      chatView?.classList.remove('hidden');
+      disconnectView?.classList.add('hidden');
+
+      const partnerName = c.partner?.nickname || 'Stranger';
+      if (chatStrangerNick) chatStrangerNick.textContent = partnerName;
+      if (chatStrangerAvatar) chatStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
+      if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
+
+      const sideStrangerAvatar = document.getElementById('side-stranger-avatar');
+      const sideStrangerNick = document.getElementById('side-stranger-nick');
+      const sideStrangerLoc = document.getElementById('side-stranger-loc');
+      const voicePartnerName = document.getElementById('voice-partner-name');
+
+      if (sideStrangerAvatar) sideStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
+      if (sideStrangerNick) sideStrangerNick.textContent = partnerName;
+      if (voicePartnerName) voicePartnerName.textContent = partnerName;
+
+      const locText = c.partner?.country && c.partner.country !== 'anywhere'
+        ? `24 yrs, ${COUNTRY_NAMES[c.partner.country] || c.partner.country}`
+        : '24 yrs, California, USA';
+      if (sideStrangerLoc) sideStrangerLoc.textContent = locText;
+
+      if (chatStrangerCountry) {
+        if (c.partner?.country && c.partner.country !== 'anywhere') {
+          chatStrangerCountry.textContent = COUNTRY_NAMES[c.partner.country] || c.partner.country;
+          chatStrangerCountry.classList.remove('hidden');
+        } else {
+          chatStrangerCountry.classList.add('hidden');
+        }
+      }
+
+      renderMessages(c);
+      renderColdGate(c);
+
+      if (c.isPartnerTyping) {
+        chatTypingIndicator?.classList.remove('hidden');
+      } else {
+        chatTypingIndicator?.classList.add('hidden');
+      }
+    } else if (c.state === 'DISCONNECTED') {
+      matchingView?.classList.add('hidden');
+      chatView?.classList.add('hidden');
+      disconnectView?.classList.remove('hidden');
+    } else if (c.state === 'LANDING') {
+      window.location.href = '/start';
+    }
   }
 
-  const client = new ChatClient({
-    nickname: nick,
-    gender: gender as any,
-    preference: pref as any,
-    onStateChange: () => {},
-    onMessage: () => {},
-    onError: () => {}
+  function renderMessages(c: ChatClient) {
+    if (!chatMessages) return;
+    const existingCount = chatMessages.querySelectorAll('.message-bubble').length;
+    if (existingCount === c.messages.length) return;
+
+    const welcome = chatMessages.firstElementChild;
+    chatMessages.innerHTML = '';
+    if (welcome) chatMessages.appendChild(welcome);
+
+    c.messages.forEach(msg => {
+      const isMe = msg.sender === 'me';
+      const wrapper = document.createElement('div');
+      wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'} animate-bubble-in`;
+
+      const bubble = document.createElement('div');
+      bubble.className = isMe
+        ? 'p-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm flex flex-col gap-2'
+        : 'p-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm flex flex-col gap-2';
+
+      if (msg.mediaData) {
+        if (msg.mediaType === 'video') {
+          const videoEl = document.createElement('video');
+          videoEl.src = msg.mediaData;
+          videoEl.controls = true;
+          videoEl.className = 'max-w-full rounded-xl max-h-60 object-contain bg-black';
+          bubble.appendChild(videoEl);
+        } else {
+          const imgEl = document.createElement('img');
+          imgEl.src = msg.mediaData;
+          imgEl.alt = 'Shared photo';
+          imgEl.className = 'max-w-full rounded-xl max-h-60 object-cover cursor-pointer hover:opacity-95 transition-opacity';
+          imgEl.addEventListener('click', () => {
+            if (lightboxImg && chatLightbox) {
+              lightboxImg.src = msg.mediaData!;
+              chatLightbox.classList.remove('hidden');
+            }
+          });
+          bubble.appendChild(imgEl);
+        }
+      }
+
+      if (msg.text) {
+        const textSpan = document.createElement('span');
+        textSpan.className = 'px-1 leading-relaxed';
+        textSpan.textContent = msg.text;
+        bubble.appendChild(textSpan);
+      }
+
+      wrapper.appendChild(bubble);
+      chatMessages.appendChild(wrapper);
+    });
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function renderColdGate(c: ChatClient) {
+    if (c.isColdGated) {
+      coldGateBanner?.classList.remove('hidden');
+      if (chatSendBtn) chatSendBtn.disabled = true;
+    } else {
+      coldGateBanner?.classList.add('hidden');
+      if (chatSendBtn) chatSendBtn.disabled = false;
+    }
+  }
+
+  client.subscribe(updateUI);
+
+  // Attachments
+  chatAttachBtn?.addEventListener('click', () => chatFileInput?.click());
+  chatFileInput?.addEventListener('change', () => {
+    const file = chatFileInput.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size exceeds 5MB.');
+      chatFileInput.value = '';
+      return;
+    }
+    const isVideo = file.type.startsWith('video/');
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target?.result as string;
+      currentAttachedMedia = { type: isVideo ? 'video' : 'image', data: dataUrl, name: file.name };
+      if (chatMediaPreviewContainer && chatMediaName) {
+        chatMediaName.textContent = file.name;
+        chatMediaPreviewContainer.classList.remove('hidden');
+        if (isVideo && chatVideoPreview) {
+          chatVideoPreview.src = dataUrl;
+          chatVideoPreview.classList.remove('hidden');
+          chatImagePreview?.classList.add('hidden');
+        } else if (chatImagePreview) {
+          chatImagePreview.src = dataUrl;
+          chatImagePreview.classList.remove('hidden');
+          chatVideoPreview?.classList.add('hidden');
+        }
+      }
+    };
+    reader.readAsDataURL(file);
   });
 
-  client.start();
+  function clearAttachedMedia() {
+    currentAttachedMedia = null;
+    if (chatFileInput) chatFileInput.value = '';
+    if (chatMediaPreviewContainer) chatMediaPreviewContainer.classList.add('hidden');
+  }
+  chatRemoveMediaBtn?.addEventListener('click', clearAttachedMedia);
+
+  lightboxClose?.addEventListener('click', () => chatLightbox?.classList.add('hidden'));
+
+  // Composer Form
+  chatComposerForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    const text = chatInput?.value || '';
+    const media = currentAttachedMedia;
+    if (!text.trim() && !media) return;
+    const sent = client.sendMessage(text, media?.type, media?.data);
+    if (sent) {
+      if (chatInput) chatInput.value = '';
+      clearAttachedMedia();
+    }
+  });
+
+  chatInput?.addEventListener('input', () => client.notifyTyping());
+
+  // Menu Dropdown
+  chatMenuBtn?.addEventListener('click', () => chatDropdown?.classList.toggle('hidden'));
+  document.addEventListener('click', e => {
+    if (chatDropdown && !chatDropdown.contains(e.target as Node) && e.target !== chatMenuBtn) {
+      chatDropdown.classList.add('hidden');
+    }
+  });
+
+  // Next / Leave / Report / Block Modals
+  chatNextBtn?.addEventListener('click', () => modalNext?.classList.remove('hidden'));
+  modalNextCancel?.addEventListener('click', () => modalNext?.classList.add('hidden'));
+  modalNextConfirm?.addEventListener('click', () => {
+    modalNext?.classList.add('hidden');
+    client.nextStranger();
+  });
+
+  menuLeaveBtn?.addEventListener('click', () => {
+    chatDropdown?.classList.add('hidden');
+    modalLeave?.classList.remove('hidden');
+  });
+  modalLeaveCancel?.addEventListener('click', () => modalLeave?.classList.add('hidden'));
+  modalLeaveConfirm?.addEventListener('click', () => {
+    modalLeave?.classList.add('hidden');
+    client.leaveChat();
+  });
+
+  menuReportBtn?.addEventListener('click', () => {
+    chatDropdown?.classList.add('hidden');
+    modalReport?.classList.remove('hidden');
+  });
+  modalReportClose?.addEventListener('click', () => modalReport?.classList.add('hidden'));
+  modalReportCancel?.addEventListener('click', () => modalReport?.classList.add('hidden'));
+  reportForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    const reason = reportReasonSelect.value as ReportReason;
+    const details = reportDetailsInput.value;
+    client.submitReport(reason, details);
+    modalReport?.classList.add('hidden');
+    alert('Report submitted.');
+  });
+
+  menuBlockBtn?.addEventListener('click', () => {
+    chatDropdown?.classList.add('hidden');
+    modalBlock?.classList.remove('hidden');
+  });
+  modalBlockCancel?.addEventListener('click', () => modalBlock?.classList.add('hidden'));
+  modalBlockConfirm?.addEventListener('click', () => {
+    modalBlock?.classList.add('hidden');
+    client.blockStranger();
+  });
+
+  // Disconnect Buttons
+  document.getElementById('disconnect-find-btn')?.addEventListener('click', () => {
+    client.enterQueue(nick, gender, pref, country, language);
+  });
+  document.getElementById('disconnect-home-btn')?.addEventListener('click', () => {
+    window.location.href = '/';
+  });
+
+  // Voice Call Modal
+  const voiceModal = document.getElementById('voice-call-modal');
+  const voiceTimer = document.getElementById('voice-call-timer');
+  const voiceMuteBtn = document.getElementById('voice-mute-btn');
+  const voiceSpeakerBtn = document.getElementById('voice-speaker-btn');
+  const voiceEndBtn = document.getElementById('voice-end-btn');
+
+  let voiceInterval: number | null = null;
+  let voiceSeconds = 0;
+  let isMuted = false;
+  let isSpeakerOn = true;
+
+  function openVoiceModal() {
+    if (chatDropdown) chatDropdown.classList.add('hidden');
+    voiceModal?.classList.remove('hidden');
+    voiceSeconds = 0;
+    if (voiceTimer) voiceTimer.textContent = '00:00';
+    if (voiceInterval) clearInterval(voiceInterval);
+    voiceInterval = window.setInterval(() => {
+      voiceSeconds++;
+      const mins = String(Math.floor(voiceSeconds / 60)).padStart(2, '0');
+      const secs = String(voiceSeconds % 60).padStart(2, '0');
+      if (voiceTimer) voiceTimer.textContent = `${mins}:${secs}`;
+    }, 1000);
+  }
+
+  function closeVoiceModal() {
+    voiceModal?.classList.add('hidden');
+    if (voiceInterval) {
+      clearInterval(voiceInterval);
+      voiceInterval = null;
+    }
+  }
+
+  document.getElementById('chat-voice-call-btn')?.addEventListener('click', openVoiceModal);
+  document.getElementById('quick-voice-btn')?.addEventListener('click', openVoiceModal);
+  document.getElementById('menu-voice-btn')?.addEventListener('click', openVoiceModal);
+  document.getElementById('chat-mobile-voice-btn')?.addEventListener('click', openVoiceModal);
+  voiceEndBtn?.addEventListener('click', closeVoiceModal);
+
+  voiceMuteBtn?.addEventListener('click', () => {
+    isMuted = !isMuted;
+    voiceMuteBtn.classList.toggle('bg-red-500/20', isMuted);
+    voiceMuteBtn.classList.toggle('text-red-400', isMuted);
+  });
+
+  voiceSpeakerBtn?.addEventListener('click', () => {
+    isSpeakerOn = !isSpeakerOn;
+    voiceSpeakerBtn.classList.toggle('opacity-50', !isSpeakerOn);
+  });
+
+  // Emojis
+  const emojiToggleBtn = document.getElementById('chat-emoji-toggle-btn');
+  const emojiPopover = document.getElementById('chat-emoji-popover');
+  emojiToggleBtn?.addEventListener('click', () => emojiPopover?.classList.toggle('hidden'));
+  document.querySelectorAll('.chat-emoji-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const emoji = (e.currentTarget as HTMLElement).textContent?.trim();
+      if (emoji && chatInput) {
+        chatInput.value += emoji;
+        chatInput.focus();
+      }
+    });
+  });
+
+  // Quick Action Buttons
+  document.getElementById('quick-share-interest-btn')?.addEventListener('click', () => {
+    client.sendMessage("Hey! I'm interested in music, gaming, movies & tech. What about you? ✨");
+  });
+  document.getElementById('menu-interests-btn')?.addEventListener('click', () => {
+    if (chatDropdown) chatDropdown.classList.add('hidden');
+    client.sendMessage("Hey! I'm interested in music, gaming, movies & tech. What about you? ✨");
+  });
+  document.getElementById('quick-clear-btn')?.addEventListener('click', () => client.clearMessages());
+  document.getElementById('menu-clear-btn')?.addEventListener('click', () => {
+    if (chatDropdown) chatDropdown.classList.add('hidden');
+    client.clearMessages();
+  });
+
+  document.getElementById('bottom-report-btn')?.addEventListener('click', () => modalReport?.classList.remove('hidden'));
+  document.getElementById('bottom-block-btn')?.addEventListener('click', () => modalBlock?.classList.remove('hidden'));
+
+  // Mobile Drawers
+  document.getElementById('chat-toggle-left-pane-btn')?.addEventListener('click', () => {
+    const leftSidebar = document.getElementById('chat-left-sidebar');
+    leftSidebar?.classList.toggle('hidden');
+    leftSidebar?.classList.toggle('flex');
+  });
+  document.getElementById('chat-toggle-right-pane-btn')?.addEventListener('click', () => {
+    const rightSidebar = document.getElementById('chat-right-sidebar');
+    rightSidebar?.classList.toggle('hidden');
+    rightSidebar?.classList.toggle('flex');
+  });
+
+  // Start matching queue
+  client.enterQueue(nick, gender, pref, country, language);
 </script>

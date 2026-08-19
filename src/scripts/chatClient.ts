@@ -203,6 +203,15 @@ export class ChatClient {
     this.leaveChat();
   }
 
+  public blockStranger(): void {
+    this.blockPartner();
+  }
+
+  public clearMessages(): void {
+    this.messages = [];
+    this.notify();
+  }
+
   private send(message: ClientMessage): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));

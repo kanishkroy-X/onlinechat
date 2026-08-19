@@ -4,6 +4,8 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getTranslations } from '../../i18n/translations';
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return [
     { params: { topic: 'general' }, props: { title: 'General Chat', desc: 'Open conversations about everyday life, thoughts, and casual discussions.', icon: '💬', related: ['technology', 'movies', 'music'] } },

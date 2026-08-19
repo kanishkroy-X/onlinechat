@@ -2,56 +2,67 @@
 
 @layer base {
   :root {
-    --color-plum-deep: #492351;
-    --color-plum: #7F376D;
-    --color-rose: #D55882;
-    --color-coral: #FF808A;
-    --color-peach: #FFBF92;
-    --color-cream: #F6E5D9;
+    /* Vice City & Neon Night Palette Tokens */
+    --color-sunset-pink: #FF5CA8;
+    --color-vice-cyan: #00F0FF;
+    --color-neon-purple: #BC6CFF;
+    --color-miami-peach: #FFB86B;
+    --color-ocean-night: #0B0F2B;
+    --color-deep-plum: #14102E;
+    --color-dark-surface: #070B18;
+    --color-neon-border: #31354A;
 
-    --bg-page: #FFF9F7;
-    --bg-surface: #FFFFFF;
-    --bg-surface-elevated: #FFF4F2;
-    --text-main: #2A2027;
-    --text-muted: #665B63;
-    --text-subtle: #95878F;
-    --border-color: #E8DDE0;
-    --border-subtle: #F0E4E7;
+    /* Legacy compatibility mappings */
+    --color-plum-deep: #0B0F2B;
+    --color-plum: #14102E;
+    --color-rose: #FF5CA8;
+    --color-coral: #FF5CA8;
+    --color-peach: #FFB86B;
+    --color-cream: #F7F8FF;
 
-    --bubble-me: #FCECEF;
-    --bubble-stranger: #FFFFFF;
-    --bubble-me-text: #2A2027;
-    --bubble-stranger-text: #2A2027;
+    --bg-page: #0B0F2B;
+    --bg-surface: #14102E;
+    --bg-surface-elevated: #1C173E;
+    --text-main: #F7F8FF;
+    --text-muted: #9CA7C7;
+    --text-subtle: #687399;
+    --border-color: #31354A;
+    --border-subtle: #242940;
 
-    --focus-ring: rgba(213, 88, 130, 0.4);
-    --shadow-soft: 0 4px 20px -2px rgba(73, 35, 81, 0.06);
-    --shadow-card: 0 10px 30px -4px rgba(73, 35, 81, 0.1);
+    --bubble-me: #BC6CFF;
+    --bubble-stranger: #181538;
+    --bubble-me-text: #FFFFFF;
+    --bubble-stranger-text: #F7F8FF;
+
+    --focus-ring: rgba(255, 92, 168, 0.45);
+    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 10px 30px -4px rgba(0, 0, 0, 0.6);
   }
 
   html.dark {
-    --bg-page: #241622;
-    --bg-surface: #301B2D;
-    --bg-surface-elevated: #3B2140;
-    --text-main: #FFF7F5;
-    --text-muted: #D8C7CF;
-    --text-subtle: #A38E9B;
-    --border-color: #58374F;
-    --border-subtle: #45293E;
+    --bg-page: #070B18;
+    --bg-surface: #0E122A;
+    --bg-surface-elevated: #161B3D;
+    --text-main: #F7F8FF;
+    --text-muted: #9CA7C7;
+    --text-subtle: #616B8F;
+    --border-color: #272D48;
+    --border-subtle: #1B2036;
 
-    --bubble-me: #6B304C;
-    --bubble-stranger: #3B2140;
-    --bubble-me-text: #FFF7F5;
-    --bubble-stranger-text: #FFF7F5;
+    --bubble-me: #BC6CFF;
+    --bubble-stranger: #141838;
+    --bubble-me-text: #FFFFFF;
+    --bubble-stranger-text: #F7F8FF;
 
-    --focus-ring: rgba(255, 128, 138, 0.4);
-    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
-    --shadow-card: 0 10px 30px -4px rgba(0, 0, 0, 0.45);
+    --focus-ring: rgba(0, 240, 255, 0.45);
+    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+    --shadow-card: 0 10px 30px -4px rgba(0, 0, 0, 0.8);
   }
 
   body {
     background-color: var(--bg-page);
     color: var(--text-main);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -60,46 +71,242 @@
   }
 }
 
-/* Motion System Tokens (Emil Kowalski Physics Easing) */
+/* Motion System Tokens */
 :root {
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Sunset Design System v2 Gradient & Atmospheric Tokens */
-.gradient-sunset-full {
-  background: linear-gradient(180deg, #492351 0%, #7F376D 24%, #D55882 48%, #FF808A 68%, #FFBF92 84%, #F6E5D9 100%);
-}
-
-.gradient-sunset-hero {
-  background: linear-gradient(180deg, #492351 0%, #7F376D 24%, #D55882 48%, #FF808A 68%, #FFBF92 84%, #F6E5D9 100%);
-}
-
-.gradient-sunset-hero-dark {
-  background: linear-gradient(180deg, #241622 0%, #301B2D 30%, #492351 60%, #5C274E 85%, #241622 100%);
-}
-
+/* Vice City & Neon Night Gradients */
 .gradient-accent {
-  background: linear-gradient(135deg, #7F376D 0%, #D55882 50%, #FF808A 100%);
+  background: linear-gradient(135deg, #FF5CA8 0%, #BC6CFF 50%, #00F0FF 100%);
 }
 
 .gradient-accent-hover:hover {
-  background: linear-gradient(135deg, #8E3E7B 0%, #E0648E 50%, #FF919A 100%);
+  background: linear-gradient(135deg, #FF70B6 0%, #C77EFF 50%, #33F3FF 100%);
+}
+
+.gradient-vice-cta {
+  background: linear-gradient(135deg, #FF5CA8 0%, #BC6CFF 100%);
+}
+
+.gradient-vice-cyan {
+  background: linear-gradient(135deg, #00F0FF 0%, #BC6CFF 100%);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #D55882 0%, #FF808A 100%);
+  background: linear-gradient(135deg, #FF5CA8 0%, #BC6CFF 50%, #00F0FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #00F0FF 0%, #FF5CA8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.vice-glow-pink {
+  box-shadow: 0 0 20px -3px rgba(255, 92, 168, 0.45);
+}
+
+.vice-glow-cyan {
+  box-shadow: 0 0 20px -3px rgba(0, 240, 255, 0.4);
+}
+
+.vice-glow-purple {
+  box-shadow: 0 0 20px -3px rgba(188, 108, 255, 0.4);
+}
+
+/* Ambient Vice City Background Loop (8–15s) */
+.ambient-vice-glow {
+  animation: ambient-glow-loop 12s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-glow-loop {
+  0% {
+    transform: scale(1) translate(0px, 0px);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.12) translate(15px, -10px);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.95) translate(-10px, 15px);
+    opacity: 0.3;
+  }
+}
+
+/* Online Counter Gentle Pulse (● → ◉ → ● every 2s) */
+.animate-online-pulse {
+  animation: online-pulse-anim 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes online-pulse-anim {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+    box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.4);
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+    box-shadow: 0 0 8px 3px rgba(0, 240, 255, 0.6);
+  }
+}
+
+/* Signature RandomChat Connection Orb & Orbiting Bubbles */
+.animate-orb-orbit {
+  animation: orb-orbit-anim 2.2s linear infinite;
+}
+
+@keyframes orb-orbit-anim {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-orb-pulse {
+  animation: orb-pulse-anim 1.8s ease-in-out infinite;
+}
+
+@keyframes orb-pulse-anim {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 12px rgba(255, 92, 168, 0.5));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 28px rgba(0, 240, 255, 0.8));
+  }
+}
+
+/* Match Found Sequence: Avatars Gliding Together (500–700ms) */
+.animate-avatar-left-in {
+  animation: avatar-left-slide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes avatar-left-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(-40px) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-avatar-right-in {
+  animation: avatar-right-slide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes avatar-right-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-match-heart {
+  animation: match-heart-pop 0.5s 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+@keyframes match-heart-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Message In/Out Transitions (180–220ms) */
+.animate-bubble-in {
+  animation: bubble-entrance 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bubble-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Next Stranger Slide Transitions */
+.animate-slide-left-out {
+  animation: slide-left-out 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slide-left-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+.animate-slide-right-in {
+  animation: slide-right-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slide-right-in {
+  0% {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Send Button Press Micro-Interaction */
+.send-btn-active:active {
+  transform: scale(0.88) translateX(2px);
+  transition: transform 0.1s ease-out;
+}
+
+/* Staggered User List item */
+.user-list-item {
+  animation: user-item-fade 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes user-item-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Sunset Glowing Wave Background for Chat View */
 .sunset-chat-waves {
   background: 
-    radial-gradient(ellipse at 50% 100%, rgba(255, 128, 138, 0.15) 0%, transparent 60%),
-    radial-gradient(circle at 10% 20%, rgba(127, 55, 109, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 90% 40%, rgba(213, 88, 130, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 92, 168, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 10% 20%, rgba(188, 108, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 90% 40%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
     var(--bg-page);
   position: relative;
 }
@@ -108,95 +315,13 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 50% 120%, rgba(255, 191, 146, 0.12) 0%, transparent 70%);
+  background-image: radial-gradient(circle at 50% 120%, rgba(255, 184, 107, 0.08) 0%, transparent 70%);
   pointer-events: none;
-}
-
-/* Concentric Radar Orb & Water Surface Ripples */
-.sunset-radar-orb {
-  background: radial-gradient(circle, #FF808A 0%, #D55882 65%, #7F376D 100%);
-  box-shadow: 0 0 28px rgba(255, 128, 138, 0.6), inset 0 0 10px rgba(255, 191, 146, 0.8);
-}
-
-.sunset-ripple-ring {
-  border: 1px solid rgba(255, 128, 138, 0.4);
-  animation: sunset-ripple-anim 3s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
-}
-
-@keyframes sunset-ripple-anim {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: scale(2.8);
-    opacity: 0;
-  }
-}
-
-/* Tactile Micro-Interactions */
-.interactive-tactile {
-  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s var(--ease-spring);
-}
-.interactive-tactile:hover {
-  transform: translateY(-2px);
-}
-.interactive-tactile:active {
-  transform: translateY(0) scale(0.98);
-}
-
-/* Pulsing & Floating Animations */
-.pulsing-orb {
-  animation: pulse-glow 3s infinite ease-in-out;
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.08);
-    opacity: 1;
-    filter: drop-shadow(0 0 18px rgba(255, 128, 138, 0.6));
-  }
-}
-
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
-}
-
-@keyframes float-slow {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(0.5deg);
-  }
-}
-
-/* Chat Message Spring Entry */
-.animate-bubble-in {
-  animation: bubble-spring-in 0.28s var(--ease-spring) forwards;
-}
-
-@keyframes bubble-spring-in {
-  0% {
-    opacity: 0;
-    transform: translateY(8px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 /* Radar Ripple Wave for Matchmaking */
 .animate-radar-wave {
-  animation: radar-ripple 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  animation: radar-ripple 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
 }
 
 @keyframes radar-ripple {
@@ -205,7 +330,7 @@
     opacity: 0.8;
   }
   50% {
-    opacity: 0.4;
+    opacity: 0.35;
   }
   100% {
     transform: scale(2.4);

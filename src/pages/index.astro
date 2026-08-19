@@ -178,9 +178,26 @@ const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchP
         footerContainer?.classList.add('hidden');
         setupModal?.classList.add('hidden');
 
-        if (chatStrangerNick) chatStrangerNick.textContent = c.partner?.nickname || 'Stranger';
-        if (chatStrangerAvatar) chatStrangerAvatar.textContent = (c.partner?.nickname || 'S').charAt(0).toUpperCase();
+        const partnerName = c.partner?.nickname || 'Stranger';
+        if (chatStrangerNick) chatStrangerNick.textContent = partnerName;
+        if (chatStrangerAvatar) chatStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
         if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
+
+        // Right sidebar sync
+        const sideStrangerAvatar = document.getElementById('side-stranger-avatar');
+        const sideStrangerNick = document.getElementById('side-stranger-nick');
+        const sideStrangerLoc = document.getElementById('side-stranger-loc');
+        const voicePartnerName = document.getElementById('voice-partner-name');
+
+        if (sideStrangerAvatar) sideStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
+        if (sideStrangerNick) sideStrangerNick.textContent = partnerName;
+        if (voicePartnerName) voicePartnerName.textContent = partnerName;
+
+        const locText = c.partner?.country && c.partner.country !== 'anywhere'
+          ? `24 yrs, ${COUNTRY_NAMES[c.partner.country] || c.partner.country}`
+          : '24 yrs, California, USA';
+        if (sideStrangerLoc) sideStrangerLoc.textContent = locText;
+
         if (chatStrangerCountry) {
           if (c.partner?.country && c.partner.country !== 'anywhere') {
             chatStrangerCountry.textContent = COUNTRY_NAMES[c.partner.country] || c.partner.country;
@@ -524,6 +541,146 @@ const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchP
     });
     disconnectHomeBtn?.addEventListener('click', () => {
       client.setState('LANDING');
+    });
+
+    // Voice Call Interactive Modal
+    const voiceModal = document.getElementById('voice-call-modal');
+    const voiceTimer = document.getElementById('voice-call-timer');
+    const voiceMuteBtn = document.getElementById('voice-mute-btn');
+    const voiceSpeakerBtn = document.getElementById('voice-speaker-btn');
+    const voiceEndBtn = document.getElementById('voice-end-btn');
+    const chatVoiceCallBtn = document.getElementById('chat-voice-call-btn');
+    const quickVoiceBtn = document.getElementById('quick-voice-btn');
+    const menuVoiceBtn = document.getElementById('menu-voice-btn');
+    const chatMobileVoiceBtn = document.getElementById('chat-mobile-voice-btn');
+
+    let voiceInterval: number | null = null;
+    let voiceSeconds = 0;
+    let isMuted = false;
+    let isSpeakerOn = true;
+
+    function openVoiceModal() {
+      if (chatDropdown) chatDropdown.classList.add('hidden');
+      voiceModal?.classList.remove('hidden');
+      voiceSeconds = 0;
+      if (voiceTimer) voiceTimer.textContent = '00:00';
+      if (voiceInterval) clearInterval(voiceInterval);
+      voiceInterval = window.setInterval(() => {
+        voiceSeconds++;
+        const mins = String(Math.floor(voiceSeconds / 60)).padStart(2, '0');
+        const secs = String(voiceSeconds % 60).padStart(2, '0');
+        if (voiceTimer) voiceTimer.textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function closeVoiceModal() {
+      voiceModal?.classList.add('hidden');
+      if (voiceInterval) {
+        clearInterval(voiceInterval);
+        voiceInterval = null;
+      }
+    }
+
+    chatVoiceCallBtn?.addEventListener('click', openVoiceModal);
+    quickVoiceBtn?.addEventListener('click', openVoiceModal);
+    menuVoiceBtn?.addEventListener('click', openVoiceModal);
+    chatMobileVoiceBtn?.addEventListener('click', openVoiceModal);
+    voiceEndBtn?.addEventListener('click', closeVoiceModal);
+
+    voiceMuteBtn?.addEventListener('click', () => {
+      isMuted = !isMuted;
+      voiceMuteBtn.classList.toggle('bg-red-500/20', isMuted);
+      voiceMuteBtn.classList.toggle('text-red-400', isMuted);
+    });
+
+    voiceSpeakerBtn?.addEventListener('click', () => {
+      isSpeakerOn = !isSpeakerOn;
+      voiceSpeakerBtn.classList.toggle('opacity-50', !isSpeakerOn);
+    });
+
+    // Emoji Picker Popover
+    const emojiToggleBtn = document.getElementById('chat-emoji-toggle-btn');
+    const emojiPopover = document.getElementById('chat-emoji-popover');
+
+    emojiToggleBtn?.addEventListener('click', () => {
+      emojiPopover?.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('.chat-emoji-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const emoji = (e.currentTarget as HTMLElement).textContent?.trim();
+        if (emoji && chatInput) {
+          chatInput.value += emoji;
+          chatInput.focus();
+        }
+      });
+    });
+
+    // Quick Actions
+    const quickShareInterestBtn = document.getElementById('quick-share-interest-btn');
+    const menuInterestsBtn = document.getElementById('menu-interests-btn');
+    const quickClearBtn = document.getElementById('quick-clear-btn');
+    const menuClearBtn = document.getElementById('menu-clear-btn');
+
+    function shareInterests() {
+      if (chatDropdown) chatDropdown.classList.add('hidden');
+      const interestMsg = "Hey! I'm interested in music, gaming, movies & tech. What about you? ✨";
+      client.sendMessage(interestMsg);
+    }
+
+    function clearChatHistory() {
+      if (chatDropdown) chatDropdown.classList.add('hidden');
+      client.clearMessages();
+    }
+
+    quickShareInterestBtn?.addEventListener('click', shareInterests);
+    menuInterestsBtn?.addEventListener('click', shareInterests);
+    quickClearBtn?.addEventListener('click', clearChatHistory);
+    menuClearBtn?.addEventListener('click', clearChatHistory);
+
+    // Bottom action bar buttons
+    document.getElementById('bottom-report-btn')?.addEventListener('click', () => {
+      modalReport?.classList.remove('hidden');
+    });
+    document.getElementById('bottom-block-btn')?.addEventListener('click', () => {
+      modalBlock?.classList.remove('hidden');
+    });
+
+    // Left Sidebar Filter & Search
+    const countryFilter = document.getElementById('chat-sidebar-country-filter') as HTMLSelectElement;
+    const searchInput = document.getElementById('chat-sidebar-search') as HTMLInputElement;
+    const usersList = document.getElementById('chat-online-users-list');
+
+    function filterOnlineUsers() {
+      if (!usersList) return;
+      const query = (searchInput?.value || '').toLowerCase().trim();
+      const countryVal = countryFilter?.value || 'all';
+
+      Array.from(usersList.children).forEach(child => {
+        const text = child.textContent?.toLowerCase() || '';
+        const matchesQuery = !query || text.includes(query);
+        const matchesCountry = countryVal === 'all' || text.includes(countryVal) || countryVal === 'all';
+        (child as HTMLElement).style.display = matchesQuery && matchesCountry ? 'flex' : 'none';
+      });
+    }
+
+    searchInput?.addEventListener('input', filterOnlineUsers);
+    countryFilter?.addEventListener('change', filterOnlineUsers);
+
+    // Mobile Drawers Toggle
+    const leftPaneToggle = document.getElementById('chat-toggle-left-pane-btn');
+    const rightPaneToggle = document.getElementById('chat-toggle-right-pane-btn');
+    const leftSidebar = document.getElementById('chat-left-sidebar');
+    const rightSidebar = document.getElementById('chat-right-sidebar');
+
+    leftPaneToggle?.addEventListener('click', () => {
+      leftSidebar?.classList.toggle('hidden');
+      leftSidebar?.classList.toggle('flex');
+    });
+
+    rightPaneToggle?.addEventListener('click', () => {
+      rightSidebar?.classList.toggle('hidden');
+      rightSidebar?.classList.toggle('flex');
     });
   </script>
 </BaseLayout>

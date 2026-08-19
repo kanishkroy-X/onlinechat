@@ -7,78 +7,271 @@ import { getTranslations } from '../../i18n/translations';
 const lang = 'en';
 const t = getTranslations(lang);
 
-const TOPICS = [
-  { slug: 'general', title: 'General Chat', desc: 'Open conversations about everyday life, thoughts, and casual discussions.', icon: '💬' },
-  { slug: 'technology', title: 'Technology', desc: 'Discuss AI, software, hardware, programming, gadgets, and tech news.', icon: '💻' },
-  { slug: 'gaming', title: 'Gaming', desc: 'Talk about PC, console, esports, indie games, and your favorite walkthroughs.', icon: '🎮' },
-  { slug: 'music', title: 'Music', desc: 'Share song recommendations, favorite artists, albums, and instruments.', icon: '🎵' },
-  { slug: 'movies', title: 'Movies & TV', desc: 'Discussions around cinema, trending series, classic films, and reviews.', icon: '🎬' },
-  { slug: 'sports', title: 'Sports', desc: 'Football, basketball, cricket, athletics, and major sporting tournaments.', icon: '⚽' },
-  { slug: 'fitness', title: 'Fitness & Health', desc: 'Workouts, nutrition, wellness, training routines, and healthy habits.', icon: '🏃' },
-  { slug: 'travel', title: 'Travel & Cultures', desc: 'Stories from different cities, travel itineraries, cultures, and wanderlust.', icon: '✈️' },
-  { slug: 'books', title: 'Books & Literature', desc: 'Book club discussions, sci-fi novels, philosophy, and poetry.', icon: '📚' },
-  { slug: 'anime', title: 'Anime & Manga', desc: 'Seasonal anime releases, favorite series, manga chapters, and adaptations.', icon: '✨' },
-  { slug: 'study', title: 'Study & Career', desc: 'Academic motivation, study techniques, productivity, and career growth.', icon: '🎓' },
-  { slug: 'photography', title: 'Photography & Art', desc: 'Camera gear, digital art, visual aesthetics, and creative projects.', icon: '📷' }
+const ROOMS = [
+  {
+    slug: 'dating',
+    title: 'Dating & Romance',
+    desc: 'Meet singles, find chemistry, flirt, and connect with people looking for love.',
+    icon: '💖',
+    online: 2206,
+    badge: 'HOT',
+    badgeColor: 'text-[var(--color-sunset-pink)] bg-[var(--color-sunset-pink)]/15 border-[var(--color-sunset-pink)]/30',
+    category: 'dating',
+    tags: ['Flirting', 'Relationships', 'Singles', '18+']
+  },
+  {
+    slug: 'singles',
+    title: 'Singles Chat Lounge',
+    desc: 'A relaxed space for singles to mingle, exchange stories, and make new connections.',
+    icon: '✨',
+    online: 976,
+    badge: 'POPULAR',
+    badgeColor: 'text-[var(--color-vice-cyan)] bg-[var(--color-vice-cyan)]/15 border-[var(--color-vice-cyan)]/30',
+    category: 'dating',
+    tags: ['Mingle', 'Social', 'Global']
+  },
+  {
+    slug: 'nightlife',
+    title: 'Vice City Nightlife',
+    desc: 'Late night chill conversations, club vibes, music recommendations, and evening moods.',
+    icon: '🍹',
+    online: 420,
+    badge: 'TRENDING',
+    badgeColor: 'text-[var(--color-neon-purple)] bg-[var(--color-neon-purple)]/15 border-[var(--color-neon-purple)]/30',
+    category: 'lifestyle',
+    tags: ['Vibes', 'Midnight', 'Music']
+  },
+  {
+    slug: 'gaming',
+    title: 'Gaming & Esports',
+    desc: 'Talk about PC, console, FPS, RPGs, Valorant, GTA, Steam, and favorite gameplay.',
+    icon: '🎮',
+    online: 312,
+    badge: 'ACTIVE',
+    badgeColor: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30',
+    category: 'interests',
+    tags: ['Steam', 'PlayStation', 'PC Master Race']
+  },
+  {
+    slug: 'movies',
+    title: 'Cinema, Series & Anime',
+    desc: 'Discussions on blockbusters, trending series, anime seasons, plot theories, and reviews.',
+    icon: '🎬',
+    online: 245,
+    category: 'interests',
+    tags: ['Anime', 'Netflix', 'Cinema']
+  },
+  {
+    slug: 'music',
+    title: 'Music & Concerts',
+    desc: 'Share Spotify playlists, synthwave tracks, hip-hop beats, rock classics, and producers.',
+    icon: '🎵',
+    online: 184,
+    category: 'interests',
+    tags: ['Synthwave', 'Hip-Hop', 'Pop']
+  },
+  {
+    slug: 'technology',
+    title: 'Tech, AI & Coding',
+    desc: 'Artificial Intelligence, software engineering, gadgets, cybersecurity, and startups.',
+    icon: '💻',
+    online: 142,
+    category: 'interests',
+    tags: ['AI', 'Coding', 'Startups']
+  },
+  {
+    slug: 'india',
+    title: 'India Chat Room',
+    desc: 'Conversations with people across Delhi, Mumbai, Bengaluru, and the Indian diaspora.',
+    icon: '🇮🇳',
+    online: 49,
+    category: 'country',
+    tags: ['Desi', 'Bollywood', 'Chai']
+  },
+  {
+    slug: 'travel',
+    title: 'Travel & Cultures',
+    desc: 'Stories from different cities, travel itineraries, cultures, food, and wanderlust.',
+    icon: '✈️',
+    online: 88,
+    category: 'lifestyle',
+    tags: ['Backpacking', 'Food', 'Culture']
+  },
+  {
+    slug: 'study',
+    title: 'Study & Career Growth',
+    desc: 'Productivity tips, university life, remote work, career guidance, and motivation.',
+    icon: '🎓',
+    online: 67,
+    category: 'lifestyle',
+    tags: ['University', 'Career', 'Productivity']
+  },
+  {
+    slug: 'sports',
+    title: 'Sports & Fitness',
+    desc: 'Football matches, Premier League, NBA, cricket tournaments, workouts, and gym routines.',
+    icon: '⚽',
+    online: 73,
+    category: 'lifestyle',
+    tags: ['Football', 'Fitness', 'Cricket']
+  },
+  {
+    slug: 'philosophy',
+    title: 'Philosophy & Deep Talks',
+    desc: 'Thought-provoking questions, ethics, cosmos, existential wonders, and deep musings.',
+    icon: '🧠',
+    online: 34,
+    category: 'lifestyle',
+    tags: ['Mind', 'Cosmos', 'Existential']
+  }
 ];
 ---
 
 <BaseLayout
-  title="Chat Topics & Discoveries — randomcaht.online"
-  description="Explore conversational topics on RandomChat. Choose a theme to inspire your next stranger conversation."
+  title="Live Chat Rooms & Topics — randomcaht.online"
+  description="Explore active topic chat rooms on RandomChat. Join rooms for dating, gaming, music, tech, and regional communities."
   canonical="https://randomcaht.online/chat-rooms"
   lang={lang}
 >
   <Header lang={lang} />
 
-  <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-12 flex flex-col gap-10">
-    <!-- Page Header -->
-    <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-3">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold">
-        Conversation Starters
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-8 sm:py-12 flex flex-col gap-8">
+    <!-- Header Hero Banner -->
+    <div class="relative rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-2xl overflow-hidden flex flex-col items-center text-center gap-4">
+      <!-- Neon Atmospheric Glow -->
+      <div class="absolute -top-20 -left-20 w-72 h-72 bg-[var(--color-sunset-pink)]/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -right-20 w-72 h-72 bg-[var(--color-vice-cyan)]/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--color-sunset-pink)]/15 border border-[var(--color-sunset-pink)]/30 text-[var(--color-sunset-pink)] text-xs font-bold z-10">
+        <span class="w-2 h-2 rounded-full bg-[var(--color-sunset-pink)] animate-pulse"></span>
+        <span>Vice City Communities</span>
       </div>
-      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-main)] tracking-tight">
-        Chat Topics
+
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-main)] tracking-tight z-10">
+        Live Chat <span class="text-gradient">Rooms & Hubs</span>
       </h1>
-      <p class="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
-        Choose a topic to discover conversations around shared interests and mutual passions.
+
+      <p class="text-sm sm:text-base text-[var(--text-muted)] max-w-2xl leading-relaxed z-10">
+        Select an active topic room to connect with strangers who share your immediate passion, mood, or lifestyle.
       </p>
+
+      <!-- Search & Tab Filter Toolbar -->
+      <div class="w-full max-w-3xl flex flex-col sm:flex-row items-center gap-3 mt-4 z-10">
+        <!-- Room Search Input -->
+        <div class="relative flex-1 w-full">
+          <input
+            id="rooms-search-input"
+            type="text"
+            placeholder="Search room by name, interest, or tag..."
+            class="w-full px-4 py-3 pl-11 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface-elevated)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] text-sm focus:outline-none focus:border-[var(--color-sunset-pink)] focus:ring-1 focus:ring-[var(--color-sunset-pink)] transition-all"
+          />
+          <svg class="w-5 h-5 absolute left-3.5 top-3.5 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto p-1 bg-[var(--bg-surface-elevated)] border border-[var(--border-color)] rounded-2xl text-xs font-semibold shrink-0">
+          <button type="button" class="room-filter-btn px-3 py-2 rounded-xl bg-[var(--color-sunset-pink)] text-white shadow-sm transition-all cursor-pointer" data-category="all">
+            All
+          </button>
+          <button type="button" class="room-filter-btn px-3 py-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer" data-category="dating">
+            💖 Dating
+          </button>
+          <button type="button" class="room-filter-btn px-3 py-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer" data-category="interests">
+            🎮 Interests
+          </button>
+          <button type="button" class="room-filter-btn px-3 py-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer" data-category="lifestyle">
+            🍹 Lifestyle
+          </button>
+          <button type="button" class="room-filter-btn px-3 py-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer" data-category="country">
+            🌍 Regional
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Topics Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-      {TOPICS.map(topic => (
-        <a
-          href={`/chat-rooms/${topic.slug}`}
-          class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-[#D55882]/50 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all group interactive-tactile"
+    <!-- Rooms Cards Grid -->
+    <div id="rooms-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {ROOMS.map(room => (
+        <div
+          class="room-card p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-[var(--color-sunset-pink)]/50 flex flex-col justify-between gap-5 shadow-xl hover:shadow-2xl transition-all duration-300 group"
+          data-category={room.category}
+          data-tags={room.tags.join(' ').toLowerCase()}
+          data-name={room.title.toLowerCase()}
         >
-          <div class="flex items-center justify-between">
-            <span class="text-2xl">{topic.icon}</span>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[var(--bg-page)] text-[var(--text-subtle)] group-hover:text-[#FF808A] transition-colors">
-              Coming Soon
-            </span>
+          <div class="flex flex-col gap-3.5">
+            <!-- Top Card Header: Icon, Badge, and Online Pill -->
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FF5CA8]/20 via-[#BC6CFF]/20 to-[#00F0FF]/20 border border-[var(--border-color)] flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                {room.icon}
+              </div>
+
+              <div class="flex items-center gap-2">
+                {room.badge && (
+                  <span class={`text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-full border ${room.badgeColor}`}>
+                    {room.badge}
+                  </span>
+                )}
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--color-vice-cyan)]/10 border border-[var(--color-vice-cyan)]/25 text-[var(--color-vice-cyan)] text-xs font-bold">
+                  <span class="w-2 h-2 rounded-full bg-[var(--color-vice-cyan)] animate-pulse"></span>
+                  <span>{room.online.toLocaleString()} Online</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Title & Description -->
+            <div class="flex flex-col gap-1.5">
+              <h2 class="text-lg font-bold text-[var(--text-main)] group-hover:text-[var(--color-sunset-pink)] transition-colors">
+                {room.title}
+              </h2>
+              <p class="text-xs text-[var(--text-muted)] leading-relaxed line-clamp-2">
+                {room.desc}
+              </p>
+            </div>
+
+            <!-- Tag Pills -->
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              {room.tags.map(tag => (
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[var(--bg-surface-elevated)] border border-[var(--border-color)]/70 text-[var(--text-subtle)]">
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </div>
-          <div class="flex flex-col gap-1">
-            <h2 class="text-lg font-bold text-[var(--text-main)] group-hover:text-[#FF808A] transition-colors">
-              {topic.title}
-            </h2>
-            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
-              {topic.desc}
-            </p>
+
+          <!-- Bottom Action Buttons -->
+          <div class="pt-3 border-t border-[var(--border-color)]/60 flex items-center justify-between gap-3">
+            <a
+              href={`/chat-rooms/${room.slug}`}
+              class="text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+            >
+              Room Info
+            </a>
+            <a
+              href={`/start?pref=anyone&topic=${room.slug}`}
+              class="gradient-vice-cta text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-transform hover:scale-105 flex items-center gap-1.5"
+            >
+              <span>Join Room</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
           </div>
-        </a>
+        </div>
       ))}
     </div>
 
-    <!-- Informational Note -->
-    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 text-center text-xs text-[var(--text-muted)] flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Looking for instant general matchmaking right now?</span>
+    <!-- Quick Instant Matching Banner -->
+    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-[var(--color-vice-cyan)]/20 border border-[var(--color-vice-cyan)]/40 flex items-center justify-center text-[var(--color-vice-cyan)] shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-sm text-[var(--text-main)]">Prefer 1-on-1 instant random matching?</span>
+          <span class="text-xs text-[var(--text-muted)]">Connect directly with a stranger without selecting a specific room.</span>
+        </div>
       </div>
       <a
         href="/start"
-        class="gradient-accent gradient-accent-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition-all shrink-0"
+        class="gradient-vice-cta text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-transform hover:scale-105 shrink-0"
       >
         Start Random Chat &rarr;
       </a>
@@ -87,3 +280,47 @@ const TOPICS = [
 
   <Footer lang={lang} />
 </BaseLayout>
+
+<script>
+  const searchInput = document.getElementById('rooms-search-input') as HTMLInputElement;
+  const filterBtns = document.querySelectorAll('.room-filter-btn');
+  const cards = document.querySelectorAll('.room-card');
+
+  let activeCategory = 'all';
+
+  function filterRooms() {
+    const query = (searchInput?.value || '').toLowerCase().trim();
+
+    cards.forEach(card => {
+      const el = card as HTMLElement;
+      const category = el.dataset.category || '';
+      const name = el.dataset.name || '';
+      const tags = el.dataset.tags || '';
+
+      const matchesCat = activeCategory === 'all' || category === activeCategory;
+      const matchesQuery = !query || name.includes(query) || tags.includes(query);
+
+      if (matchesCat && matchesQuery) {
+        el.style.display = 'flex';
+      } else {
+        el.style.display = 'none';
+      }
+    });
+  }
+
+  searchInput?.addEventListener('input', filterRooms);
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      const target = e.currentTarget as HTMLButtonElement;
+      activeCategory = target.dataset.category || 'all';
+
+      filterBtns.forEach(b => {
+        b.className = 'room-filter-btn px-3 py-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer';
+      });
+      target.className = 'room-filter-btn px-3 py-2 rounded-xl bg-[var(--color-sunset-pink)] text-white shadow-sm transition-all cursor-pointer';
+
+      filterRooms();
+    });
+  });
+</script>
