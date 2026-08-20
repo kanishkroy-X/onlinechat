@@ -1,818 +1,1502 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import LandingHero from '../components/LandingHero.astro';
-import HowItWorks from '../components/HowItWorks.astro';
-import SafetyTrust from '../components/SafetyTrust.astro';
-import SetupModal from '../components/SetupModal.astro';
-import MatchingView from '../components/MatchingView.astro';
-import ChatView from '../components/ChatView.astro';
-import DisconnectNotice from '../components/DisconnectNotice.astro';
-import Modals from '../components/Modals.astro';
+import HeaderNav from '../components/HeaderNav.astro';
+import OnboardingModal from '../components/OnboardingModal.astro';
+import FilterPanel from '../components/FilterPanel.astro';
+import PeopleList from '../components/PeopleList.astro';
+import ActiveChat from '../components/ActiveChat.astro';
+import CallModals from '../components/CallModals.astro';
+import RoomsModal from '../components/RoomsModal.astro';
+import InboxModal from '../components/InboxModal.astro';
+import SettingsModal from '../components/SettingsModal.astro';
+import SafetyModals from '../components/SafetyModals.astro';
 
 export const prerender = false;
-
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
 ---
 
-<BaseLayout lang={currentLang}>
-  <Header lang={currentLang} />
+<BaseLayout
+  title="RandomChat — Clean, Modern & Safe People Online Chat"
+  description="Connect with people online instantly. Lightweight, anonymous-by-default social chat with progressive communication unlocks."
+>
+  <!-- Global Navigation Header -->
+  <HeaderNav />
 
-  <main id="app-main" class="flex-1 flex flex-col w-full relative">
-    <!-- Landing State -->
-    <div id="landing-view" class="w-full flex flex-col">
-      <LandingHero lang={currentLang} />
-      <HowItWorks lang={currentLang} />
-      <SafetyTrust lang={currentLang} />
+  <!-- Main Application Workspace -->
+  <main id="app-main" class="flex-1 w-full max-w-7xl mx-auto p-2 sm:p-4 lg:p-6 flex flex-col min-h-[calc(100vh-4rem)]">
+    <!-- Desktop Layout: 3-column / 2-column Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 items-start">
+      <!-- Left Column: Filters Sidebar (Desktop) -->
+      <div id="desktop-filter-col" class="hidden lg:block lg:col-span-3 sticky top-20">
+        <FilterPanel />
+      </div>
+
+      <!-- Center Column: People Online List -->
+      <div id="people-list-col" class="col-span-1 lg:col-span-4 flex flex-col gap-4">
+        <PeopleList />
+      </div>
+
+      <!-- Right Column: Active Chat Interface -->
+      <div id="active-chat-col" class="hidden md:flex col-span-1 lg:col-span-5 h-[calc(100vh-6.5rem)] sticky top-20 flex-col">
+        <ActiveChat />
+      </div>
     </div>
-
-    <!-- Active Interactive States -->
-    <MatchingView lang={currentLang} />
-    <ChatView lang={currentLang} />
-    <DisconnectNotice lang={currentLang} />
   </main>
 
-  <!-- Modals & Overlays -->
-  <SetupModal lang={currentLang} />
-  <Modals lang={currentLang} />
-
-  <div id="footer-container">
-    <Footer lang={currentLang} />
+  <!-- Mobile Filter Bottom Sheet / Drawer -->
+  <div
+    id="mobile-filter-drawer"
+    class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4"
+  >
+    <div class="w-full sm:max-w-md bg-[var(--bg-surface)] border-t sm:border border-[var(--border)] rounded-t-3xl sm:rounded-3xl p-5 flex flex-col gap-4 animate-drawer-in max-h-[85vh] overflow-y-auto transition-colors">
+      <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+        <h3 class="text-sm font-bold text-[var(--text-primary)]">Filter People Online</h3>
+        <button type="button" id="mobile-filter-close-btn" class="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <!-- Embedded Filter Panel inside Mobile Drawer -->
+      <div id="mobile-drawer-filter-content">
+        <!-- Filter controls -->
+      </div>
+      <button
+        type="button"
+        id="mobile-filter-apply-btn"
+        class="w-full py-3 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white font-semibold text-xs transition-all shadow-md cursor-pointer mt-2"
+      >
+        Apply Filters
+      </button>
+    </div>
   </div>
 
-  <!-- Interactive Client State Script -->
+  <!-- Onboarding Modal -->
+  <OnboardingModal />
+
+  <!-- Communication & Discovery Modals -->
+  <CallModals />
+  <RoomsModal />
+  <InboxModal />
+  <SettingsModal />
+  <SafetyModals />
+
+  <!-- Client-Side State Management Script -->
   <script>
-    import { ChatClient } from '../scripts/chatClient';
-    import { validateNickname } from '../server/sanitizer';
-    import type { Gender, MatchPreference, Country, Language, ReportReason } from '../server/types';
-    import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
+    import { MOCK_USERS, MOCK_ROOMS, COUNTRY_FLAG_MAP } from '../data/mockData';
+    import type { User, Message, Conversation, FilterState, ReportReason } from '../types/randomchat';
 
-    const client = new ChatClient();
+    // Application State
+    interface AppState {
+      currentUser: User | null;
+      activeConversation: Conversation | null;
+      conversations: Map<string, Conversation>;
+      filters: FilterState;
+      searchQuery: string;
+      blockedUserIds: Set<string>;
+      isRecordingVoice: boolean;
+      recordingTimer: number | null;
+      recordingSeconds: number;
+    }
 
-    // DOM Elements
-    const landingView = document.getElementById('landing-view');
-    const matchingView = document.getElementById('matching-view');
-    const chatView = document.getElementById('chat-view');
-    const disconnectView = document.getElementById('disconnect-view');
-    const setupModal = document.getElementById('setup-modal');
-    const footerContainer = document.getElementById('footer-container');
+    const state: AppState = {
+      currentUser: null,
+      activeConversation: null,
+      conversations: new Map(),
+      filters: {
+        gender: 'all',
+        minAge: 18,
+        maxAge: 45,
+        countryCode: 'all',
+        city: 'all'
+      },
+      searchQuery: '',
+      blockedUserIds: new Set(),
+      isRecordingVoice: false,
+      recordingTimer: null,
+      recordingSeconds: 0
+    };
 
-    // Hero / Triggers
-    const heroStartBtn = document.getElementById('hero-start-btn');
-    const setupCloseBtn = document.getElementById('setup-close-btn');
-    const setupForm = document.getElementById('setup-form') as HTMLFormElement;
-    const nicknameInput = document.getElementById('setup-nickname') as HTMLInputElement;
-    const nicknameError = document.getElementById('setup-nickname-error');
-    const matchingCancelBtn = document.getElementById('matching-cancel-btn');
-    const matchingPrefDisplay = document.getElementById('matching-pref-display');
+    // DOM Element References
+    const onboardingModal = document.getElementById('onboarding-modal');
+    const obUsernameInput = document.getElementById('ob-username-input') as HTMLInputElement;
+    const obUsernameMsg = document.getElementById('ob-username-msg');
+    const obUsernameIcon = document.getElementById('ob-username-status-icon');
+    const obUsernameSuggestions = document.getElementById('ob-username-suggestions');
+    const obSuggestionsList = document.getElementById('ob-suggestions-list');
+    const obStep1Btn = document.getElementById('ob-step-1-btn') as HTMLButtonElement;
+    const obStep1 = document.getElementById('onboarding-step-1');
+    const obStep2 = document.getElementById('onboarding-step-2');
+    const obStep3 = document.getElementById('onboarding-step-3');
+    const obAgeSelect = document.getElementById('ob-age-select') as HTMLSelectElement;
+    const obStep2Btn = document.getElementById('ob-step-2-btn');
+    const obStep2Back = document.getElementById('ob-step-2-back');
+    const obCountrySelect = document.getElementById('ob-country-select') as HTMLSelectElement;
+    const obCitySelect = document.getElementById('ob-city-select') as HTMLSelectElement;
+    const obStep3Back = document.getElementById('ob-step-3-back');
+    const obFinishBtn = document.getElementById('ob-finish-btn');
+    const stepDot1 = document.getElementById('step-dot-1');
+    const stepDot2 = document.getElementById('step-dot-2');
+    const stepDot3 = document.getElementById('step-dot-3');
 
-    // Chat elements
-    const chatStrangerNick = document.getElementById('chat-stranger-nick');
-    const chatStrangerAvatar = document.getElementById('chat-stranger-avatar');
-    const chatStrangerGender = document.getElementById('chat-stranger-gender');
-    const chatStrangerCountry = document.getElementById('chat-stranger-country');
-    const chatStrangerLanguage = document.getElementById('chat-stranger-language');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input') as HTMLInputElement;
-    const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
-    const chatComposerForm = document.getElementById('chat-composer-form') as HTMLFormElement;
-    const coldGateBanner = document.getElementById('cold-gate-banner');
+    // Header & Navigation Elements
+    const headerNickname = document.getElementById('header-user-nickname');
+    const headerAvatar = document.getElementById('header-user-avatar') as HTMLImageElement;
+    const headerSettingsBtn = document.getElementById('header-settings-btn');
+    const headerProfileBtn = document.getElementById('header-profile-btn');
+    const navBtnOnline = document.getElementById('nav-btn-online');
+    const navBtnRooms = document.getElementById('nav-btn-rooms');
+    const navBtnInbox = document.getElementById('nav-btn-inbox');
+    const navBtnRandomVoice = document.getElementById('nav-btn-random-voice');
+
+    // People List Elements
+    const peopleListCol = document.getElementById('people-list-col');
+    const peopleCardsContainer = document.getElementById('people-cards-container');
+    const peopleSearchInput = document.getElementById('people-search-input') as HTMLInputElement;
+    const peopleSearchClear = document.getElementById('people-search-clear');
+    const peopleEmptyState = document.getElementById('people-empty-state');
+    const peopleOnlineCount = document.getElementById('people-online-count');
+    const emptyClearFiltersBtn = document.getElementById('empty-clear-filters-btn');
+
+    // Filters Elements
+    const filterAgeRange = document.getElementById('filter-age-range') as HTMLInputElement;
+    const filterAgeLabel = document.getElementById('filter-age-label');
+    const filterCountrySelect = document.getElementById('filter-country-select') as HTMLSelectElement;
+    const filterCitySelect = document.getElementById('filter-city-select') as HTMLSelectElement;
+    const filterClearAllBtn = document.getElementById('filter-clear-all-btn');
+    const filterApplyBtn = document.getElementById('filter-apply-btn');
+    const mobileFilterDrawer = document.getElementById('mobile-filter-drawer');
+    const mobileFilterToggle = document.getElementById('mobile-filter-drawer-toggle');
+    const mobileFilterClose = document.getElementById('mobile-filter-close-btn');
+
+    // Active Chat Elements
+    const activeChatCol = document.getElementById('active-chat-col');
+    const chatUnselected = document.getElementById('chat-unselected-state');
+    const chatSelected = document.getElementById('chat-selected-state');
+    const chatBackBtn = document.getElementById('chat-back-btn');
+    const activeChatAvatar = document.getElementById('active-chat-avatar') as HTMLImageElement;
+    const activeChatUsername = document.getElementById('active-chat-username');
+    const activeChatFlag = document.getElementById('active-chat-flag');
+    const activeChatDetails = document.getElementById('active-chat-details');
+    const chatMessagesList = document.getElementById('chat-messages-list');
+    const chatTextInput = document.getElementById('chat-text-input') as HTMLInputElement;
+    const chatInputForm = document.getElementById('chat-input-form');
+    const chatWaitingBanner = document.getElementById('chat-waiting-banner');
+    const simulateReplyBtn = document.getElementById('simulate-reply-btn');
     const chatTypingIndicator = document.getElementById('chat-typing-indicator');
-    const chatNextBtn = document.getElementById('chat-next-btn');
-    const chatMenuBtn = document.getElementById('chat-menu-btn');
-    const chatDropdown = document.getElementById('chat-dropdown');
+    const typingUserName = document.getElementById('typing-user-name');
 
-    // Attachment & Lightbox Elements
-    const chatFileInput = document.getElementById('chat-file-input') as HTMLInputElement;
+    // Feature Unlock Bar Badges
+    const badgeVoiceNote = document.getElementById('unlock-badge-voice-note');
+    const badgeVoiceChat = document.getElementById('unlock-badge-voice-chat');
+    const badgeVoiceCall = document.getElementById('unlock-badge-voice-call');
+    const badgeVideoCall = document.getElementById('unlock-badge-video-call');
+    const unlockHelpBtn = document.getElementById('unlock-help-btn');
+    const unlockInfoModal = document.getElementById('unlock-info-modal');
+    const unlockInfoCloseBtn = document.getElementById('unlock-info-close-btn');
+    const unlockInfoGotItBtn = document.getElementById('unlock-info-got-it-btn');
+
+    // Call Buttons in Chat Header
+    const chatVoiceChatBtn = document.getElementById('chat-voice-chat-btn') as HTMLButtonElement;
+    const chatVoiceCallBtn = document.getElementById('chat-voice-call-btn') as HTMLButtonElement;
+    const chatVideoCallBtn = document.getElementById('chat-video-call-btn') as HTMLButtonElement;
+    const chatMicBtn = document.getElementById('chat-mic-btn') as HTMLButtonElement;
+
+    // Attachments Elements
     const chatAttachBtn = document.getElementById('chat-attach-btn');
-    const chatMediaPreviewContainer = document.getElementById('chat-media-preview-container');
-    const chatImagePreview = document.getElementById('chat-image-preview') as HTMLImageElement;
-    const chatVideoPreview = document.getElementById('chat-video-preview') as HTMLVideoElement;
-    const chatMediaName = document.getElementById('chat-media-name');
-    const chatRemoveMediaBtn = document.getElementById('chat-remove-media-btn');
+    const chatAttachmentMenu = document.getElementById('chat-attachment-menu');
+    const attachPngBtn = document.getElementById('attach-png-btn');
+    const attachMp4Btn = document.getElementById('attach-mp4-btn');
+    const hiddenFileInput = document.getElementById('hidden-file-input') as HTMLInputElement;
+    const mediaPreviewContainer = document.getElementById('chat-media-preview-container');
+    const previewImg = document.getElementById('preview-img') as HTMLImageElement;
+    const previewVideo = document.getElementById('preview-video') as HTMLVideoElement;
+    const previewFileName = document.getElementById('preview-file-name');
+    const previewFileSize = document.getElementById('preview-file-size');
+    const cancelMediaPreviewBtn = document.getElementById('cancel-media-preview-btn');
     const chatLightbox = document.getElementById('chat-lightbox');
     const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
-    const lightboxClose = document.getElementById('lightbox-close');
+    const lightboxCloseBtn = document.getElementById('lightbox-close-btn');
 
-    let currentAttachedMedia: { type: 'image' | 'video'; data: string; name: string } | null = null;
+    // Voice Note Recorder Elements
+    const voiceRecorderBar = document.getElementById('voice-recorder-bar');
+    const normalComposerBar = document.getElementById('normal-composer-bar');
+    const recordingTimer = document.getElementById('recording-timer');
+    const cancelRecordBtn = document.getElementById('cancel-record-btn');
+    const sendRecordBtn = document.getElementById('send-record-btn');
 
-    // Modals
-    const modalNext = document.getElementById('modal-next');
-    const modalNextCancel = document.getElementById('modal-next-cancel');
-    const modalNextConfirm = document.getElementById('modal-next-confirm');
+    // Modals Elements
+    const roomsModal = document.getElementById('rooms-modal');
+    const roomsCloseBtn = document.getElementById('rooms-close-btn');
+    const roomDetailModal = document.getElementById('room-detail-modal');
+    const roomDetailCloseBtn = document.getElementById('room-detail-close-btn');
+    const roomJoinConfirmBtn = document.getElementById('room-join-confirm-btn');
 
-    const modalLeave = document.getElementById('modal-leave');
-    const modalLeaveCancel = document.getElementById('modal-leave-cancel');
-    const modalLeaveConfirm = document.getElementById('modal-leave-confirm');
-    const menuLeaveBtn = document.getElementById('menu-leave-btn');
+    const inboxModal = document.getElementById('inbox-modal');
+    const inboxCloseBtn = document.getElementById('inbox-close-btn');
 
-    const modalReport = document.getElementById('modal-report');
-    const modalReportClose = document.getElementById('modal-report-close');
-    const modalReportCancel = document.getElementById('modal-report-cancel');
-    const reportForm = document.getElementById('report-form') as HTMLFormElement;
-    const reportReasonSelect = document.getElementById('report-reason-select') as HTMLSelectElement;
-    const reportDetailsInput = document.getElementById('report-details-input') as HTMLTextAreaElement;
-    const menuReportBtn = document.getElementById('menu-report-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const settingsCloseBtn = document.getElementById('settings-close-btn');
+    const settingsEditNickBtn = document.getElementById('settings-edit-nick-btn');
+    const settingsClearHistoryBtn = document.getElementById('settings-clear-history-btn');
 
-    const modalBlock = document.getElementById('modal-block');
-    const modalBlockCancel = document.getElementById('modal-block-cancel');
-    const modalBlockConfirm = document.getElementById('modal-block-confirm');
-    const menuBlockBtn = document.getElementById('menu-block-btn');
+    const safetyMenuBtn = document.getElementById('chat-safety-menu-btn');
+    const safetyDropdown = document.getElementById('chat-safety-dropdown');
+    const menuReportBtn = document.getElementById('menu-report-user-btn');
+    const menuBlockBtn = document.getElementById('menu-block-user-btn');
+    const reportModal = document.getElementById('report-modal');
+    const reportCloseBtn = document.getElementById('report-close-btn');
+    const reportCancelBtn = document.getElementById('report-cancel-btn');
+    const reportForm = document.getElementById('report-form');
+    const blockModal = document.getElementById('block-modal');
+    const blockCancelBtn = document.getElementById('block-cancel-btn');
+    const blockConfirmBtn = document.getElementById('block-confirm-btn');
 
-    const disconnectFindBtn = document.getElementById('disconnect-find-btn');
-    const disconnectHomeBtn = document.getElementById('disconnect-home-btn');
+    // Call Modals Elements
+    const voiceChatModal = document.getElementById('voice-chat-modal');
+    const vcEndBtn = document.getElementById('vc-end-btn');
+    const voiceCallModal = document.getElementById('voice-call-modal');
+    const vcallEndBtn = document.getElementById('vcall-end-btn');
+    const videoCallModal = document.getElementById('video-call-modal');
+    const vidEndBtn = document.getElementById('vid-end-btn');
+    const randomVoiceModal = document.getElementById('random-voice-modal');
+    const rvCloseBtn = document.getElementById('rv-close-btn');
+    const rvCancelBtn = document.getElementById('rv-cancel-btn');
 
-    // Form state
-    let selectedGender: Gender = 'male';
-    let selectedPreference: MatchPreference = 'anyone';
-    let selectedCountry: string = 'anywhere';
-    let selectedLanguage: string = 'any';
+    let pendingAttachedFile: { file: File; type: 'png' | 'mp4'; url: string } | null = null;
+    let selectedGender: 'male' | 'female' | 'other' = 'male';
 
-    // UI State Switcher
-    function updateUI(c: ChatClient) {
-      // Hide all main state views
-      landingView?.classList.add('hidden');
-      matchingView?.classList.add('hidden');
-      chatView?.classList.add('hidden');
-      disconnectView?.classList.add('hidden');
+    // TOAST SYSTEM
+    function showToast(message: string, type: 'info' | 'success' | 'error' = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
 
-      if (c.state === 'LANDING') {
-        landingView?.classList.remove('hidden');
-        footerContainer?.classList.remove('hidden');
-        setupModal?.classList.add('hidden');
-      } else if (c.state === 'SETUP') {
-        landingView?.classList.remove('hidden');
-        setupModal?.classList.remove('hidden');
-        nicknameInput?.focus();
-      } else if (c.state === 'MATCHING') {
-        matchingView?.classList.remove('hidden');
-        footerContainer?.classList.add('hidden');
-        setupModal?.classList.add('hidden');
+      const toast = document.createElement('div');
+      toast.className = `px-4 py-3 rounded-2xl text-xs font-semibold shadow-2xl flex items-center gap-2.5 transition-all duration-300 pointer-events-auto border animate-modal-in ${
+        type === 'error'
+          ? 'bg-[#FF4D5F] text-white border-[#FF4D5F]'
+          : type === 'success'
+          ? 'bg-[#18D889] text-[#07111B] border-[#18D889]'
+          : 'bg-[#101D2A] text-[#F5F7FA] border-[#1D3040]'
+      }`;
 
-        // Show Finding Radar, hide Match Found card
-        const matchingRadarContainer = document.getElementById('matching-radar-container');
-        const matchFoundContainer = document.getElementById('match-found-container');
-        matchingRadarContainer?.classList.remove('hidden');
-        matchFoundContainer?.classList.add('hidden');
+      const icon =
+        type === 'error'
+          ? '⚠️'
+          : type === 'success'
+          ? '✓'
+          : 'ℹ️';
 
-        if (matchingPrefDisplay) matchingPrefDisplay.textContent = c.preference;
-        const matchingCountryDisplay = document.getElementById('matching-country-display');
-        const matchingLanguageDisplay = document.getElementById('matching-language-display');
-        const matchingPrefDetails = document.getElementById('matching-pref-details');
-        if (matchingCountryDisplay && c.country && c.country !== 'anywhere') {
-          matchingCountryDisplay.textContent = COUNTRY_NAMES[c.country] || c.country;
-          matchingCountryDisplay.classList.remove('hidden');
-        } else if (matchingCountryDisplay) {
-          matchingCountryDisplay.classList.add('hidden');
-        }
-        if (matchingLanguageDisplay && c.language && c.language !== 'any') {
-          matchingLanguageDisplay.textContent = LANGUAGE_NAMES[c.language] || c.language;
-          matchingLanguageDisplay.classList.remove('hidden');
-        } else if (matchingLanguageDisplay) {
-          matchingLanguageDisplay.classList.add('hidden');
-        }
-        if (matchingPrefDetails) {
-          const hasDetails = (c.country && c.country !== 'anywhere') || (c.language && c.language !== 'any');
-          if (hasDetails) {
-            matchingPrefDetails.classList.remove('hidden');
-          } else {
-            matchingPrefDetails.classList.add('hidden');
-          }
-        }
-      } else if (c.state === 'MATCH_FOUND') {
-        // MATCH FOUND SEQUENCE (500-700ms animation of avatars gliding together)
-        matchingView?.classList.remove('hidden');
-        chatView?.classList.add('hidden');
-        footerContainer?.classList.add('hidden');
-        setupModal?.classList.add('hidden');
+      toast.innerHTML = `<span>${icon}</span><span class="flex-1">${message}</span>`;
+      container.appendChild(toast);
 
-        const matchingRadarContainer = document.getElementById('matching-radar-container');
-        const matchFoundContainer = document.getElementById('match-found-container');
-        const matchFoundStrangerLetter = document.getElementById('match-found-stranger-letter');
-        const matchFoundStrangerName = document.getElementById('match-found-stranger-name');
-
-        matchingRadarContainer?.classList.add('hidden');
-        matchFoundContainer?.classList.remove('hidden');
-
-        const partnerName = c.partner?.nickname || 'Stranger';
-        if (matchFoundStrangerLetter) matchFoundStrangerLetter.textContent = partnerName.charAt(0).toUpperCase();
-        if (matchFoundStrangerName) matchFoundStrangerName.textContent = partnerName;
-
-        // Automatically slide into chat view after short celebration
-        const matchStartBtn = document.getElementById('match-found-start-btn');
-        if (matchStartBtn) {
-          matchStartBtn.onclick = () => {
-            c.setState('CONNECTED');
-          };
-        }
-        setTimeout(() => {
-          if (c.state === 'MATCH_FOUND') {
-            c.setState('CONNECTED');
-          }
-        }, 800);
-      } else if (c.state === 'CONNECTING' || c.state === 'CONNECTED') {
-        matchingView?.classList.add('hidden');
-        chatView?.classList.remove('hidden');
-        footerContainer?.classList.add('hidden');
-        setupModal?.classList.add('hidden');
-
-        const partnerName = c.partner?.nickname || 'Stranger';
-        if (chatStrangerNick) chatStrangerNick.textContent = partnerName;
-        if (chatStrangerAvatar) chatStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
-        if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
-
-        // Right sidebar sync
-        const sideStrangerAvatar = document.getElementById('side-stranger-avatar');
-        const sideStrangerNick = document.getElementById('side-stranger-nick');
-        const sideStrangerLoc = document.getElementById('side-stranger-loc');
-        const voicePartnerName = document.getElementById('voice-partner-name');
-
-        if (sideStrangerAvatar) sideStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
-        if (sideStrangerNick) sideStrangerNick.textContent = partnerName;
-        if (voicePartnerName) voicePartnerName.textContent = partnerName;
-
-        const locText = c.partner?.country && c.partner.country !== 'anywhere'
-          ? `24 yrs, ${COUNTRY_NAMES[c.partner.country] || c.partner.country}`
-          : '24 yrs, California, USA';
-        if (sideStrangerLoc) sideStrangerLoc.textContent = locText;
-
-        if (chatStrangerCountry) {
-          if (c.partner?.country && c.partner.country !== 'anywhere') {
-            chatStrangerCountry.textContent = COUNTRY_NAMES[c.partner.country] || c.partner.country;
-            chatStrangerCountry.classList.remove('hidden');
-          } else {
-            chatStrangerCountry.classList.add('hidden');
-          }
-        }
-        if (chatStrangerLanguage) {
-          if (c.partner?.language && c.partner.language !== 'any') {
-            chatStrangerLanguage.textContent = LANGUAGE_NAMES[c.partner.language] || c.partner.language;
-            chatStrangerLanguage.classList.remove('hidden');
-          } else {
-            chatStrangerLanguage.classList.add('hidden');
-          }
-        }
-
-        renderMessages(c);
-        renderColdGate(c);
-
-        if (chatMessages) {
-          chatMessages.classList.remove('animate-slide-left-out');
-          chatMessages.classList.add('animate-slide-right-in');
-        }
-
-        if (c.isPartnerTyping) {
-          chatTypingIndicator?.classList.remove('hidden');
-        } else {
-          chatTypingIndicator?.classList.add('hidden');
-        }
-      } else if (c.state === 'DISCONNECTED') {
-        disconnectView?.classList.remove('hidden');
-        footerContainer?.classList.remove('hidden');
-        setupModal?.classList.add('hidden');
-      } else if (c.state === 'RATE_LIMITED' || c.state === 'ERROR') {
-        alert(c.errorMessage || 'An error occurred.');
-        c.setState('LANDING');
-      }
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
     }
 
-    function renderMessages(c: ChatClient) {
-      if (!chatMessages) return;
+    // 1. ONBOARDING & USER IDENTITY
+    function initUser() {
+      const saved = localStorage.getItem('rc_user');
+      if (saved) {
+        try {
+          state.currentUser = JSON.parse(saved);
+          if (onboardingModal) onboardingModal.classList.add('hidden');
+          updateHeaderProfile();
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      if (onboardingModal) onboardingModal.classList.remove('hidden');
+    }
 
-      // Keep welcome banner and append new messages
-      const existingCount = chatMessages.querySelectorAll('.message-bubble').length;
-      if (existingCount === c.messages.length) return;
+    function updateHeaderProfile() {
+      if (!state.currentUser) return;
+      if (headerNickname) headerNickname.textContent = state.currentUser.username;
+      if (headerAvatar) headerAvatar.src = state.currentUser.avatarUrl;
+    }
 
-      // Re-render message list
-      const welcome = chatMessages.firstElementChild;
-      chatMessages.innerHTML = '';
-      if (welcome) chatMessages.appendChild(welcome);
+    // Real-time Username Uniqueness & Format Validation
+    const TAKEN_USERNAMES = ['coolvibes', 'randomchat', 'admin', 'alex', 'sarah', 'john'];
 
-      c.messages.forEach(msg => {
-        const isMe = msg.sender === 'me';
-        const wrapper = document.createElement('div');
-        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'} animate-bubble-in`;
+    if (obUsernameInput) {
+      obUsernameInput.addEventListener('input', () => {
+        const val = obUsernameInput.value.trim();
+        const regex = /^[a-zA-Z0-9_]{4,20}$/;
 
-        const bubble = document.createElement('div');
-        bubble.className = isMe
-          ? 'p-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm flex flex-col gap-2'
-          : 'p-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm flex flex-col gap-2';
+        if (!val) {
+          if (obUsernameMsg) obUsernameMsg.innerHTML = '';
+          if (obUsernameIcon) obUsernameIcon.classList.add('hidden');
+          if (obUsernameSuggestions) obUsernameSuggestions.classList.add('hidden');
+          obStep1Btn.disabled = true;
+          return;
+        }
 
-        // Render Media if present
-        if (msg.mediaData) {
-          if (msg.mediaType === 'video') {
-            const videoEl = document.createElement('video');
-            videoEl.src = msg.mediaData;
-            videoEl.controls = true;
-            videoEl.className = 'max-w-full rounded-xl max-h-60 object-contain bg-black';
-            bubble.appendChild(videoEl);
-          } else {
-            const imgEl = document.createElement('img');
-            imgEl.src = msg.mediaData;
-            imgEl.alt = 'Shared photo';
-            imgEl.className = 'max-w-full rounded-xl max-h-60 object-cover cursor-pointer hover:opacity-95 transition-opacity';
-            imgEl.addEventListener('click', () => {
-              if (lightboxImg && chatLightbox) {
-                lightboxImg.src = msg.mediaData!;
-                chatLightbox.classList.remove('hidden');
-              }
+        if (!regex.test(val)) {
+          if (obUsernameMsg) {
+            obUsernameMsg.innerHTML = '<span class="text-[#FF4D5F]">Username must be 4–20 letters, numbers, or underscores (no spaces).</span>';
+          }
+          if (obUsernameIcon) {
+            obUsernameIcon.innerHTML = '<span class="text-[#FF4D5F] font-bold">✗</span>';
+            obUsernameIcon.classList.remove('hidden');
+          }
+          if (obUsernameSuggestions) obUsernameSuggestions.classList.add('hidden');
+          obStep1Btn.disabled = true;
+          return;
+        }
+
+        // Check uniqueness
+        const lower = val.toLowerCase();
+        if (TAKEN_USERNAMES.includes(lower)) {
+          if (obUsernameMsg) {
+            obUsernameMsg.innerHTML = `<span class="text-[#FF4D5F]"><strong>${val}</strong> is already taken.</span>`;
+          }
+          if (obUsernameIcon) {
+            obUsernameIcon.innerHTML = '<span class="text-[#FF4D5F] font-bold">✗</span>';
+            obUsernameIcon.classList.remove('hidden');
+          }
+
+          // Generate 3 realistic alternatives
+          const suggestions = [
+            `${val}_27`,
+            `${val}2026`,
+            `${val}X`
+          ];
+
+          if (obSuggestionsList) {
+            obSuggestionsList.innerHTML = suggestions
+              .map(
+                (s) =>
+                  `<button type="button" class="ob-suggest-pill px-2.5 py-1 rounded-lg bg-[#07111B] hover:bg-[#6C4DFF] hover:text-white border border-[#1D3040] text-xs text-[#6C4DFF] font-semibold transition-colors cursor-pointer">${s}</button>`
+              )
+              .join('');
+
+            document.querySelectorAll('.ob-suggest-pill').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                obUsernameInput.value = btn.textContent || '';
+                obUsernameInput.dispatchEvent(new Event('input'));
+              });
             });
-            bubble.appendChild(imgEl);
           }
-        }
 
-        // Render Text if present
-        if (msg.text) {
-          const textSpan = document.createElement('span');
-          textSpan.className = 'px-1 leading-relaxed';
-          textSpan.textContent = msg.text;
-          bubble.appendChild(textSpan);
+          if (obUsernameSuggestions) obUsernameSuggestions.classList.remove('hidden');
+          obStep1Btn.disabled = true;
+        } else {
+          // Available State
+          if (obUsernameMsg) {
+            obUsernameMsg.innerHTML = '<span class="text-[#18D889]">✓ Username available.</span>';
+          }
+          if (obUsernameIcon) {
+            obUsernameIcon.innerHTML = '<span class="text-[#18D889] font-bold">✓</span>';
+            obUsernameIcon.classList.remove('hidden');
+          }
+          if (obUsernameSuggestions) obUsernameSuggestions.classList.add('hidden');
+          obStep1Btn.disabled = false;
         }
-
-        wrapper.appendChild(bubble);
-        chatMessages.appendChild(wrapper);
       });
-
-      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function renderColdGate(c: ChatClient) {
-      if (c.isColdGated) {
-        coldGateBanner?.classList.remove('hidden');
-        if (chatSendBtn) chatSendBtn.disabled = true;
-      } else {
-        coldGateBanner?.classList.add('hidden');
-        if (chatSendBtn) chatSendBtn.disabled = false;
-      }
+    // Step Navigation in Onboarding
+    if (obStep1Btn) {
+      obStep1Btn.addEventListener('click', () => {
+        obStep1?.classList.add('hidden');
+        obStep2?.classList.remove('hidden');
+        stepDot1?.classList.replace('bg-[#6C4DFF]', 'bg-[#18D889]');
+        stepDot2?.classList.replace('bg-[#1D3040]', 'bg-[#6C4DFF]');
+      });
     }
 
-    client.subscribe(updateUI);
+    if (obStep2Back) {
+      obStep2Back.addEventListener('click', () => {
+        obStep2?.classList.add('hidden');
+        obStep1?.classList.remove('hidden');
+        stepDot2?.classList.replace('bg-[#6C4DFF]', 'bg-[#1D3040]');
+        stepDot1?.classList.replace('bg-[#18D889]', 'bg-[#6C4DFF]');
+      });
+    }
 
-    // Landing Triggers
-    heroStartBtn?.addEventListener('click', () => {
-      client.startSetup();
-    });
+    if (obStep2Btn) {
+      obStep2Btn.addEventListener('click', () => {
+        obStep2?.classList.add('hidden');
+        obStep3?.classList.remove('hidden');
+        stepDot2?.classList.replace('bg-[#6C4DFF]', 'bg-[#18D889]');
+        stepDot3?.classList.replace('bg-[#1D3040]', 'bg-[#6C4DFF]');
+      });
+    }
 
-    setupCloseBtn?.addEventListener('click', () => {
-      client.cancelSetup();
-    });
+    if (obStep3Back) {
+      obStep3Back.addEventListener('click', () => {
+        obStep3?.classList.add('hidden');
+        obStep2?.classList.remove('hidden');
+        stepDot3?.classList.replace('bg-[#6C4DFF]', 'bg-[#1D3040]');
+        stepDot2?.classList.replace('bg-[#18D889]', 'bg-[#6C4DFF]');
+      });
+    }
 
-    // Gender selection
-    document.querySelectorAll('.gender-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const target = e.currentTarget as HTMLButtonElement;
-        const g = target.dataset.gender as Gender;
-        if (!g) return;
-        selectedGender = g;
-        document.querySelectorAll('.gender-btn').forEach(b => {
-          b.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
+    // Dynamic Country -> City dropdown update
+    if (obCountrySelect) {
+      obCountrySelect.addEventListener('change', () => {
+        const cCode = obCountrySelect.value;
+        const cData = COUNTRY_FLAG_MAP[cCode];
+        if (obCitySelect && cData) {
+          obCitySelect.innerHTML = cData.cities
+            .map((city) => `<option value="${city}">${city}</option>`)
+            .join('');
+        }
+      });
+    }
+
+    document.querySelectorAll('.ob-gender-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.ob-gender-btn').forEach((b) => {
+          b.className =
+            'ob-gender-btn py-2.5 px-3 rounded-xl border border-[#1D3040] bg-[#07111B] text-[#9AAABD] hover:text-[#F5F7FA] text-xs font-semibold cursor-pointer';
         });
-        target.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
+        btn.className =
+          'ob-gender-btn py-2.5 px-3 rounded-xl border border-[#6C4DFF] bg-[#6C4DFF]/15 text-[#F5F7FA] text-xs font-semibold cursor-pointer';
+        selectedGender = (btn.getAttribute('data-gender') as 'male' | 'female' | 'other') || 'male';
       });
     });
 
-    // Preference selection
-    document.querySelectorAll('.pref-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const target = e.currentTarget as HTMLButtonElement;
-        const p = target.dataset.pref as MatchPreference;
-        if (!p) return;
-        selectedPreference = p;
-        document.querySelectorAll('.pref-btn').forEach(b => {
-          b.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
-        });
-        target.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
-      });
-    });
+    if (obFinishBtn) {
+      obFinishBtn.addEventListener('click', () => {
+        const username = obUsernameInput?.value.trim() || 'NewUser';
+        const age = parseInt(obAgeSelect?.value || '23', 10);
+        const countryCode = obCountrySelect?.value || 'US';
+        const countryName = COUNTRY_FLAG_MAP[countryCode]?.name || 'United States';
+        const city = obCitySelect?.value || 'New York';
 
-    const countrySelect = document.getElementById('setup-country') as HTMLSelectElement;
-    const languageSelect = document.getElementById('setup-language') as HTMLSelectElement;
-
-    if (countrySelect) {
-      selectedCountry = countrySelect.value;
-      countrySelect.addEventListener('change', () => {
-        selectedCountry = countrySelect.value;
-      });
-    }
-
-    if (languageSelect) {
-      selectedLanguage = languageSelect.value;
-      languageSelect.addEventListener('change', () => {
-        selectedLanguage = languageSelect.value;
-      });
-    }
-
-    // Setup Submit
-    setupForm?.addEventListener('submit', e => {
-      e.preventDefault();
-      const rawNick = nicknameInput.value;
-      const validation = validateNickname(rawNick);
-      if (!validation.isValid || !validation.sanitizedValue) {
-        if (nicknameError) {
-          nicknameError.textContent = validation.error || 'Invalid nickname';
-          nicknameError.classList.remove('hidden');
-        }
-        return;
-      }
-      if (nicknameError) nicknameError.classList.add('hidden');
-
-      client.enterQueue(validation.sanitizedValue, selectedGender, selectedPreference, selectedCountry, selectedLanguage);
-    });
-
-    // Matching Cancel
-    matchingCancelBtn?.addEventListener('click', () => {
-      client.cancelQueue();
-    });
-
-    // Gallery File Attachment handling
-    chatAttachBtn?.addEventListener('click', () => {
-      chatFileInput?.click();
-    });
-
-    chatFileInput?.addEventListener('change', () => {
-      const file = chatFileInput.files?.[0];
-      if (!file) return;
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File is too large. Please select a photo or video under 5MB.');
-        chatFileInput.value = '';
-        return;
-      }
-
-      const isVideo = file.type.startsWith('video/');
-      const reader = new FileReader();
-
-      reader.onload = e => {
-        const dataUrl = e.target?.result as string;
-        currentAttachedMedia = {
-          type: isVideo ? 'video' : 'image',
-          data: dataUrl,
-          name: file.name
+        const newUser: User = {
+          id: 'me',
+          username,
+          age,
+          gender: selectedGender,
+          countryCode,
+          countryName,
+          city,
+          avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+          isOnline: true
         };
 
-        if (chatMediaPreviewContainer && chatMediaName) {
-          chatMediaName.textContent = file.name;
-          chatMediaPreviewContainer.classList.remove('hidden');
+        state.currentUser = newUser;
+        localStorage.setItem('rc_user', JSON.stringify(newUser));
+        onboardingModal?.classList.add('hidden');
+        updateHeaderProfile();
+        showToast(`Welcome to RandomChat, ${username}!`, 'success');
+      });
+    }
 
-          if (isVideo && chatVideoPreview) {
-            chatVideoPreview.src = dataUrl;
-            chatVideoPreview.classList.remove('hidden');
-            chatImagePreview?.classList.add('hidden');
-          } else if (chatImagePreview) {
-            chatImagePreview.src = dataUrl;
-            chatImagePreview.classList.remove('hidden');
-            chatVideoPreview?.classList.add('hidden');
+    // 2. FILTERS & SEARCH
+    function renderPeopleList() {
+      if (!peopleCardsContainer) return;
+      const query = state.searchQuery.toLowerCase();
+
+      let visibleCount = 0;
+      const cards = peopleCardsContainer.querySelectorAll('.person-card') as NodeListOf<HTMLElement>;
+
+      cards.forEach((card) => {
+        const username = card.getAttribute('data-username')?.toLowerCase() || '';
+        const age = parseInt(card.getAttribute('data-age') || '0', 10);
+        const gender = card.getAttribute('data-gender') || '';
+        const country = card.getAttribute('data-country') || '';
+        const city = card.getAttribute('data-city')?.toLowerCase() || '';
+
+        let match = true;
+
+        // Search match
+        if (query && !username.includes(query) && !city.includes(query)) {
+          match = false;
+        }
+
+        // Gender filter
+        if (state.filters.gender !== 'all' && gender !== state.filters.gender) {
+          match = false;
+        }
+
+        // Age filter
+        if (age > state.filters.maxAge) {
+          match = false;
+        }
+
+        // Country filter
+        if (state.filters.countryCode !== 'all' && country !== state.filters.countryCode) {
+          match = false;
+        }
+
+        // City filter
+        if (state.filters.city !== 'all' && city !== state.filters.city.toLowerCase()) {
+          match = false;
+        }
+
+        if (match) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (peopleOnlineCount) {
+        peopleOnlineCount.textContent = `${(2480 + visibleCount).toLocaleString()} people online`;
+      }
+
+      if (visibleCount === 0) {
+        peopleEmptyState?.classList.remove('hidden');
+        peopleEmptyState?.classList.add('flex');
+      } else {
+        peopleEmptyState?.classList.add('hidden');
+        peopleEmptyState?.classList.remove('flex');
+      }
+    }
+
+    if (peopleSearchInput) {
+      peopleSearchInput.addEventListener('input', () => {
+        state.searchQuery = peopleSearchInput.value.trim();
+        if (peopleSearchClear) {
+          if (state.searchQuery) peopleSearchClear.classList.remove('hidden');
+          else peopleSearchClear.classList.add('hidden');
+        }
+        renderPeopleList();
+      });
+    }
+
+    if (peopleSearchClear) {
+      peopleSearchClear.addEventListener('click', () => {
+        peopleSearchInput.value = '';
+        state.searchQuery = '';
+        peopleSearchClear.classList.add('hidden');
+        renderPeopleList();
+      });
+    }
+
+    // Gender Filter Buttons
+    document.querySelectorAll('.filter-gender-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-gender-btn').forEach((b) => {
+          b.className =
+            'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all text-[#9AAABD] hover:text-[#F5F7FA] cursor-pointer';
+        });
+        btn.className =
+          'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all bg-[#101D2A] text-[#F5F7FA] border border-[#1D3040] shadow-xs cursor-pointer';
+        state.filters.gender = (btn.getAttribute('data-gender') as 'all' | 'male' | 'female' | 'other') || 'all';
+        renderPeopleList();
+      });
+    });
+
+    if (filterAgeRange) {
+      filterAgeRange.addEventListener('input', () => {
+        const val = parseInt(filterAgeRange.value, 10);
+        state.filters.maxAge = val;
+        if (filterAgeLabel) filterAgeLabel.textContent = `18 – ${val}`;
+        renderPeopleList();
+      });
+    }
+
+    if (filterCountrySelect) {
+      filterCountrySelect.addEventListener('change', () => {
+        const code = filterCountrySelect.value;
+        state.filters.countryCode = code;
+        if (filterCitySelect) {
+          if (code === 'all') {
+            filterCitySelect.innerHTML = '<option value="all">🏙️ All Cities</option>';
+          } else {
+            const cData = COUNTRY_FLAG_MAP[code];
+            filterCitySelect.innerHTML =
+              '<option value="all">🏙️ All Cities</option>' +
+              (cData?.cities.map((city) => `<option value="${city}">${city}</option>`).join('') || '');
           }
         }
+        renderPeopleList();
+      });
+    }
+
+    if (filterCitySelect) {
+      filterCitySelect.addEventListener('change', () => {
+        state.filters.city = filterCitySelect.value;
+        renderPeopleList();
+      });
+    }
+
+    function resetFilters() {
+      state.filters = {
+        gender: 'all',
+        minAge: 18,
+        maxAge: 65,
+        countryCode: 'all',
+        city: 'all'
       };
-
-      reader.readAsDataURL(file);
-    });
-
-    function clearAttachedMedia() {
-      currentAttachedMedia = null;
-      if (chatFileInput) chatFileInput.value = '';
-      if (chatMediaPreviewContainer) chatMediaPreviewContainer.classList.add('hidden');
-      if (chatImagePreview) chatImagePreview.src = '';
-      if (chatVideoPreview) chatVideoPreview.src = '';
+      if (filterAgeRange) filterAgeRange.value = '65';
+      if (filterAgeLabel) filterAgeLabel.textContent = '18 – 65';
+      if (filterCountrySelect) filterCountrySelect.value = 'all';
+      if (filterCitySelect) filterCitySelect.innerHTML = '<option value="all">🏙️ All Cities</option>';
+      if (peopleSearchInput) peopleSearchInput.value = '';
+      state.searchQuery = '';
+      document.querySelectorAll('.filter-gender-btn').forEach((b, idx) => {
+        if (idx === 0) {
+          b.className =
+            'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all bg-[#101D2A] text-[#F5F7FA] border border-[#1D3040] shadow-xs cursor-pointer';
+        } else {
+          b.className =
+            'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all text-[#9AAABD] hover:text-[#F5F7FA] cursor-pointer';
+        }
+      });
+      renderPeopleList();
     }
 
-    chatRemoveMediaBtn?.addEventListener('click', clearAttachedMedia);
+    if (filterClearAllBtn) filterClearAllBtn.addEventListener('click', resetFilters);
+    if (emptyClearFiltersBtn) emptyClearFiltersBtn.addEventListener('click', resetFilters);
 
-    // Lightbox Close
-    lightboxClose?.addEventListener('click', () => {
-      chatLightbox?.classList.add('hidden');
-    });
-    chatLightbox?.addEventListener('click', e => {
-      if (e.target === chatLightbox) {
-        chatLightbox.classList.add('hidden');
+    // Mobile Filter Drawer Toggle
+    if (mobileFilterToggle) {
+      mobileFilterToggle.addEventListener('click', () => {
+        mobileFilterDrawer?.classList.remove('hidden');
+      });
+    }
+    if (mobileFilterClose) {
+      mobileFilterClose.addEventListener('click', () => {
+        mobileFilterDrawer?.classList.add('hidden');
+      });
+    }
+
+    // 3. CHAT SELECTION & CONVERSATIONS
+    function selectUserToChat(user: User) {
+      let conv = state.conversations.get(user.id);
+      if (!conv) {
+        conv = {
+          id: `conv-${user.id}`,
+          participant: user,
+          messages: [],
+          hasSentMessage: false,
+          hasReceivedReply: false,
+          voiceNoteUnlocked: false,
+          voiceChatUnlocked: false,
+          voiceCallUnlocked: false,
+          videoCallUnlocked: false,
+          unreadCount: 0,
+          lastActivity: 'Just now'
+        };
+        state.conversations.set(user.id, conv);
       }
-    });
+      state.activeConversation = conv;
 
-    // Chat Message Sending
-    chatComposerForm?.addEventListener('submit', e => {
-      e.preventDefault();
-      const text = chatInput ? chatInput.value : '';
-      const media = currentAttachedMedia;
+      // Update UI Header
+      if (activeChatAvatar) activeChatAvatar.src = user.avatarUrl;
+      if (activeChatUsername) activeChatUsername.textContent = user.username;
+      if (activeChatFlag) activeChatFlag.textContent = COUNTRY_FLAG_MAP[user.countryCode]?.flag || '🌍';
+      if (activeChatDetails) activeChatDetails.textContent = `${user.age} · ${user.city}, ${user.countryName}`;
 
-      if (!text.trim() && !media) return;
+      // Switch visibility on mobile and desktop
+      chatUnselected?.classList.add('hidden');
+      chatSelected?.classList.remove('hidden');
+      chatSelected?.classList.add('flex');
 
-      const sent = client.sendMessage(text, media?.type, media?.data);
-      if (sent) {
-        if (chatInput) chatInput.value = '';
-        clearAttachedMedia();
+      // On Mobile view: show chat full-screen
+      if (window.innerWidth < 768) {
+        peopleListCol?.classList.add('hidden');
+        activeChatCol?.classList.remove('hidden');
+        activeChatCol?.classList.add('flex');
       }
+
+      updateUnlockStateUI();
+      renderChatMessages();
+    }
+
+    // Bind Person Card Clicks
+    document.querySelectorAll('.person-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        const user = MOCK_USERS.find((u) => u.id === id);
+        if (user) selectUserToChat(user);
+      });
     });
 
-    chatInput?.addEventListener('input', () => {
-      client.notifyTyping();
-    });
+    // Mobile Chat Back Button
+    if (chatBackBtn) {
+      chatBackBtn.addEventListener('click', () => {
+        activeChatCol?.classList.add('hidden');
+        activeChatCol?.classList.remove('flex');
+        peopleListCol?.classList.remove('hidden');
+      });
+    }
 
-    // Dropdown toggle
-    chatMenuBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.toggle('hidden');
-    });
+    // 4. PROGRESSIVE FEATURE UNLOCK LOGIC
+    function updateUnlockStateUI() {
+      const conv = state.activeConversation;
+      if (!conv) return;
 
-    document.addEventListener('click', e => {
-      if (chatDropdown && !chatDropdown.contains(e.target as Node) && e.target !== chatMenuBtn) {
-        chatDropdown.classList.add('hidden');
-      }
-    });
-
-    // Next Stranger Modal
-    chatNextBtn?.addEventListener('click', () => {
-      modalNext?.classList.remove('hidden');
-    });
-    modalNextCancel?.addEventListener('click', () => {
-      modalNext?.classList.add('hidden');
-    });
-    modalNextConfirm?.addEventListener('click', () => {
-      modalNext?.classList.add('hidden');
-      if (chatMessages) {
-        chatMessages.classList.add('animate-slide-left-out');
-        setTimeout(() => {
-          client.nextStranger();
-        }, 220);
+      // Voice Note Badge
+      if (conv.voiceNoteUnlocked) {
+        badgeVoiceNote!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#00D9A3]/15 text-[#00D9A3] border border-[#00D9A3]/30 transition-all font-semibold';
+        badgeVoiceNote!.innerHTML = '<span>✓</span><span>Voice Note</span>';
+        if (chatMicBtn) {
+          chatMicBtn.disabled = false;
+          chatMicBtn.className =
+            'w-10 h-10 rounded-xl bg-[#00D9A3]/15 hover:bg-[#00D9A3]/25 border border-[#00D9A3]/40 text-[#00D9A3] flex items-center justify-center transition-all cursor-pointer shrink-0';
+          chatMicBtn.title = 'Record Voice Note (Unlocked)';
+        }
       } else {
-        client.nextStranger();
+        badgeVoiceNote!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#101D2A] text-[#718397] transition-all';
+        badgeVoiceNote!.innerHTML = '<span>🔒</span><span class="font-medium">Voice Note</span>';
+        if (chatMicBtn) {
+          chatMicBtn.disabled = true;
+          chatMicBtn.className =
+            'w-10 h-10 rounded-xl bg-[#101D2A] border border-[#1D3040] text-[#718397] flex items-center justify-center transition-all cursor-not-allowed opacity-60 shrink-0';
+          chatMicBtn.title = 'Voice Note (Locked until reply)';
+        }
       }
-    });
 
-    // Leave Modal
-    menuLeaveBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.add('hidden');
-      modalLeave?.classList.remove('hidden');
-    });
-    modalLeaveCancel?.addEventListener('click', () => {
-      modalLeave?.classList.add('hidden');
-    });
-    modalLeaveConfirm?.addEventListener('click', () => {
-      modalLeave?.classList.add('hidden');
-      client.leaveChat();
-    });
+      // Voice Chat Badge & Header Button
+      if (conv.voiceChatUnlocked) {
+        badgeVoiceChat!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#6C4DFF]/15 text-[#6C4DFF] border border-[#6C4DFF]/30 transition-all font-semibold';
+        badgeVoiceChat!.innerHTML = '<span>✓</span><span>Voice Chat</span>';
+        if (chatVoiceChatBtn) {
+          chatVoiceChatBtn.disabled = false;
+          chatVoiceChatBtn.className =
+            'chat-call-btn w-8 h-8 rounded-xl bg-[#6C4DFF]/15 hover:bg-[#6C4DFF]/25 border border-[#6C4DFF]/40 text-[#6C4DFF] flex items-center justify-center transition-all cursor-pointer';
+          chatVoiceChatBtn.title = 'Start Voice Chat';
+        }
+      } else {
+        badgeVoiceChat!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#101D2A] text-[#718397] transition-all';
+        badgeVoiceChat!.innerHTML = '<span>🔒</span><span class="font-medium">Voice Chat</span>';
+        if (chatVoiceChatBtn) {
+          chatVoiceChatBtn.disabled = true;
+          chatVoiceChatBtn.className =
+            'chat-call-btn w-8 h-8 rounded-xl bg-[#101D2A] border border-[#1D3040] text-[#718397] flex items-center justify-center transition-all cursor-not-allowed opacity-60';
+        }
+      }
 
-    // Report Modal
-    menuReportBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.add('hidden');
-      modalReport?.classList.remove('hidden');
-    });
-    modalReportClose?.addEventListener('click', () => {
-      modalReport?.classList.add('hidden');
-    });
-    modalReportCancel?.addEventListener('click', () => {
-      modalReport?.classList.add('hidden');
-    });
-    reportForm?.addEventListener('submit', e => {
-      e.preventDefault();
-      const reason = reportReasonSelect.value as ReportReason;
-      const details = reportDetailsInput.value;
-      client.submitReport(reason, details);
-      modalReport?.classList.add('hidden');
-      alert('Report submitted. Thank you.');
-    });
+      // Voice Call Badge & Header Button
+      if (conv.voiceCallUnlocked) {
+        badgeVoiceCall!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#18D889]/15 text-[#18D889] border border-[#18D889]/30 transition-all font-semibold';
+        badgeVoiceCall!.innerHTML = '<span>✓</span><span>Voice Call</span>';
+        if (chatVoiceCallBtn) {
+          chatVoiceCallBtn.disabled = false;
+          chatVoiceCallBtn.className =
+            'chat-call-btn w-8 h-8 rounded-xl bg-[#18D889]/15 hover:bg-[#18D889]/25 border border-[#18D889]/40 text-[#18D889] flex items-center justify-center transition-all cursor-pointer';
+          chatVoiceCallBtn.title = 'Start Voice Call';
+        }
+      } else {
+        badgeVoiceCall!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#101D2A] text-[#718397] transition-all';
+        badgeVoiceCall!.innerHTML = '<span>🔒</span><span class="font-medium">Voice Call</span>';
+        if (chatVoiceCallBtn) {
+          chatVoiceCallBtn.disabled = true;
+          chatVoiceCallBtn.className =
+            'chat-call-btn w-8 h-8 rounded-xl bg-[#101D2A] border border-[#1D3040] text-[#718397] flex items-center justify-center transition-all cursor-not-allowed opacity-60';
+        }
+      }
 
-    // Block Modal
-    menuBlockBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.add('hidden');
-      modalBlock?.classList.remove('hidden');
-    });
-    modalBlockCancel?.addEventListener('click', () => {
-      modalBlock?.classList.add('hidden');
-    });
-    modalBlockConfirm?.addEventListener('click', () => {
-      modalBlock?.classList.add('hidden');
-      client.blockStranger();
-    });
+      // Video Call Badge & Header Button
+      if (conv.videoCallUnlocked) {
+        badgeVideoCall!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#18D889]/15 text-[#18D889] border border-[#18D889]/30 transition-all font-semibold';
+        badgeVideoCall!.innerHTML = '<span>✓</span><span>Video Call</span>';
+        if (chatVideoCallBtn) {
+          chatVideoCallBtn.disabled = false;
+          chatVideoCallBtn.className =
+            'chat-call-btn w-8 h-8 rounded-xl bg-[#18D889]/15 hover:bg-[#18D889]/25 border border-[#18D889]/40 text-[#18D889] flex items-center justify-center transition-all cursor-pointer';
+          chatVideoCallBtn.title = 'Start Video Call';
+        }
+      } else {
+        badgeVideoCall!.className =
+          'flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#101D2A] text-[#718397] transition-all';
+        badgeVideoCall!.innerHTML = '<span>🔒</span><span class="font-medium">Video Call</span>';
+        if (chatVideoCallBtn) {
+          chatVideoCallBtn.disabled = true;
+          chatVideoCallBtn.className =
+            'chat-call-btn w-8 h-8 rounded-xl bg-[#101D2A] border border-[#1D3040] text-[#718397] flex items-center justify-center transition-all cursor-not-allowed opacity-60';
+        }
+      }
 
-    // Disconnect Actions
-    disconnectFindBtn?.addEventListener('click', () => {
-      client.enterQueue(client.nickname, client.gender, client.preference, client.country, client.language);
-    });
-    disconnectHomeBtn?.addEventListener('click', () => {
-      client.setState('LANDING');
-    });
+      // Waiting for reply banner visibility
+      if (conv.hasSentMessage && !conv.hasReceivedReply) {
+        chatWaitingBanner?.classList.remove('hidden');
+      } else {
+        chatWaitingBanner?.classList.add('hidden');
+      }
+    }
 
-    // Voice Call Interactive Audio-Reactive Modal
-    const voiceModal = document.getElementById('voice-call-modal');
-    const voiceTimer = document.getElementById('voice-call-timer');
-    const voiceMuteBtn = document.getElementById('voice-mute-btn');
-    const voiceSpeakerBtn = document.getElementById('voice-speaker-btn');
-    const voiceEndBtn = document.getElementById('voice-end-btn');
-    const voiceMutedBadge = document.getElementById('voice-muted-badge');
-    const ring1 = document.getElementById('voice-ring-1');
-    const ring2 = document.getElementById('voice-ring-2');
-    const ring3 = document.getElementById('voice-ring-3');
-    const centerOrb = document.getElementById('voice-center-orb');
-    const chatVoiceCallBtn = document.getElementById('chat-voice-call-btn');
-    const quickVoiceBtn = document.getElementById('quick-voice-btn');
-    const menuVoiceBtn = document.getElementById('menu-voice-btn');
-    const chatMobileVoiceBtn = document.getElementById('chat-mobile-voice-btn');
+    function renderChatMessages() {
+      if (!chatMessagesList || !state.activeConversation) return;
 
-    let voiceInterval: number | null = null;
-    let voiceSeconds = 0;
-    let isMuted = false;
-    let isSpeakerOn = true;
-    let audioCtx: AudioContext | null = null;
-    let audioStream: MediaStream | null = null;
-    let animationFrameId: number | null = null;
+      // Keep the initial welcome banner
+      const welcome = chatMessagesList.firstElementChild;
+      chatMessagesList.innerHTML = '';
+      if (welcome) chatMessagesList.appendChild(welcome);
 
-    async function startAudioVisualizer() {
-      try {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-          audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-          const source = audioCtx.createMediaStreamSource(audioStream);
-          const analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 64;
-          source.connect(analyser);
+      state.activeConversation.messages.forEach((msg) => {
+        const isMe = msg.senderId === 'me';
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1 animate-msg-in`;
 
-          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        let bodyHtml = '';
 
-          function renderFrame() {
-            if (!voiceModal || voiceModal.classList.contains('hidden')) return;
-            animationFrameId = requestAnimationFrame(renderFrame);
+        if (msg.type === 'text') {
+          bodyHtml = `
+            <div class="px-4 py-2.5 rounded-2xl text-xs sm:text-sm max-w-sm sm:max-w-md ${
+              isMe
+                ? 'bg-[#6C4DFF] text-white rounded-br-xs'
+                : 'bg-[#101D2A] border border-[#1D3040] text-[#F5F7FA] rounded-bl-xs'
+            }">
+              ${escapeHtml(msg.content || '')}
+            </div>
+          `;
+        } else if (msg.type === 'png') {
+          bodyHtml = `
+            <div class="rounded-2xl overflow-hidden max-w-xs border border-[#1D3040] bg-[#101D2A] p-1.5 cursor-pointer msg-img-trigger" data-url="${msg.mediaUrl}">
+              <img src="${msg.mediaUrl}" alt="Photo" class="rounded-xl max-h-56 w-full object-cover" />
+              <div class="px-2 py-1 text-[10px] text-[#9AAABD] flex justify-between">
+                <span>Photo (PNG)</span>
+                <span>${msg.fileSize || ''}</span>
+              </div>
+            </div>
+          `;
+        } else if (msg.type === 'mp4') {
+          bodyHtml = `
+            <div class="rounded-2xl overflow-hidden max-w-xs border border-[#1D3040] bg-[#101D2A] p-1.5">
+              <video src="${msg.mediaUrl}" controls class="rounded-xl max-h-56 w-full object-cover"></video>
+              <div class="px-2 py-1 text-[10px] text-[#9AAABD] flex justify-between">
+                <span>Video (MP4)</span>
+                <span>${msg.fileSize || ''}</span>
+              </div>
+            </div>
+          `;
+        } else if (msg.type === 'voice') {
+          bodyHtml = `
+            <div class="px-4 py-3 rounded-2xl bg-[#101D2A] border border-[#1D3040] flex items-center gap-3 text-xs text-[#F5F7FA] max-w-xs">
+              <button type="button" class="w-8 h-8 rounded-full bg-[#00D9A3] text-[#07111B] flex items-center justify-center font-bold voice-play-btn cursor-pointer">
+                ▶
+              </button>
+              <div class="flex items-center gap-1 h-5">
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 6px;"></span>
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 14px;"></span>
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 18px;"></span>
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 10px;"></span>
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 16px;"></span>
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 8px;"></span>
+                <span class="w-1 bg-[#00D9A3] rounded-full" style="height: 12px;"></span>
+              </div>
+              <span class="text-[11px] font-mono text-[#9AAABD]">${msg.voiceDuration || '00:08'}</span>
+            </div>
+          `;
+        }
 
-            if (isMuted) {
-              if (ring1) ring1.style.transform = 'scale(1)';
-              if (ring2) ring2.style.transform = 'scale(1)';
-              if (ring3) ring3.style.transform = 'scale(1)';
-              if (centerOrb) centerOrb.style.transform = 'scale(1)';
-              return;
-            }
+        msgDiv.innerHTML = `
+          ${bodyHtml}
+          <span class="text-[10px] text-[#718397] px-1">${msg.createdAt}</span>
+        `;
 
-            analyser.getByteFrequencyData(dataArray);
-            let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-              sum += dataArray[i];
-            }
-            const average = sum / dataArray.length;
-            const boost = Math.min(1 + (average / 128) * 0.35, 1.45);
+        chatMessagesList.appendChild(msgDiv);
+      });
 
-            if (ring1) ring1.style.transform = `scale(${boost * 1.05})`;
-            if (ring2) ring2.style.transform = `scale(${boost * 1.15})`;
-            if (ring3) ring3.style.transform = `scale(${boost * 1.25})`;
-            if (centerOrb) centerOrb.style.transform = `scale(${1 + (average / 128) * 0.15})`;
+      // Bind Image Lightbox triggers
+      document.querySelectorAll('.msg-img-trigger').forEach((el) => {
+        el.addEventListener('click', () => {
+          const url = el.getAttribute('data-url');
+          if (url && lightboxImg && chatLightbox) {
+            lightboxImg.src = url;
+            chatLightbox.classList.remove('hidden');
           }
-          renderFrame();
+        });
+      });
+
+      // Bind Voice Play buttons
+      document.querySelectorAll('.voice-play-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (btn.textContent?.trim() === '▶') {
+            btn.textContent = '⏸';
+            setTimeout(() => (btn.textContent = '▶'), 3000);
+          } else {
+            btn.textContent = '▶';
+          }
+        });
+      });
+
+      chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+    }
+
+    function escapeHtml(str: string) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Send Message Handler
+    if (chatInputForm) {
+      chatInputForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const conv = state.activeConversation;
+        if (!conv) return;
+
+        const text = chatTextInput?.value.trim();
+
+        // Handle attached media first
+        if (pendingAttachedFile) {
+          const newMsg: Message = {
+            id: `msg-${Date.now()}`,
+            senderId: 'me',
+            type: pendingAttachedFile.type,
+            mediaUrl: pendingAttachedFile.url,
+            fileName: pendingAttachedFile.file.name,
+            fileSize: `${(pendingAttachedFile.file.size / (1024 * 1024)).toFixed(1)} MB`,
+            createdAt: 'Just now'
+          };
+          conv.messages.push(newMsg);
+          conv.hasSentMessage = true;
+          pendingAttachedFile = null;
+          mediaPreviewContainer?.classList.add('hidden');
+          updateUnlockStateUI();
+          renderChatMessages();
         }
-      } catch (err) {
-        // Fallback subtle ambient animation if microphone is disabled
-      }
+
+        if (text) {
+          const newMsg: Message = {
+            id: `msg-${Date.now()}`,
+            senderId: 'me',
+            type: 'text',
+            content: text,
+            createdAt: 'Just now'
+          };
+          conv.messages.push(newMsg);
+          conv.hasSentMessage = true;
+          chatTextInput.value = '';
+          updateUnlockStateUI();
+          renderChatMessages();
+        }
+      });
     }
 
-    function stopAudioVisualizer() {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-      }
-      if (audioStream) {
-        audioStream.getTracks().forEach(t => t.stop());
-        audioStream = null;
-      }
-      if (audioCtx) {
-        audioCtx.close();
-        audioCtx = null;
-      }
-      if (ring1) ring1.style.transform = 'scale(1)';
-      if (ring2) ring2.style.transform = 'scale(1)';
-      if (ring3) ring3.style.transform = 'scale(1)';
-      if (centerOrb) centerOrb.style.transform = 'scale(1)';
+    // SIMULATED INCOMING REPLY & PROGRESSIVE UNLOCK
+    function triggerSimulatedReply() {
+      const conv = state.activeConversation;
+      if (!conv) return;
+
+      if (typingUserName) typingUserName.textContent = conv.participant.username;
+      chatTypingIndicator?.classList.remove('hidden');
+
+      setTimeout(() => {
+        chatTypingIndicator?.classList.add('hidden');
+
+        // Progressive state advance
+        if (!conv.hasReceivedReply) {
+          // STEP 1 -> STEP 2: Reply Received -> Unlock Voice Note!
+          conv.hasReceivedReply = true;
+          conv.voiceNoteUnlocked = true;
+
+          const replies = [
+            `Hey there! Nice to meet you! How's your day going? 😊`,
+            `Hi! Loved your profile. Where are you chatting from today?`,
+            `Hello! Great to connect with you on RandomChat!`
+          ];
+          const replyText = replies[Math.floor(Math.random() * replies.length)];
+
+          conv.messages.push({
+            id: `msg-${Date.now()}`,
+            senderId: conv.participant.id,
+            type: 'text',
+            content: replyText,
+            createdAt: 'Just now'
+          });
+
+          showToast('✓ Voice Note Unlocked!', 'success');
+        } else if (!conv.voiceChatUnlocked) {
+          // STEP 2 -> STEP 3: Voice Chat Unlock!
+          conv.voiceChatUnlocked = true;
+
+          conv.messages.push({
+            id: `msg-${Date.now()}`,
+            senderId: conv.participant.id,
+            type: 'voice',
+            voiceDuration: '00:09',
+            createdAt: 'Just now'
+          });
+
+          showToast('✓ Voice Chat Unlocked!', 'success');
+        } else if (!conv.voiceCallUnlocked) {
+          // STEP 3 -> STEP 4: Voice Call + Video Call Unlock!
+          conv.voiceCallUnlocked = true;
+          conv.videoCallUnlocked = true;
+
+          conv.messages.push({
+            id: `msg-${Date.now()}`,
+            senderId: conv.participant.id,
+            type: 'text',
+            content: 'Ready for a quick voice or video call whenever you are! 📞',
+            createdAt: 'Just now'
+          });
+
+          showToast('✓ Voice Call & Video Call Unlocked!', 'success');
+        } else {
+          conv.messages.push({
+            id: `msg-${Date.now()}`,
+            senderId: conv.participant.id,
+            type: 'text',
+            content: 'Sounds awesome! Let’s keep chatting.',
+            createdAt: 'Just now'
+          });
+        }
+
+        updateUnlockStateUI();
+        renderChatMessages();
+      }, 1200);
     }
 
-    function openVoiceModal() {
-      if (chatDropdown) chatDropdown.classList.add('hidden');
-      voiceModal?.classList.remove('hidden');
-      voiceSeconds = 0;
-      isMuted = false;
-      voiceMutedBadge?.classList.add('hidden');
-      if (voiceTimer) voiceTimer.textContent = '00:00';
-      if (voiceInterval) clearInterval(voiceInterval);
-      voiceInterval = window.setInterval(() => {
-        voiceSeconds++;
-        const mins = String(Math.floor(voiceSeconds / 60)).padStart(2, '0');
-        const secs = String(voiceSeconds % 60).padStart(2, '0');
-        if (voiceTimer) voiceTimer.textContent = `${mins}:${secs}`;
+    if (simulateReplyBtn) {
+      simulateReplyBtn.addEventListener('click', triggerSimulatedReply);
+    }
+
+    // 5. STRICT ATTACHMENT HANDLING (.png <= 10MB, .mp4 <= 50MB)
+    if (chatAttachBtn) {
+      chatAttachBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chatAttachmentMenu?.classList.toggle('hidden');
+      });
+    }
+
+    document.addEventListener('click', () => {
+      chatAttachmentMenu?.classList.add('hidden');
+      safetyDropdown?.classList.add('hidden');
+    });
+
+    if (attachPngBtn) {
+      attachPngBtn.addEventListener('click', () => {
+        if (hiddenFileInput) {
+          hiddenFileInput.accept = '.png, image/png';
+          hiddenFileInput.click();
+        }
+      });
+    }
+
+    if (attachMp4Btn) {
+      attachMp4Btn.addEventListener('click', () => {
+        if (hiddenFileInput) {
+          hiddenFileInput.accept = '.mp4, video/mp4';
+          hiddenFileInput.click();
+        }
+      });
+    }
+
+    if (hiddenFileInput) {
+      hiddenFileInput.addEventListener('change', () => {
+        const file = hiddenFileInput.files?.[0];
+        if (!file) return;
+
+        const isPng = file.name.toLowerCase().endsWith('.png') || file.type === 'image/png';
+        const isMp4 = file.name.toLowerCase().endsWith('.mp4') || file.type === 'video/mp4';
+
+        // 1. Strict format check
+        if (!isPng && !isMp4) {
+          showToast('File type not supported. Only PNG images and MP4 videos are allowed.', 'error');
+          hiddenFileInput.value = '';
+          return;
+        }
+
+        // 2. Strict size check
+        if (isPng && file.size > 10 * 1024 * 1024) {
+          showToast('This image is larger than 10 MB.', 'error');
+          hiddenFileInput.value = '';
+          return;
+        }
+
+        if (isMp4 && file.size > 50 * 1024 * 1024) {
+          showToast('This video is larger than 50 MB.', 'error');
+          hiddenFileInput.value = '';
+          return;
+        }
+
+        // Valid File -> Show Preview
+        const url = URL.createObjectURL(file);
+        pendingAttachedFile = { file, type: isPng ? 'png' : 'mp4', url };
+
+        if (previewFileName) previewFileName.textContent = file.name;
+        if (previewFileSize) previewFileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+
+        if (isPng) {
+          if (previewImg) {
+            previewImg.src = url;
+            previewImg.classList.remove('hidden');
+          }
+          if (previewVideo) previewVideo.classList.add('hidden');
+        } else {
+          if (previewVideo) {
+            previewVideo.src = url;
+            previewVideo.classList.remove('hidden');
+          }
+          if (previewImg) previewImg.classList.add('hidden');
+        }
+
+        mediaPreviewContainer?.classList.remove('hidden');
+        chatAttachmentMenu?.classList.add('hidden');
+        hiddenFileInput.value = '';
+      });
+    }
+
+    if (cancelMediaPreviewBtn) {
+      cancelMediaPreviewBtn.addEventListener('click', () => {
+        pendingAttachedFile = null;
+        mediaPreviewContainer?.classList.add('hidden');
+      });
+    }
+
+    if (lightboxCloseBtn) {
+      lightboxCloseBtn.addEventListener('click', () => {
+        chatLightbox?.classList.add('hidden');
+      });
+    }
+
+    // 6. VOICE NOTE RECORDER (Timer max 60s)
+    if (chatMicBtn) {
+      chatMicBtn.addEventListener('click', () => {
+        if (!state.activeConversation?.voiceNoteUnlocked) {
+          showToast('Voice Notes unlock once the other person replies.', 'info');
+          return;
+        }
+        startVoiceRecording();
+      });
+    }
+
+    function startVoiceRecording() {
+      state.isRecordingVoice = true;
+      state.recordingSeconds = 0;
+      normalComposerBar?.classList.add('hidden');
+      voiceRecorderBar?.classList.remove('hidden');
+      voiceRecorderBar?.classList.add('flex');
+
+      if (recordingTimer) recordingTimer.textContent = '00:00';
+
+      state.recordingTimer = window.setInterval(() => {
+        state.recordingSeconds++;
+        const mins = Math.floor(state.recordingSeconds / 60)
+          .toString()
+          .padStart(2, '0');
+        const secs = (state.recordingSeconds % 60).toString().padStart(2, '0');
+        if (recordingTimer) recordingTimer.textContent = `${mins}:${secs}`;
+
+        // Max 60 seconds duration
+        if (state.recordingSeconds >= 60) {
+          stopVoiceRecording(true);
+        }
       }, 1000);
-
-      startAudioVisualizer();
     }
 
-    function closeVoiceModal() {
-      voiceModal?.classList.add('hidden');
-      if (voiceInterval) {
-        clearInterval(voiceInterval);
-        voiceInterval = null;
+    function stopVoiceRecording(send: boolean) {
+      if (state.recordingTimer) clearInterval(state.recordingTimer);
+      state.isRecordingVoice = false;
+      voiceRecorderBar?.classList.add('hidden');
+      voiceRecorderBar?.classList.remove('flex');
+      normalComposerBar?.classList.remove('hidden');
+
+      if (send && state.activeConversation) {
+        const secs = (state.recordingSeconds % 60).toString().padStart(2, '0');
+        const durationStr = `00:${secs === '00' ? '08' : secs}`;
+
+        state.activeConversation.messages.push({
+          id: `msg-${Date.now()}`,
+          senderId: 'me',
+          type: 'voice',
+          voiceDuration: durationStr,
+          createdAt: 'Just now'
+        });
+
+        // Trigger Voice Chat unlock progression
+        if (!state.activeConversation.voiceChatUnlocked) {
+          state.activeConversation.voiceChatUnlocked = true;
+          showToast('✓ Voice Chat Unlocked!', 'success');
+        }
+
+        updateUnlockStateUI();
+        renderChatMessages();
       }
-      stopAudioVisualizer();
     }
 
-    chatVoiceCallBtn?.addEventListener('click', openVoiceModal);
-    quickVoiceBtn?.addEventListener('click', openVoiceModal);
-    menuVoiceBtn?.addEventListener('click', openVoiceModal);
-    chatMobileVoiceBtn?.addEventListener('click', openVoiceModal);
-    voiceEndBtn?.addEventListener('click', closeVoiceModal);
+    if (cancelRecordBtn) {
+      cancelRecordBtn.addEventListener('click', () => stopVoiceRecording(false));
+    }
 
-    voiceMuteBtn?.addEventListener('click', () => {
-      isMuted = !isMuted;
-      voiceMuteBtn.classList.toggle('bg-red-500/20', isMuted);
-      voiceMuteBtn.classList.toggle('text-red-400', isMuted);
-      if (isMuted) {
-        voiceMutedBadge?.classList.remove('hidden');
-      } else {
-        voiceMutedBadge?.classList.add('hidden');
-      }
+    if (sendRecordBtn) {
+      sendRecordBtn.addEventListener('click', () => stopVoiceRecording(true));
+    }
+
+    // 7. CALL MODALS (Voice Chat, Voice Call, Video Call, Random Voice)
+    // Unlock Help Modal
+    if (unlockHelpBtn) {
+      unlockHelpBtn.addEventListener('click', () => unlockInfoModal?.classList.remove('hidden'));
+    }
+    if (unlockInfoCloseBtn) {
+      unlockInfoCloseBtn.addEventListener('click', () => unlockInfoModal?.classList.add('hidden'));
+    }
+    if (unlockInfoGotItBtn) {
+      unlockInfoGotItBtn.addEventListener('click', () => unlockInfoModal?.classList.add('hidden'));
+    }
+
+    // Voice Chat Trigger
+    if (chatVoiceChatBtn) {
+      chatVoiceChatBtn.addEventListener('click', () => {
+        if (!state.activeConversation) return;
+        const vcAvatar = document.getElementById('vc-user-avatar') as HTMLImageElement;
+        const vcTitle = document.getElementById('voice-chat-title');
+        if (vcAvatar) vcAvatar.src = state.activeConversation.participant.avatarUrl;
+        if (vcTitle) vcTitle.textContent = state.activeConversation.participant.username;
+        voiceChatModal?.classList.remove('hidden');
+      });
+    }
+    if (vcEndBtn) {
+      vcEndBtn.addEventListener('click', () => {
+        voiceChatModal?.classList.add('hidden');
+        showToast('Voice Chat ended', 'info');
+      });
+    }
+
+    // Voice Call Trigger
+    if (chatVoiceCallBtn) {
+      chatVoiceCallBtn.addEventListener('click', () => {
+        if (!state.activeConversation) return;
+        const vcallAvatar = document.getElementById('vcall-user-avatar') as HTMLImageElement;
+        const vcallTitle = document.getElementById('voice-call-title');
+        if (vcallAvatar) vcallAvatar.src = state.activeConversation.participant.avatarUrl;
+        if (vcallTitle) vcallTitle.textContent = state.activeConversation.participant.username;
+        voiceCallModal?.classList.remove('hidden');
+      });
+    }
+    if (vcallEndBtn) {
+      vcallEndBtn.addEventListener('click', () => {
+        voiceCallModal?.classList.add('hidden');
+        showToast('Voice Call ended', 'info');
+      });
+    }
+
+    // Video Call Trigger
+    if (chatVideoCallBtn) {
+      chatVideoCallBtn.addEventListener('click', () => {
+        if (!state.activeConversation) return;
+        const vidAvatar = document.getElementById('vid-call-avatar') as HTMLImageElement;
+        const vidTitle = document.getElementById('video-call-title');
+        const vidRemote = document.getElementById('vid-remote-stream') as HTMLImageElement;
+        if (vidAvatar) vidAvatar.src = state.activeConversation.participant.avatarUrl;
+        if (vidTitle) vidTitle.textContent = state.activeConversation.participant.username;
+        if (vidRemote) vidRemote.src = state.activeConversation.participant.avatarUrl;
+        videoCallModal?.classList.remove('hidden');
+      });
+    }
+    if (vidEndBtn) {
+      vidEndBtn.addEventListener('click', () => {
+        videoCallModal?.classList.add('hidden');
+        showToast('Video Call ended', 'info');
+      });
+    }
+
+    // RANDOM VOICE MATCHING FLOW (Separated feature)
+    if (navBtnRandomVoice) {
+      navBtnRandomVoice.addEventListener('click', () => {
+        randomVoiceModal?.classList.remove('hidden');
+        const heading = document.getElementById('rv-status-heading');
+        const detail = document.getElementById('rv-status-detail');
+        if (heading) heading.textContent = 'Finding someone...';
+        if (detail) detail.textContent = 'Scanning active online voice participants';
+
+        // Simulate Match transition after 2.5s
+        setTimeout(() => {
+          if (!randomVoiceModal?.classList.contains('hidden')) {
+            if (heading) heading.textContent = 'Connecting...';
+            if (detail) detail.textContent = 'Established audio tunnel';
+
+            setTimeout(() => {
+              randomVoiceModal?.classList.add('hidden');
+              // Connect to a random user
+              const randomPartner = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+              const vcallAvatar = document.getElementById('vcall-user-avatar') as HTMLImageElement;
+              const vcallTitle = document.getElementById('voice-call-title');
+              if (vcallAvatar) vcallAvatar.src = randomPartner.avatarUrl;
+              if (vcallTitle) vcallTitle.textContent = randomPartner.username;
+              voiceCallModal?.classList.remove('hidden');
+              showToast(`Connected with ${randomPartner.username}!`, 'success');
+            }, 800);
+          }
+        }, 2200);
+      });
+    }
+
+    if (rvCloseBtn) rvCloseBtn.addEventListener('click', () => randomVoiceModal?.classList.add('hidden'));
+    if (rvCancelBtn) rvCancelBtn.addEventListener('click', () => randomVoiceModal?.classList.add('hidden'));
+
+    // 8. ROOMS, INBOX, SETTINGS & SAFETY
+    if (navBtnRooms) {
+      navBtnRooms.addEventListener('click', () => roomsModal?.classList.remove('hidden'));
+    }
+    if (roomsCloseBtn) {
+      roomsCloseBtn.addEventListener('click', () => roomsModal?.classList.add('hidden'));
+    }
+
+    document.querySelectorAll('.room-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const name = card.getAttribute('data-name');
+        const online = card.getAttribute('data-online');
+        const desc = card.getAttribute('data-desc');
+        const rules = JSON.parse(card.getAttribute('data-rules') || '[]');
+
+        const titleEl = document.getElementById('room-detail-name');
+        const onlineEl = document.getElementById('room-detail-online');
+        const descEl = document.getElementById('room-detail-desc');
+        const rulesList = document.getElementById('room-detail-rules-list');
+
+        if (titleEl) titleEl.textContent = name || '';
+        if (onlineEl) onlineEl.textContent = `● ${online} People Online`;
+        if (descEl) descEl.textContent = desc || '';
+        if (rulesList) {
+          rulesList.innerHTML = rules.map((r: string) => `<li>${r}</li>`).join('');
+        }
+
+        roomsModal?.classList.add('hidden');
+        roomDetailModal?.classList.remove('hidden');
+      });
     });
 
-    voiceSpeakerBtn?.addEventListener('click', () => {
-      isSpeakerOn = !isSpeakerOn;
-      voiceSpeakerBtn.classList.toggle('opacity-50', !isSpeakerOn);
+    if (roomDetailCloseBtn) {
+      roomDetailCloseBtn.addEventListener('click', () => roomDetailModal?.classList.add('hidden'));
+    }
+    if (roomJoinConfirmBtn) {
+      roomJoinConfirmBtn.addEventListener('click', () => {
+        roomDetailModal?.classList.add('hidden');
+        showToast('Entered chat room successfully!', 'success');
+      });
+    }
+
+    // Inbox Modal
+    if (navBtnInbox) {
+      navBtnInbox.addEventListener('click', () => inboxModal?.classList.remove('hidden'));
+    }
+    if (inboxCloseBtn) {
+      inboxCloseBtn.addEventListener('click', () => inboxModal?.classList.add('hidden'));
+    }
+
+    document.querySelectorAll('.inbox-row').forEach((row) => {
+      row.addEventListener('click', () => {
+        const userId = row.getAttribute('data-user-id');
+        const user = MOCK_USERS.find((u) => u.id === userId);
+        inboxModal?.classList.add('hidden');
+        if (user) selectUserToChat(user);
+      });
     });
 
-    // Emoji Picker Popover
-    const emojiToggleBtn = document.getElementById('chat-emoji-toggle-btn');
-    const emojiPopover = document.getElementById('chat-emoji-popover');
-
-    emojiToggleBtn?.addEventListener('click', () => {
-      emojiPopover?.classList.toggle('hidden');
-    });
-
-    document.querySelectorAll('.chat-emoji-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const emoji = (e.currentTarget as HTMLElement).textContent?.trim();
-        if (emoji && chatInput) {
-          chatInput.value += emoji;
-          chatInput.focus();
+    // Settings Modal
+    if (headerSettingsBtn) {
+      headerSettingsBtn.addEventListener('click', () => {
+        const nickDisplay = document.getElementById('settings-nickname-display');
+        if (nickDisplay && state.currentUser) nickDisplay.textContent = state.currentUser.username;
+        settingsModal?.classList.remove('hidden');
+      });
+    }
+    if (headerProfileBtn) {
+      headerProfileBtn.addEventListener('click', () => {
+        const nickDisplay = document.getElementById('settings-nickname-display');
+        if (nickDisplay && state.currentUser) nickDisplay.textContent = state.currentUser.username;
+        settingsModal?.classList.remove('hidden');
+      });
+    }
+    if (settingsCloseBtn) {
+      settingsCloseBtn.addEventListener('click', () => settingsModal?.classList.add('hidden'));
+    }
+    if (settingsEditNickBtn) {
+      settingsEditNickBtn.addEventListener('click', () => {
+        const newNick = prompt('Enter new nickname (4–20 characters):', state.currentUser?.username);
+        if (newNick && /^[a-zA-Z0-9_]{4,20}$/.test(newNick.trim())) {
+          if (state.currentUser) {
+            state.currentUser.username = newNick.trim();
+            localStorage.setItem('rc_user', JSON.stringify(state.currentUser));
+            updateHeaderProfile();
+            const nickDisplay = document.getElementById('settings-nickname-display');
+            if (nickDisplay) nickDisplay.textContent = state.currentUser.username;
+            showToast('Nickname updated successfully!', 'success');
+          }
+        } else if (newNick) {
+          showToast('Invalid nickname format.', 'error');
         }
       });
-    });
-
-    // Quick Actions
-    const quickShareInterestBtn = document.getElementById('quick-share-interest-btn');
-    const menuInterestsBtn = document.getElementById('menu-interests-btn');
-    const quickClearBtn = document.getElementById('quick-clear-btn');
-    const menuClearBtn = document.getElementById('menu-clear-btn');
-
-    function shareInterests() {
-      if (chatDropdown) chatDropdown.classList.add('hidden');
-      const interestMsg = "Hey! I'm interested in music, gaming, movies & tech. What about you? ✨";
-      client.sendMessage(interestMsg);
     }
-
-    function clearChatHistory() {
-      if (chatDropdown) chatDropdown.classList.add('hidden');
-      client.clearMessages();
-    }
-
-    quickShareInterestBtn?.addEventListener('click', shareInterests);
-    menuInterestsBtn?.addEventListener('click', shareInterests);
-    quickClearBtn?.addEventListener('click', clearChatHistory);
-    menuClearBtn?.addEventListener('click', clearChatHistory);
-
-    // Bottom action bar buttons
-    document.getElementById('bottom-report-btn')?.addEventListener('click', () => {
-      modalReport?.classList.remove('hidden');
-    });
-    document.getElementById('bottom-block-btn')?.addEventListener('click', () => {
-      modalBlock?.classList.remove('hidden');
-    });
-
-    // Left Sidebar Filter & Search
-    const countryFilter = document.getElementById('chat-sidebar-country-filter') as HTMLSelectElement;
-    const searchInput = document.getElementById('chat-sidebar-search') as HTMLInputElement;
-    const usersList = document.getElementById('chat-online-users-list');
-
-    function filterOnlineUsers() {
-      if (!usersList) return;
-      const query = (searchInput?.value || '').toLowerCase().trim();
-      const countryVal = countryFilter?.value || 'all';
-
-      Array.from(usersList.children).forEach(child => {
-        const text = child.textContent?.toLowerCase() || '';
-        const matchesQuery = !query || text.includes(query);
-        const matchesCountry = countryVal === 'all' || text.includes(countryVal) || countryVal === 'all';
-        (child as HTMLElement).style.display = matchesQuery && matchesCountry ? 'flex' : 'none';
+    if (settingsClearHistoryBtn) {
+      settingsClearHistoryBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all local chat history?')) {
+          state.conversations.clear();
+          if (state.activeConversation) state.activeConversation.messages = [];
+          renderChatMessages();
+          showToast('Chat history cleared.', 'info');
+        }
       });
     }
 
-    searchInput?.addEventListener('input', filterOnlineUsers);
-    countryFilter?.addEventListener('change', filterOnlineUsers);
+    // Safety Menu (Report & Block)
+    if (safetyMenuBtn) {
+      safetyMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        safetyDropdown?.classList.toggle('hidden');
+      });
+    }
+    if (menuReportBtn) {
+      menuReportBtn.addEventListener('click', () => {
+        safetyDropdown?.classList.add('hidden');
+        reportModal?.classList.remove('hidden');
+      });
+    }
+    if (reportCloseBtn) reportCloseBtn.addEventListener('click', () => reportModal?.classList.add('hidden'));
+    if (reportCancelBtn) reportCancelBtn.addEventListener('click', () => reportModal?.classList.add('hidden'));
 
-    // Mobile Drawers Toggle
-    const leftPaneToggle = document.getElementById('chat-toggle-left-pane-btn');
-    const rightPaneToggle = document.getElementById('chat-toggle-right-pane-btn');
-    const leftSidebar = document.getElementById('chat-left-sidebar');
-    const rightSidebar = document.getElementById('chat-right-sidebar');
+    if (reportForm) {
+      reportForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        reportModal?.classList.add('hidden');
+        showToast('Report submitted. Thank you for keeping RandomChat safe.', 'success');
+      });
+    }
 
-    leftPaneToggle?.addEventListener('click', () => {
-      leftSidebar?.classList.toggle('hidden');
-      leftSidebar?.classList.toggle('flex');
-    });
+    if (menuBlockBtn) {
+      menuBlockBtn.addEventListener('click', () => {
+        safetyDropdown?.classList.add('hidden');
+        const desc = document.getElementById('block-modal-desc');
+        if (desc && state.activeConversation) {
+          desc.textContent = `Block ${state.activeConversation.participant.username}? They will no longer be able to message you.`;
+        }
+        blockModal?.classList.remove('hidden');
+      });
+    }
+    if (blockCancelBtn) blockCancelBtn.addEventListener('click', () => blockModal?.classList.add('hidden'));
+    if (blockConfirmBtn) {
+      blockConfirmBtn.addEventListener('click', () => {
+        if (state.activeConversation) {
+          state.blockedUserIds.add(state.activeConversation.participant.id);
+          blockModal?.classList.add('hidden');
+          chatSelected?.classList.add('hidden');
+          chatUnselected?.classList.remove('hidden');
+          showToast(`Blocked ${state.activeConversation.participant.username}`, 'info');
+        }
+      });
+    }
 
-    rightPaneToggle?.addEventListener('click', () => {
-      rightSidebar?.classList.toggle('hidden');
-      rightSidebar?.classList.toggle('flex');
-    });
+    // Theme Toggle Handler (Light Mode / Dark Mode)
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+          showToast('Switched to Light Mode ☀️', 'info');
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+          showToast('Switched to Dark Mode 🌙', 'info');
+        }
+      });
+    }
+
+    // Initialize application on load
+    initUser();
   </script>
 </BaseLayout>

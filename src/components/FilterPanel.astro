@@ -1,0 +1,131 @@
+---
+import { COUNTRY_FLAG_MAP } from '../data/mockData';
+
+const countries = Object.entries(COUNTRY_FLAG_MAP).map(([code, data]) => ({
+  code,
+  name: data.name,
+  flag: data.flag,
+  cities: data.cities
+}));
+---
+
+<aside id="filter-panel" class="w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 flex flex-col gap-5 shadow-xs transition-colors">
+  <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-[#6C4DFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      <h3 class="text-sm font-bold text-[var(--text-primary)]">Filters</h3>
+    </div>
+    <button
+      type="button"
+      id="filter-clear-all-btn"
+      class="text-xs font-semibold text-[var(--text-secondary)] hover:text-[#FF4D5F] transition-colors cursor-pointer"
+    >
+      Clear all
+    </button>
+  </div>
+
+  <!-- Gender Filter -->
+  <div class="flex flex-col gap-2">
+    <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Gender</span>
+    <div class="grid grid-cols-4 gap-1.5 p-1 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)]">
+      <button
+        type="button"
+        class="filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)] shadow-xs cursor-pointer"
+        data-gender="all"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        class="filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+        data-gender="male"
+      >
+        Male
+      </button>
+      <button
+        type="button"
+        class="filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+        data-gender="female"
+      >
+        Female
+      </button>
+      <button
+        type="button"
+        class="filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+        data-gender="other"
+      >
+        Other
+      </button>
+    </div>
+  </div>
+
+  <!-- Age Range Filter -->
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Age Range</span>
+      <span id="filter-age-label" class="text-xs font-bold text-[#6C4DFF]">18 – 45</span>
+    </div>
+    <div class="flex flex-col gap-2 px-1">
+      <input
+        id="filter-age-range"
+        type="range"
+        min="18"
+        max="65"
+        value="45"
+        class="w-full accent-[#6C4DFF] bg-[var(--border-strong)] h-1.5 rounded-lg appearance-none cursor-pointer"
+      />
+      <div class="flex justify-between text-[10px] text-[var(--text-muted)]">
+        <span>18 y/o</span>
+        <span>65+ y/o</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location Filter -->
+  <div class="flex flex-col gap-3">
+    <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Location</span>
+    
+    <!-- Country Select -->
+    <div class="flex flex-col gap-1">
+      <label for="filter-country-select" class="text-[11px] text-[var(--text-muted)]">Country</label>
+      <select
+        id="filter-country-select"
+        class="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] text-xs focus:outline-none focus:border-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
+      >
+        <option value="all">🌍 All Countries</option>
+        {countries.map((c) => (
+          <option value={c.code}>
+            {c.flag} {c.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <!-- City Select -->
+    <div class="flex flex-col gap-1">
+      <label for="filter-city-select" class="text-[11px] text-[var(--text-muted)]">City</label>
+      <select
+        id="filter-city-select"
+        class="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] text-xs focus:outline-none focus:border-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
+      >
+        <option value="all">🏙️ All Cities</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Apply Filters Button -->
+  <div class="pt-2 border-t border-[var(--border)]">
+    <button
+      type="button"
+      id="filter-apply-btn"
+      class="w-full py-2.5 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
+    >
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span>Apply Filters</span>
+    </button>
+  </div>
+</aside>

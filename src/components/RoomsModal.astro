@@ -1,0 +1,114 @@
+---
+import { MOCK_ROOMS } from '../data/mockData';
+---
+
+<div
+  id="rooms-modal"
+  class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="rooms-modal-title"
+>
+  <div class="w-full max-w-2xl bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 flex flex-col gap-6 shadow-2xl animate-modal-in max-h-[90vh] overflow-hidden transition-colors">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-[var(--border)] pb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-[#6C4DFF]/15 text-[#6C4DFF] flex items-center justify-center font-bold">
+          💬
+        </div>
+        <div>
+          <h3 id="rooms-modal-title" class="text-xl font-bold text-[var(--text-primary)]">Chat Rooms</h3>
+          <p class="text-xs text-[var(--text-secondary)]">Join public topic-based rooms with people around the world</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        id="rooms-close-btn"
+        class="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+        aria-label="Close Rooms"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Rooms List Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-1">
+      {MOCK_ROOMS.map((room) => (
+        <div
+          class="room-card group bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] hover:border-[var(--border-strong)] rounded-2xl p-4 transition-all duration-150 cursor-pointer flex flex-col justify-between gap-3 shadow-xs"
+          data-id={room.id}
+          data-name={room.name}
+          data-online={room.onlineCount}
+          data-desc={room.description}
+          data-rules={JSON.stringify(room.rules)}
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">{room.icon}</span>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-[var(--text-primary)] group-hover:text-[#6C4DFF] transition-colors">
+                  {room.name}
+                </span>
+                <span class="text-[11px] text-[var(--text-secondary)]">{room.category}</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#18D889]/15 text-[#16A34A] dark:text-[#18D889] border border-[#18D889]/30 shrink-0">
+              ● {room.onlineCount} Online
+            </span>
+          </div>
+
+          <p class="text-xs text-[var(--text-secondary)] line-clamp-2">
+            {room.description}
+          </p>
+
+          <div class="pt-2 border-t border-[var(--border)] flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-[#6C4DFF]">Join Room →</span>
+            <span class="text-[10px] text-[var(--text-muted)]">Free & Public</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<!-- Room Detail / Join Modal -->
+<div
+  id="room-detail-modal"
+  class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+>
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 flex flex-col gap-5 shadow-2xl animate-modal-in transition-colors">
+    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+      <div class="flex items-center gap-3">
+        <span id="room-detail-icon" class="text-2xl">🇮🇳</span>
+        <div class="flex flex-col">
+          <h4 id="room-detail-name" class="text-lg font-bold text-[var(--text-primary)]">India Chat Room</h4>
+          <span id="room-detail-online" class="text-xs text-[#16A34A] dark:text-[#18D889] font-semibold">● 152 People Online</span>
+        </div>
+      </div>
+      <button type="button" id="room-detail-close-btn" class="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <p id="room-detail-desc" class="text-xs text-[var(--text-secondary)]">
+      Vibrant conversations, culture, Bollywood, tech & food discussions.
+    </p>
+
+    <div class="flex flex-col gap-2 p-3 bg-[var(--bg-surface-elevated)] border border-[var(--border)] rounded-2xl">
+      <span class="text-xs font-bold text-[var(--text-primary)]">Room Rules:</span>
+      <ul id="room-detail-rules-list" class="text-xs text-[var(--text-secondary)] list-disc list-inside space-y-1">
+        <li>Be respectful to all participants.</li>
+        <li>No spamming or advertising.</li>
+      </ul>
+    </div>
+
+    <button
+      type="button"
+      id="room-join-confirm-btn"
+      class="w-full py-3 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white font-semibold text-sm transition-all shadow-md cursor-pointer"
+    >
+      Enter Room
+    </button>
+  </div>
+</div>

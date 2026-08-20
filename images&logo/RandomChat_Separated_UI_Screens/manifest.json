@@ -1,0 +1,222 @@
+[
+  {
+    "file": "01_desktop_landing.png",
+    "description": "Desktop landing",
+    "source": "01_core_flows",
+    "crop": [
+      12,
+      8,
+      500,
+      1008
+    ]
+  },
+  {
+    "file": "02_desktop_random_voice_matching.png",
+    "description": "Desktop Random Voice matching",
+    "source": "01_core_flows",
+    "crop": [
+      520,
+      10,
+      1048,
+      310
+    ]
+  },
+  {
+    "file": "03_desktop_active_chat.png",
+    "description": "Desktop active chat",
+    "source": "01_core_flows",
+    "crop": [
+      520,
+      323,
+      1048,
+      756
+    ]
+  },
+  {
+    "file": "04_desktop_disconnected.png",
+    "description": "Desktop disconnected",
+    "source": "01_core_flows",
+    "crop": [
+      520,
+      765,
+      1048,
+      1008
+    ]
+  },
+  {
+    "file": "05_mobile_landing.png",
+    "description": "Mobile landing",
+    "source": "01_core_flows",
+    "crop": [
+      1065,
+      10,
+      1286,
+      486
+    ]
+  },
+  {
+    "file": "06_mobile_random_voice_matching.png",
+    "description": "Mobile Random Voice matching",
+    "source": "01_core_flows",
+    "crop": [
+      1298,
+      10,
+      1524,
+      486
+    ]
+  },
+  {
+    "file": "07_mobile_active_chat.png",
+    "description": "Mobile active chat",
+    "source": "01_core_flows",
+    "crop": [
+      1065,
+      496,
+      1286,
+      1008
+    ]
+  },
+  {
+    "file": "08_mobile_disconnected.png",
+    "description": "Mobile disconnected",
+    "source": "01_core_flows",
+    "crop": [
+      1298,
+      496,
+      1524,
+      1008
+    ]
+  },
+  {
+    "file": "09_people_online_filters.png",
+    "description": "People online + filters",
+    "source": "02_features",
+    "crop": [
+      8,
+      8,
+      474,
+      620
+    ]
+  },
+  {
+    "file": "10_active_chat_unlock_bar.png",
+    "description": "Active chat + feature unlock bar",
+    "source": "02_features",
+    "crop": [
+      478,
+      8,
+      1030,
+      620
+    ]
+  },
+  {
+    "file": "11_user_info.png",
+    "description": "User info / profile",
+    "source": "02_features",
+    "crop": [
+      1032,
+      8,
+      1278,
+      620
+    ]
+  },
+  {
+    "file": "12_feature_unlock_explainer.png",
+    "description": "How chat features unlock",
+    "source": "02_features",
+    "crop": [
+      1278,
+      8,
+      1528,
+      620
+    ]
+  },
+  {
+    "file": "13_rooms.png",
+    "description": "Rooms",
+    "source": "02_features",
+    "crop": [
+      8,
+      626,
+      380,
+      1018
+    ]
+  },
+  {
+    "file": "14_voice_note.png",
+    "description": "Voice note",
+    "source": "02_features",
+    "crop": [
+      382,
+      626,
+      552,
+      1018
+    ]
+  },
+  {
+    "file": "15_voice_note_chat.png",
+    "description": "Voice note in chat",
+    "source": "02_features",
+    "crop": [
+      554,
+      626,
+      706,
+      1018
+    ]
+  },
+  {
+    "file": "16_voice_chat.png",
+    "description": "Voice chat",
+    "source": "02_features",
+    "crop": [
+      708,
+      626,
+      849,
+      1018
+    ]
+  },
+  {
+    "file": "17_voice_call.png",
+    "description": "Voice call",
+    "source": "02_features",
+    "crop": [
+      851,
+      626,
+      992,
+      1018
+    ]
+  },
+  {
+    "file": "18_video_call.png",
+    "description": "Video call",
+    "source": "02_features",
+    "crop": [
+      994,
+      626,
+      1136,
+      1018
+    ]
+  },
+  {
+    "file": "19_settings.png",
+    "description": "Settings",
+    "source": "02_features",
+    "crop": [
+      1138,
+      626,
+      1290,
+      1018
+    ]
+  },
+  {
+    "file": "20_inbox.png",
+    "description": "Inbox",
+    "source": "02_features",
+    "crop": [
+      1292,
+      626,
+      1528,
+      1018
+    ]
+  }
+]

@@ -1,0 +1,218 @@
+---
+import { COUNTRY_FLAG_MAP } from '../data/mockData';
+
+const countries = Object.entries(COUNTRY_FLAG_MAP).map(([code, data]) => ({
+  code,
+  name: data.name,
+  flag: data.flag,
+  cities: data.cities
+}));
+---
+
+<div
+  id="onboarding-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-opacity duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="onboarding-title"
+>
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 flex flex-col gap-6 animate-modal-in transition-colors">
+    <!-- Top Step Progress Indicator -->
+    <div class="flex items-center justify-between border-b border-[var(--border)] pb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-[#6C4DFF] flex items-center justify-center text-white font-bold text-xs shadow-xs">
+          RC
+        </div>
+        <span class="text-sm font-bold text-[var(--text-primary)]">Random<span class="text-[#6C4DFF]">Chat</span> Setup</span>
+      </div>
+
+      <!-- Steps: 1, 2, 3 -->
+      <div class="flex items-center gap-1.5" id="onboarding-steps-indicator">
+        <span id="step-dot-1" class="w-2.5 h-2.5 rounded-full bg-[#6C4DFF] transition-all"></span>
+        <span id="step-dot-2" class="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)] transition-all"></span>
+        <span id="step-dot-3" class="w-2.5 h-2.5 rounded-full bg-[var(--border-strong)] transition-all"></span>
+      </div>
+    </div>
+
+    <!-- STEP 1: USERNAME -->
+    <div id="onboarding-step-1" class="flex flex-col gap-4">
+      <div>
+        <h2 id="onboarding-title" class="text-2xl font-bold text-[var(--text-primary)] tracking-tight">Create your username</h2>
+        <p class="text-sm text-[var(--text-secondary)] mt-1">This will be your identity in RandomChat. No passwords needed.</p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="ob-username-input" class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+          Username
+        </label>
+        
+        <div class="relative">
+          <input
+            id="ob-username-input"
+            type="text"
+            placeholder="e.g. CoolVibes27"
+            maxlength="20"
+            autocomplete="off"
+            class="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:border-[#6C4DFF] transition-colors pr-10 shadow-xs"
+          />
+          <div id="ob-username-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 hidden">
+            <!-- Green check or red cross dynamically rendered -->
+          </div>
+        </div>
+
+        <!-- Availability / Error Message -->
+        <div id="ob-username-msg" class="text-xs font-medium min-h-4"></div>
+
+        <!-- Suggestions list (shown when taken) -->
+        <div id="ob-username-suggestions" class="hidden flex-col gap-1.5 p-3 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border)]">
+          <span class="text-xs text-[var(--text-secondary)] font-medium">Available suggestions:</span>
+          <div id="ob-suggestions-list" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <p class="text-[11px] text-[var(--text-muted)]">
+          Rules: 4–20 characters, letters, numbers, and underscores only. No spaces.
+        </p>
+      </div>
+
+      <!-- Next Button -->
+      <button
+        type="button"
+        id="ob-step-1-btn"
+        class="w-full py-3 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white font-semibold text-sm transition-all shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+        disabled
+      >
+        Continue
+      </button>
+    </div>
+
+    <!-- STEP 2: AGE -->
+    <div id="onboarding-step-2" class="hidden flex flex-col gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-[var(--text-primary)] tracking-tight">How old are you?</h2>
+        <p class="text-sm text-[var(--text-secondary)] mt-1">This helps us keep RandomChat safe and match you with peers.</p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="ob-age-select" class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+          Age
+        </label>
+        <select
+          id="ob-age-select"
+          class="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
+        >
+          {Array.from({ length: 82 }, (_, i) => i + 18).map((age) => (
+            <option value={age} selected={age === 23}>{age} years old</option>
+          ))}
+        </select>
+        <p class="text-[11px] text-[var(--text-muted)]">
+          Must be 18+ to use RandomChat.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 mt-2">
+        <button
+          type="button"
+          id="ob-step-2-back"
+          class="w-1/3 py-3 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-semibold text-sm transition-all border border-[var(--border)] cursor-pointer"
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          id="ob-step-2-btn"
+          class="w-2/3 py-3 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white font-semibold text-sm transition-all shadow-md cursor-pointer"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: LOCATION (Country & City) -->
+    <div id="onboarding-step-3" class="hidden flex flex-col gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-[var(--text-primary)] tracking-tight">Where are you from?</h2>
+        <p class="text-sm text-[var(--text-secondary)] mt-1">Select your country and city to find people around you.</p>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-1.5">
+          <label for="ob-country-select" class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+            Country
+          </label>
+          <select
+            id="ob-country-select"
+            class="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
+          >
+            {countries.map((c) => (
+              <option value={c.code} selected={c.code === 'US'}>
+                {c.flag} {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="ob-city-select" class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+            City
+          </label>
+          <select
+            id="ob-city-select"
+            class="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
+          >
+            <option value="New York">New York</option>
+            <option value="Los Angeles">Los Angeles</option>
+            <option value="Chicago">Chicago</option>
+            <option value="Austin">Austin</option>
+            <option value="Miami">Miami</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="ob-gender-select" class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+            Gender
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              class="ob-gender-btn py-2.5 px-3 rounded-xl border border-[#6C4DFF] bg-[#6C4DFF]/15 text-[#6C4DFF] dark:text-[#F5F7FA] text-xs font-semibold cursor-pointer"
+              data-gender="male"
+            >
+              Male
+            </button>
+            <button
+              type="button"
+              class="ob-gender-btn py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-semibold cursor-pointer"
+              data-gender="female"
+            >
+              Female
+            </button>
+            <button
+              type="button"
+              class="ob-gender-btn py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-semibold cursor-pointer"
+              data-gender="other"
+            >
+              Other
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mt-2">
+        <button
+          type="button"
+          id="ob-step-3-back"
+          class="w-1/3 py-3 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-semibold text-sm transition-all border border-[var(--border)] cursor-pointer"
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          id="ob-finish-btn"
+          class="w-2/3 py-3 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white font-semibold text-sm transition-all shadow-md cursor-pointer"
+        >
+          Start Chatting
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

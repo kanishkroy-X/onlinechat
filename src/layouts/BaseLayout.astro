@@ -40,23 +40,23 @@ const isRtl = currentLang === 'ar';
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Google Fonts: Poppins -->
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- SEO & Metadata -->
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#492351" />
+    <meta name="theme-color" content="#07111B" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="randomcaht.online" />
+    <meta property="og:site_name" content="RandomChat" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -66,16 +66,13 @@ const isRtl = currentLang === 'ar';
     <!-- Zero-FOUC Theme & Language Script -->
     <script is:inline>
       (function () {
-        const theme = localStorage.getItem('theme') || 'system';
-        const isDark =
-          theme === 'dark' ||
-          (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const stored = localStorage.getItem('theme');
+        const isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches) || stored === 'system';
         if (isDark) {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
         }
-
         const savedLang = localStorage.getItem('rc_language');
         if (savedLang) {
           document.documentElement.lang = savedLang;
@@ -84,7 +81,7 @@ const isRtl = currentLang === 'ar';
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col antialiased selection:bg-[#FF808A] selection:text-white">
+  <body class="min-h-screen flex flex-col antialiased bg-[var(--bg-page)] text-[var(--text-primary)] font-sans selection:bg-[#6C4DFF] selection:text-white">
     <!-- Accessible Screen Reader Announcer -->
     <div id="sr-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 

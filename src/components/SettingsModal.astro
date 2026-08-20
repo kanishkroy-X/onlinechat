@@ -1,0 +1,131 @@
+---
+// SettingsModal.astro - Account, Privacy & Notification preferences
+---
+
+<div
+  id="settings-modal"
+  class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="settings-modal-title"
+>
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-7 flex flex-col gap-6 shadow-2xl animate-modal-in max-h-[90vh] overflow-y-auto transition-colors">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] flex items-center justify-center border border-[var(--border)]">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </div>
+        <h3 id="settings-modal-title" class="text-lg font-bold text-[var(--text-primary)]">Settings</h3>
+      </div>
+
+      <button
+        type="button"
+        id="settings-close-btn"
+        class="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+        aria-label="Close Settings"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- 1. ACCOUNT SECTION -->
+    <div class="flex flex-col gap-3">
+      <span class="text-xs font-bold uppercase tracking-wider text-[#6C4DFF]">Account</span>
+      
+      <div class="flex flex-col gap-2 p-3 bg-[var(--bg-surface-elevated)] border border-[var(--border)] rounded-2xl">
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold text-[var(--text-primary)]">Nickname</span>
+            <span id="settings-nickname-display" class="text-[11px] text-[var(--text-secondary)]">GuestUser</span>
+          </div>
+          <button
+            type="button"
+            id="settings-edit-nick-btn"
+            class="px-3 py-1 rounded-lg bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
+          >
+            Edit
+          </button>
+        </div>
+
+        <hr class="border-[var(--border)]" />
+
+        <button
+          type="button"
+          id="settings-clear-history-btn"
+          class="text-left text-xs font-semibold text-[var(--text-secondary)] hover:text-[#FF4D5F] py-1 transition-colors cursor-pointer"
+        >
+          Clear Chat History
+        </button>
+
+        <hr class="border-[var(--border)]" />
+
+        <button
+          type="button"
+          id="settings-blocked-users-btn"
+          class="text-left text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] py-1 transition-colors cursor-pointer flex items-center justify-between"
+        >
+          <span>Blocked Users</span>
+          <span id="settings-blocked-count" class="text-[10px] text-[var(--text-muted)]">0 users</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. PRIVACY SECTION -->
+    <div class="flex flex-col gap-3">
+      <span class="text-xs font-bold uppercase tracking-wider text-[#6C4DFF]">Privacy</span>
+      
+      <div class="flex flex-col gap-3 p-3 bg-[var(--bg-surface-elevated)] border border-[var(--border)] rounded-2xl">
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold text-[var(--text-primary)]">Who can message me</span>
+            <span class="text-[10px] text-[var(--text-secondary)]">Control direct incoming messages</span>
+          </div>
+          <select id="privacy-who-can-msg" class="px-2 py-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg text-xs text-[var(--text-primary)] shadow-xs">
+            <option value="everyone">Everyone</option>
+            <option value="friends">Verified Only</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold text-[var(--text-primary)]">Read Receipts</span>
+            <span class="text-[10px] text-[var(--text-secondary)]">Show when you've seen a message</span>
+          </div>
+          <input type="checkbox" id="privacy-read-receipts" checked class="w-4 h-4 accent-[#6C4DFF] cursor-pointer" />
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold text-[var(--text-primary)]">Show Online Status</span>
+            <span class="text-[10px] text-[var(--text-secondary)]">Let peers know when you are active</span>
+          </div>
+          <input type="checkbox" id="privacy-online-status" checked class="w-4 h-4 accent-[#6C4DFF] cursor-pointer" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. NOTIFICATIONS SECTION -->
+    <div class="flex flex-col gap-3">
+      <span class="text-xs font-bold uppercase tracking-wider text-[#6C4DFF]">Notifications</span>
+      
+      <div class="flex flex-col gap-3 p-3 bg-[var(--bg-surface-elevated)] border border-[var(--border)] rounded-2xl">
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold text-[var(--text-primary)]">Message Notifications</span>
+            <span class="text-[10px] text-[var(--text-secondary)]">Alert on new incoming chats</span>
+          </div>
+          <input type="checkbox" id="notif-messages" checked class="w-4 h-4 accent-[#6C4DFF] cursor-pointer" />
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold text-[var(--text-primary)]">Sound Effects</span>
+            <span class="text-[10px] text-[var(--text-secondary)]">Play audio on messages & calls</span>
+          </div>
+          <input type="checkbox" id="notif-sounds" checked class="w-4 h-4 accent-[#6C4DFF] cursor-pointer" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

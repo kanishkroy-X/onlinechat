@@ -1,0 +1,134 @@
+[
+  {
+    "file": "01_dark_people_online_filters.png",
+    "description": "Dark mode people online + filters",
+    "mode": "dark",
+    "source_crop": [
+      10,
+      10,
+      519,
+      598
+    ]
+  },
+  {
+    "file": "02_dark_active_chat.png",
+    "description": "Dark mode active chat + unlock bar",
+    "mode": "dark",
+    "source_crop": [
+      528,
+      10,
+      1011,
+      598
+    ]
+  },
+  {
+    "file": "03_dark_user_info.png",
+    "description": "Dark mode user info",
+    "mode": "dark",
+    "source_crop": [
+      1019,
+      10,
+      1246,
+      598
+    ]
+  },
+  {
+    "file": "04_dark_feature_unlock.png",
+    "description": "Dark mode feature unlock explanation",
+    "mode": "dark",
+    "source_crop": [
+      1253,
+      10,
+      1527,
+      598
+    ]
+  },
+  {
+    "file": "05_dark_rooms.png",
+    "description": "Dark mode rooms",
+    "mode": "dark",
+    "source_crop": [
+      10,
+      607,
+      375,
+      979
+    ]
+  },
+  {
+    "file": "06_dark_voice_note_info.png",
+    "description": "Dark mode voice note information",
+    "mode": "dark",
+    "source_crop": [
+      382,
+      607,
+      519,
+      979
+    ]
+  },
+  {
+    "file": "07_dark_voice_note_chat.png",
+    "description": "Dark mode voice note chat",
+    "mode": "dark",
+    "source_crop": [
+      527,
+      607,
+      687,
+      979
+    ]
+  },
+  {
+    "file": "08_dark_voice_chat.png",
+    "description": "Dark mode voice chat",
+    "mode": "dark",
+    "source_crop": [
+      693,
+      607,
+      836,
+      979
+    ]
+  },
+  {
+    "file": "09_dark_voice_call.png",
+    "description": "Dark mode voice call",
+    "mode": "dark",
+    "source_crop": [
+      842,
+      607,
+      984,
+      979
+    ]
+  },
+  {
+    "file": "10_dark_video_call.png",
+    "description": "Dark mode video call",
+    "mode": "dark",
+    "source_crop": [
+      991,
+      607,
+      1134,
+      979
+    ]
+  },
+  {
+    "file": "11_dark_settings.png",
+    "description": "Dark mode settings",
+    "mode": "dark",
+    "source_crop": [
+      1141,
+      607,
+      1287,
+      979
+    ]
+  },
+  {
+    "file": "12_dark_inbox.png",
+    "description": "Dark mode inbox",
+    "mode": "dark",
+    "source_crop": [
+      1294,
+      607,
+      1527,
+      979
+    ]
+  }
+]
