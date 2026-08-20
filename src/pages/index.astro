@@ -1,529 +1,748 @@
----
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import LandingHero from '../components/LandingHero.astro';
-import HowItWorks from '../components/HowItWorks.astro';
-import SafetyTrust from '../components/SafetyTrust.astro';
-import SetupModal from '../components/SetupModal.astro';
-import MatchingView from '../components/MatchingView.astro';
-import ChatView from '../components/ChatView.astro';
-import DisconnectNotice from '../components/DisconnectNotice.astro';
-import Modals from '../components/Modals.astro';
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DNS Configuration UI</title>
+    <style is:global>
+      :root {
+        --bg: #f5f5f4;
+        --panel: #ffffff;
+        --line: #dfe2e5;
+        --line-soft: #eaebed;
+        --text: #1f2937;
+        --text-soft: #6b7280;
+        --text-faint: #8a939e;
+        --primary: #2f80ed;
+        --toggle: #e5e7eb;
+        --success: #1d9b5c;
+        --success-soft: #dff2e7;
+      }
 
-export const prerender = false;
+      * { box-sizing: border-box; }
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
----
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", sans-serif;
+      }
 
-<BaseLayout lang={currentLang}>
-  <Header lang={currentLang} />
+      body {
+        display: flex;
+        justify-content: center;
+        padding: 24px 0 60px;
+      }
 
-  <main id="app-main" class="flex-1 flex flex-col w-full relative">
-    <!-- Landing State -->
-    <div id="landing-view" class="w-full flex flex-col">
-      <LandingHero lang={currentLang} />
-      <HowItWorks lang={currentLang} />
-      <SafetyTrust lang={currentLang} />
+      .app-shell {
+        width: min(1360px, calc(100vw - 80px));
+      }
+
+      .top-row {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        padding-left: 8px;
+        min-height: 44px;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .status-pill .dot {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        border-radius: 50%;
+        position: relative;
+        background: var(--success-soft);
+      }
+
+      .status-pill .dot::before {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border-radius: 50%;
+        background: var(--success);
+      }
+
+      .status-pill.locked .dot {
+        background: #eff1f4;
+      }
+
+      .status-pill.locked .dot::before {
+        background: #6b7280;
+      }
+
+      .status-pill.locked .dot::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 4px;
+        width: 6px;
+        height: 6px;
+        transform: translateX(-50%);
+        border-radius: 2px 2px 3px 3px;
+        background: #6b7280;
+      }
+
+      .tabs {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        padding-top: 4px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tab-button {
+        appearance: none;
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: 6px 6px 0 0;
+        padding: 12px 16px 10px;
+        color: var(--text);
+        font-size: 15px;
+        cursor: pointer;
+      }
+
+      .tab-button.active {
+        background: rgba(148, 163, 184, 0.08);
+        border-color: var(--line);
+        border-bottom-color: transparent;
+        box-shadow: inset 0 -1px 0 var(--panel);
+      }
+
+      .panel {
+        display: none;
+        padding: 32px 0 0;
+      }
+
+      .panel.active {
+        display: block;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 18px;
+      }
+
+      .section-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .section-header p {
+        margin: 12px 0 0;
+        color: var(--text-soft);
+        font-size: 18px;
+      }
+
+      .primary-button {
+        appearance: none;
+        border: 0;
+        background: linear-gradient(180deg, #4b9af7 0%, #2d7ef0 100%);
+        color: #fff;
+        border-radius: 8px;
+        padding: 11px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12);
+        cursor: pointer;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: minmax(320px, 1.65fr) minmax(200px, 1fr) minmax(200px, 1fr) 56px;
+        gap: 0;
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+      }
+
+      .searchbox,
+      .selectbox,
+      .mini-button {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+      }
+
+      .searchbox {
+        border-right: 0;
+        border-radius: 10px 0 0 0;
+      }
+
+      .searchbox .icon {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        color: var(--text-faint);
+      }
+
+      .searchbox input {
+        border: 0;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .selectbox {
+        justify-content: space-between;
+        font-size: 15px;
+        color: var(--text);
+        border-left: 0;
+      }
+
+      .selectbox .chev {
+        color: var(--text-soft);
+        font-size: 18px;
+      }
+
+      .mini-button {
+        width: 48px;
+        justify-content: center;
+        border-left: 0;
+        border-radius: 0 10px 0 0;
+        color: var(--text-soft);
+      }
+
+      .table-wrap {
+        border: 1px solid var(--line);
+        border-top: none;
+        border-radius: 0 0 10px 10px;
+        background: var(--panel);
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      th {
+        font-size: 15px;
+        color: var(--text-soft);
+        font-weight: 600;
+        background: rgba(148, 163, 184, 0.04);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      td {
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .email-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        background: rgba(59, 130, 246, 0.08);
+        color: var(--text);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 80px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        line-height: 1.3;
+        font-weight: 700;
+      }
+
+      .tag.verified {
+        background: #1f2937;
+        color: #fff;
+      }
+
+      .status-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .switch {
+        position: relative;
+        width: 42px;
+        height: 22px;
+        background: var(--toggle);
+        border-radius: 999px;
+        border: 1px solid rgba(17,24,39,0.08);
+        transition: background 0.2s ease;
+      }
+
+      .switch::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+        transition: transform 0.2s ease;
+      }
+
+      .switch.on {
+        background: var(--primary);
+      }
+
+      .switch.on::before {
+        transform: translateX(20px);
+      }
+
+      .row-actions {
+        display: flex;
+        justify-content: flex-end;
+        color: var(--text-faint);
+        font-size: 18px;
+      }
+
+      .footer-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 18px;
+        color: var(--text-soft);
+        font-size: 14px;
+      }
+
+      .pager {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pager button {
+        width: 34px;
+        height: 30px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 6px;
+        color: var(--text-soft);
+        cursor: pointer;
+      }
+
+      .pager .page-number {
+        width: 34px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 6px;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .input-row input {
+        flex: 1;
+        min-width: 0;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        min-height: 42px;
+        padding: 0 14px;
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .settings-section {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 14px;
+      }
+
+      .settings-box {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 10px;
+        padding: 18px 18px 14px;
+      }
+
+      .settings-box .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .settings-box h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+
+      .settings-box p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 15px;
+      }
+
+      .locked-box {
+        margin-top: 24px;
+      }
+
+      .table-card {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--panel);
+      }
+
+      .table-card table th,
+      .table-card table td {
+        padding: 16px 18px;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 84px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .status-badge.locked {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+
+      .status-badge.unlocked {
+        background: rgba(16, 185, 129, 0.11);
+        color: #0a9a69;
+      }
+
+      .secondary-button {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 15px;
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      @media (max-width: 900px) {
+        .app-shell { width: min(100vw - 30px, 1360px); }
+        .toolbar { grid-template-columns: 1fr; }
+        .searchbox, .selectbox, .mini-button { border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+        .tabs { overflow-x: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="top-row" aria-label="Service state">
+        <div class="status-pill"><span class="dot"></span><span>Enabled</span></div>
+        <div class="status-pill locked"><span class="dot"></span><span>Locked</span></div>
+      </div>
+
+      <nav class="tabs" aria-label="DNS settings sections">
+        <button class="tab-button" type="button" data-tab="Overview">Overview</button>
+        <button class="tab-button" type="button" data-tab="Activity Log">Activity Log</button>
+        <button class="tab-button active" type="button" data-tab="Routing rules">Routing rules</button>
+        <button class="tab-button" type="button" data-tab="Destination Addresses">Destination Addresses</button>
+        <button class="tab-button" type="button" data-tab="Destination Workers">Destination Workers</button>
+        <button class="tab-button" type="button" data-tab="Settings">Settings</button>
+      </nav>
+
+      <main>
+        <section class="panel" data-panel="Overview">
+          <div class="section-header">
+            <div>
+              <h2>Overview</h2>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="Activity Log">
+          <div class="section-header">
+            <div>
+              <h2>Activity Log</h2>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel active" data-panel="Routing rules">
+          <div class="section-header">
+            <div>
+              <h2>Routing rules</h2>
+              <p>Create routing rules and set the action to take on received emails.</p>
+            </div>
+            <button class="primary-button" type="button">+ Create routing rule</button>
+          </div>
+
+          <div class="toolbar" role="search">
+            <div class="searchbox">
+              <span class="icon">⌕</span>
+              <input aria-label="Search routing rules" placeholder="Search" />
+            </div>
+            <div class="selectbox">
+              <span>All domains</span>
+              <span class="chev">⌃</span>
+            </div>
+            <div class="selectbox">
+              <span>All actions</span>
+              <span class="chev">⌃</span>
+            </div>
+            <div class="mini-button" aria-label="Refresh">↻</div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Routing rule</th>
+                  <th>Action</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>✦ Catch-all</td>
+                  <td><span class="tag" style="background:#f3f4f6;color:#4b5563;">Drop</span></td>
+                  <td>
+                    <div class="status-toggle">
+                      <span class="switch" aria-label="Disabled"></span>
+                      <span style="color:var(--text-soft);">Disabled</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>hello@randomcaht.online</td>
+                  <td><span class="email-tag">✉️ kanishkroy09@gmail.com</span></td>
+                  <td>
+                    <div class="status-toggle">
+                      <span class="switch on" aria-label="Active"></span>
+                      <span style="color:var(--text);">Active</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="footer-meta">
+            <span>Showing 1 - 1 of 1</span>
+            <div class="pager" aria-label="Pagination">
+              <button type="button">«</button>
+              <button type="button">‹</button>
+              <span class="page-number">1</span>
+              <button type="button">›</button>
+              <button type="button">»</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="Destination Addresses">
+          <div class="section-header">
+            <div>
+              <h2>Destination Address</h2>
+              <p>Destination addresses are shared across every zone on this account. Manage the address list here, then use a verified address as the target of a routing rule for this zone.</p>
+            </div>
+          </div>
+
+          <div class="toolbar" role="search">
+            <div class="searchbox">
+              <span class="icon">⌕</span>
+              <input aria-label="Search destination addresses" placeholder="Search" />
+            </div>
+            <div class="selectbox">
+              <span>All</span>
+              <span class="chev">⌃</span>
+            </div>
+            <div class="mini-button" aria-label="Refresh">↻</div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Email Address</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>kanishkroy09@gmail.com</td>
+                  <td><span class="tag verified">Verified</span></td>
+                  <td>12 hours ago</td>
+                  <td class="row-actions">⋯</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="footer-meta">
+            <span>Showing 1 - 1 of 1</span>
+            <div class="pager" aria-label="Pagination">
+              <button type="button">«</button>
+              <button type="button">‹</button>
+              <span class="page-number">1</span>
+              <button type="button">›</button>
+              <button type="button">»</button>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <input type="email" aria-label="Add destination email" placeholder="user@example.com" />
+            <button class="primary-button" type="button">Add address</button>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="Destination Workers">
+          <div class="section-header">
+            <div>
+              <h2>Destination Workers</h2>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="Settings">
+          <div class="settings-section">
+            <div class="settings-box">
+              <div class="row">
+                <div>
+                  <h3>Subaddressing</h3>
+                  <p>Use the '+' separator to add detail to addresses matched by your routing rules (address+detail@example.com).</p>
+                </div>
+                <div class="status-toggle">
+                  <span class="switch" aria-label="Enable subaddressing"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-box locked-box">
+              <div class="row">
+                <div>
+                  <h3>DNS records</h3>
+                  <p>DNS records associated with this service.</p>
+                </div>
+                <button class="secondary-button" type="button">🔓 Unlock</button>
+              </div>
+
+              <div class="table-card">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Hostname</th>
+                      <th>Priority</th>
+                      <th>Value</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>MX</td>
+                      <td>randomcaht.online</td>
+                      <td>65</td>
+                      <td>route1.mx.cloudflare.net</td>
+                      <td><span class="status-badge locked">Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td>MX</td>
+                      <td>randomcaht.online</td>
+                      <td>3</td>
+                      <td>route2.mx.cloudflare.net</td>
+                      <td><span class="status-badge locked">Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td>MX</td>
+                      <td>randomcaht.online</td>
+                      <td>33</td>
+                      <td>route3.mx.cloudflare.net</td>
+                      <td><span class="status-badge locked">Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td>TXT</td>
+                      <td>cf2024-1._domainkey.randomcaht.online</td>
+                      <td></td>
+                      <td>"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A..."</td>
+                      <td><span class="status-badge locked">Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td>TXT</td>
+                      <td>randomcaht.online</td>
+                      <td></td>
+                      <td>"v=spf1 include:_spf.mx.cloudflare.net ~all"</td>
+                      <td><span class="status-badge unlocked">Unlocked</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <!-- Active Interactive States -->
-    <MatchingView lang={currentLang} />
-    <ChatView lang={currentLang} />
-    <DisconnectNotice lang={currentLang} />
-  </main>
+    <script>
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabPanels = document.querySelectorAll('.panel');
 
-  <!-- Modals & Overlays -->
-  <SetupModal lang={currentLang} />
-  <Modals lang={currentLang} />
-
-  <div id="footer-container">
-    <Footer lang={currentLang} />
-  </div>
-
-  <!-- Interactive Client State Script -->
-  <script>
-    import { ChatClient } from '../scripts/chatClient';
-    import { validateNickname } from '../server/sanitizer';
-    import type { Gender, MatchPreference, Country, Language, ReportReason } from '../server/types';
-    import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
-
-    const client = new ChatClient();
-
-    // DOM Elements
-    const landingView = document.getElementById('landing-view');
-    const matchingView = document.getElementById('matching-view');
-    const chatView = document.getElementById('chat-view');
-    const disconnectView = document.getElementById('disconnect-view');
-    const setupModal = document.getElementById('setup-modal');
-    const footerContainer = document.getElementById('footer-container');
-
-    // Hero / Triggers
-    const heroStartBtn = document.getElementById('hero-start-btn');
-    const setupCloseBtn = document.getElementById('setup-close-btn');
-    const setupForm = document.getElementById('setup-form') as HTMLFormElement;
-    const nicknameInput = document.getElementById('setup-nickname') as HTMLInputElement;
-    const nicknameError = document.getElementById('setup-nickname-error');
-    const matchingCancelBtn = document.getElementById('matching-cancel-btn');
-    const matchingPrefDisplay = document.getElementById('matching-pref-display');
-
-    // Chat elements
-    const chatStrangerNick = document.getElementById('chat-stranger-nick');
-    const chatStrangerAvatar = document.getElementById('chat-stranger-avatar');
-    const chatStrangerGender = document.getElementById('chat-stranger-gender');
-    const chatStrangerCountry = document.getElementById('chat-stranger-country');
-    const chatStrangerLanguage = document.getElementById('chat-stranger-language');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input') as HTMLInputElement;
-    const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
-    const chatComposerForm = document.getElementById('chat-composer-form') as HTMLFormElement;
-    const coldGateBanner = document.getElementById('cold-gate-banner');
-    const chatTypingIndicator = document.getElementById('chat-typing-indicator');
-    const chatNextBtn = document.getElementById('chat-next-btn');
-    const chatMenuBtn = document.getElementById('chat-menu-btn');
-    const chatDropdown = document.getElementById('chat-dropdown');
-
-    // Attachment & Lightbox Elements
-    const chatFileInput = document.getElementById('chat-file-input') as HTMLInputElement;
-    const chatAttachBtn = document.getElementById('chat-attach-btn');
-    const chatMediaPreviewContainer = document.getElementById('chat-media-preview-container');
-    const chatImagePreview = document.getElementById('chat-image-preview') as HTMLImageElement;
-    const chatVideoPreview = document.getElementById('chat-video-preview') as HTMLVideoElement;
-    const chatMediaName = document.getElementById('chat-media-name');
-    const chatRemoveMediaBtn = document.getElementById('chat-remove-media-btn');
-    const chatLightbox = document.getElementById('chat-lightbox');
-    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
-    const lightboxClose = document.getElementById('lightbox-close');
-
-    let currentAttachedMedia: { type: 'image' | 'video'; data: string; name: string } | null = null;
-
-    // Modals
-    const modalNext = document.getElementById('modal-next');
-    const modalNextCancel = document.getElementById('modal-next-cancel');
-    const modalNextConfirm = document.getElementById('modal-next-confirm');
-
-    const modalLeave = document.getElementById('modal-leave');
-    const modalLeaveCancel = document.getElementById('modal-leave-cancel');
-    const modalLeaveConfirm = document.getElementById('modal-leave-confirm');
-    const menuLeaveBtn = document.getElementById('menu-leave-btn');
-
-    const modalReport = document.getElementById('modal-report');
-    const modalReportClose = document.getElementById('modal-report-close');
-    const modalReportCancel = document.getElementById('modal-report-cancel');
-    const reportForm = document.getElementById('report-form') as HTMLFormElement;
-    const reportReasonSelect = document.getElementById('report-reason-select') as HTMLSelectElement;
-    const reportDetailsInput = document.getElementById('report-details-input') as HTMLTextAreaElement;
-    const menuReportBtn = document.getElementById('menu-report-btn');
-
-    const modalBlock = document.getElementById('modal-block');
-    const modalBlockCancel = document.getElementById('modal-block-cancel');
-    const modalBlockConfirm = document.getElementById('modal-block-confirm');
-    const menuBlockBtn = document.getElementById('menu-block-btn');
-
-    const disconnectFindBtn = document.getElementById('disconnect-find-btn');
-    const disconnectHomeBtn = document.getElementById('disconnect-home-btn');
-
-    // Form state
-    let selectedGender: Gender = 'male';
-    let selectedPreference: MatchPreference = 'anyone';
-    let selectedCountry: string = 'anywhere';
-    let selectedLanguage: string = 'any';
-
-    // UI State Switcher
-    function updateUI(c: ChatClient) {
-      // Hide all main state views
-      landingView?.classList.add('hidden');
-      matchingView?.classList.add('hidden');
-      chatView?.classList.add('hidden');
-      disconnectView?.classList.add('hidden');
-
-      if (c.state === 'LANDING') {
-        landingView?.classList.remove('hidden');
-        footerContainer?.classList.remove('hidden');
-        setupModal?.classList.add('hidden');
-      } else if (c.state === 'SETUP') {
-        landingView?.classList.remove('hidden');
-        setupModal?.classList.remove('hidden');
-        nicknameInput?.focus();
-      } else if (c.state === 'MATCHING') {
-        matchingView?.classList.remove('hidden');
-        footerContainer?.classList.add('hidden');
-        setupModal?.classList.add('hidden');
-        if (matchingPrefDisplay) matchingPrefDisplay.textContent = c.preference;
-        const matchingCountryDisplay = document.getElementById('matching-country-display');
-        const matchingLanguageDisplay = document.getElementById('matching-language-display');
-        const matchingPrefDetails = document.getElementById('matching-pref-details');
-        if (matchingCountryDisplay && c.country && c.country !== 'anywhere') {
-          matchingCountryDisplay.textContent = COUNTRY_NAMES[c.country] || c.country;
-          matchingCountryDisplay.classList.remove('hidden');
-        } else if (matchingCountryDisplay) {
-          matchingCountryDisplay.classList.add('hidden');
-        }
-        if (matchingLanguageDisplay && c.language && c.language !== 'any') {
-          matchingLanguageDisplay.textContent = LANGUAGE_NAMES[c.language] || c.language;
-          matchingLanguageDisplay.classList.remove('hidden');
-        } else if (matchingLanguageDisplay) {
-          matchingLanguageDisplay.classList.add('hidden');
-        }
-        if (matchingPrefDetails) {
-          const hasDetails = (c.country && c.country !== 'anywhere') || (c.language && c.language !== 'any');
-          if (hasDetails) {
-            matchingPrefDetails.classList.remove('hidden');
-          } else {
-            matchingPrefDetails.classList.add('hidden');
-          }
-        }
-      } else if (c.state === 'MATCH_FOUND' || c.state === 'CONNECTING' || c.state === 'CONNECTED') {
-        chatView?.classList.remove('hidden');
-        footerContainer?.classList.add('hidden');
-        setupModal?.classList.add('hidden');
-
-        if (chatStrangerNick) chatStrangerNick.textContent = c.partner?.nickname || 'Stranger';
-        if (chatStrangerAvatar) chatStrangerAvatar.textContent = (c.partner?.nickname || 'S').charAt(0).toUpperCase();
-        if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
-        if (chatStrangerCountry) {
-          if (c.partner?.country && c.partner.country !== 'anywhere') {
-            chatStrangerCountry.textContent = COUNTRY_NAMES[c.partner.country] || c.partner.country;
-            chatStrangerCountry.classList.remove('hidden');
-          } else {
-            chatStrangerCountry.classList.add('hidden');
-          }
-        }
-        if (chatStrangerLanguage) {
-          if (c.partner?.language && c.partner.language !== 'any') {
-            chatStrangerLanguage.textContent = LANGUAGE_NAMES[c.partner.language] || c.partner.language;
-            chatStrangerLanguage.classList.remove('hidden');
-          } else {
-            chatStrangerLanguage.classList.add('hidden');
-          }
-        }
-
-        renderMessages(c);
-        renderColdGate(c);
-
-        if (c.isPartnerTyping) {
-          chatTypingIndicator?.classList.remove('hidden');
-        } else {
-          chatTypingIndicator?.classList.add('hidden');
-        }
-      } else if (c.state === 'DISCONNECTED') {
-        disconnectView?.classList.remove('hidden');
-        footerContainer?.classList.remove('hidden');
-        setupModal?.classList.add('hidden');
-      } else if (c.state === 'RATE_LIMITED' || c.state === 'ERROR') {
-        alert(c.errorMessage || 'An error occurred.');
-        c.setState('LANDING');
-      }
-    }
-
-    function renderMessages(c: ChatClient) {
-      if (!chatMessages) return;
-
-      // Keep welcome banner and append new messages
-      const existingCount = chatMessages.querySelectorAll('.message-bubble').length;
-      if (existingCount === c.messages.length) return;
-
-      // Re-render message list
-      const welcome = chatMessages.firstElementChild;
-      chatMessages.innerHTML = '';
-      if (welcome) chatMessages.appendChild(welcome);
-
-      c.messages.forEach(msg => {
-        const isMe = msg.sender === 'me';
-        const wrapper = document.createElement('div');
-        wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'}`;
-
-        const bubble = document.createElement('div');
-        bubble.className = isMe
-          ? 'p-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm flex flex-col gap-2'
-          : 'p-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm flex flex-col gap-2';
-
-        // Render Media if present
-        if (msg.mediaData) {
-          if (msg.mediaType === 'video') {
-            const videoEl = document.createElement('video');
-            videoEl.src = msg.mediaData;
-            videoEl.controls = true;
-            videoEl.className = 'max-w-full rounded-xl max-h-60 object-contain bg-black';
-            bubble.appendChild(videoEl);
-          } else {
-            const imgEl = document.createElement('img');
-            imgEl.src = msg.mediaData;
-            imgEl.alt = 'Shared photo';
-            imgEl.className = 'max-w-full rounded-xl max-h-60 object-cover cursor-pointer hover:opacity-95 transition-opacity';
-            imgEl.addEventListener('click', () => {
-              if (lightboxImg && chatLightbox) {
-                lightboxImg.src = msg.mediaData!;
-                chatLightbox.classList.remove('hidden');
-              }
-            });
-            bubble.appendChild(imgEl);
-          }
-        }
-
-        // Render Text if present
-        if (msg.text) {
-          const textSpan = document.createElement('span');
-          textSpan.className = 'px-1 leading-relaxed';
-          textSpan.textContent = msg.text;
-          bubble.appendChild(textSpan);
-        }
-
-        wrapper.appendChild(bubble);
-        chatMessages.appendChild(wrapper);
-      });
-
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function renderColdGate(c: ChatClient) {
-      if (c.isColdGated) {
-        coldGateBanner?.classList.remove('hidden');
-        if (chatSendBtn) chatSendBtn.disabled = true;
-      } else {
-        coldGateBanner?.classList.add('hidden');
-        if (chatSendBtn) chatSendBtn.disabled = false;
-      }
-    }
-
-    client.subscribe(updateUI);
-
-    // Landing Triggers
-    heroStartBtn?.addEventListener('click', () => {
-      client.startSetup();
-    });
-
-    setupCloseBtn?.addEventListener('click', () => {
-      client.cancelSetup();
-    });
-
-    // Gender selection
-    document.querySelectorAll('.gender-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const target = e.currentTarget as HTMLButtonElement;
-        const g = target.dataset.gender as Gender;
-        if (!g) return;
-        selectedGender = g;
-        document.querySelectorAll('.gender-btn').forEach(b => {
-          b.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = button.dataset.tab;
+          tabButtons.forEach((btn) => btn.classList.toggle('active', btn === button));
+          tabPanels.forEach((panel) => panel.classList.toggle('active', panel.dataset.panel === target));
         });
-        target.className = 'gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
       });
-    });
-
-    // Preference selection
-    document.querySelectorAll('.pref-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const target = e.currentTarget as HTMLButtonElement;
-        const p = target.dataset.pref as MatchPreference;
-        if (!p) return;
-        selectedPreference = p;
-        document.querySelectorAll('.pref-btn').forEach(b => {
-          b.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
-        });
-        target.className = 'pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
-      });
-    });
-
-    const countrySelect = document.getElementById('setup-country') as HTMLSelectElement;
-    const languageSelect = document.getElementById('setup-language') as HTMLSelectElement;
-
-    if (countrySelect) {
-      selectedCountry = countrySelect.value;
-      countrySelect.addEventListener('change', () => {
-        selectedCountry = countrySelect.value;
-      });
-    }
-
-    if (languageSelect) {
-      selectedLanguage = languageSelect.value;
-      languageSelect.addEventListener('change', () => {
-        selectedLanguage = languageSelect.value;
-      });
-    }
-
-    // Setup Submit
-    setupForm?.addEventListener('submit', e => {
-      e.preventDefault();
-      const rawNick = nicknameInput.value;
-      const validation = validateNickname(rawNick);
-      if (!validation.isValid || !validation.sanitizedValue) {
-        if (nicknameError) {
-          nicknameError.textContent = validation.error || 'Invalid nickname';
-          nicknameError.classList.remove('hidden');
-        }
-        return;
-      }
-      if (nicknameError) nicknameError.classList.add('hidden');
-
-      client.enterQueue(validation.sanitizedValue, selectedGender, selectedPreference, selectedCountry, selectedLanguage);
-    });
-
-    // Matching Cancel
-    matchingCancelBtn?.addEventListener('click', () => {
-      client.cancelQueue();
-    });
-
-    // Gallery File Attachment handling
-    chatAttachBtn?.addEventListener('click', () => {
-      chatFileInput?.click();
-    });
-
-    chatFileInput?.addEventListener('change', () => {
-      const file = chatFileInput.files?.[0];
-      if (!file) return;
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File is too large. Please select a photo or video under 5MB.');
-        chatFileInput.value = '';
-        return;
-      }
-
-      const isVideo = file.type.startsWith('video/');
-      const reader = new FileReader();
-
-      reader.onload = e => {
-        const dataUrl = e.target?.result as string;
-        currentAttachedMedia = {
-          type: isVideo ? 'video' : 'image',
-          data: dataUrl,
-          name: file.name
-        };
-
-        if (chatMediaPreviewContainer && chatMediaName) {
-          chatMediaName.textContent = file.name;
-          chatMediaPreviewContainer.classList.remove('hidden');
-
-          if (isVideo && chatVideoPreview) {
-            chatVideoPreview.src = dataUrl;
-            chatVideoPreview.classList.remove('hidden');
-            chatImagePreview?.classList.add('hidden');
-          } else if (chatImagePreview) {
-            chatImagePreview.src = dataUrl;
-            chatImagePreview.classList.remove('hidden');
-            chatVideoPreview?.classList.add('hidden');
-          }
-        }
-      };
-
-      reader.readAsDataURL(file);
-    });
-
-    function clearAttachedMedia() {
-      currentAttachedMedia = null;
-      if (chatFileInput) chatFileInput.value = '';
-      if (chatMediaPreviewContainer) chatMediaPreviewContainer.classList.add('hidden');
-      if (chatImagePreview) chatImagePreview.src = '';
-      if (chatVideoPreview) chatVideoPreview.src = '';
-    }
-
-    chatRemoveMediaBtn?.addEventListener('click', clearAttachedMedia);
-
-    // Lightbox Close
-    lightboxClose?.addEventListener('click', () => {
-      chatLightbox?.classList.add('hidden');
-    });
-    chatLightbox?.addEventListener('click', e => {
-      if (e.target === chatLightbox) {
-        chatLightbox.classList.add('hidden');
-      }
-    });
-
-    // Chat Message Sending
-    chatComposerForm?.addEventListener('submit', e => {
-      e.preventDefault();
-      const text = chatInput ? chatInput.value : '';
-      const media = currentAttachedMedia;
-
-      if (!text.trim() && !media) return;
-
-      const sent = client.sendMessage(text, media?.type, media?.data);
-      if (sent) {
-        if (chatInput) chatInput.value = '';
-        clearAttachedMedia();
-      }
-    });
-
-    chatInput?.addEventListener('input', () => {
-      client.notifyTyping();
-    });
-
-    // Dropdown toggle
-    chatMenuBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', e => {
-      if (chatDropdown && !chatDropdown.contains(e.target as Node) && e.target !== chatMenuBtn) {
-        chatDropdown.classList.add('hidden');
-      }
-    });
-
-    // Next Stranger Modal
-    chatNextBtn?.addEventListener('click', () => {
-      modalNext?.classList.remove('hidden');
-    });
-    modalNextCancel?.addEventListener('click', () => {
-      modalNext?.classList.add('hidden');
-    });
-    modalNextConfirm?.addEventListener('click', () => {
-      modalNext?.classList.add('hidden');
-      client.nextStranger();
-    });
-
-    // Leave Modal
-    menuLeaveBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.add('hidden');
-      modalLeave?.classList.remove('hidden');
-    });
-    modalLeaveCancel?.addEventListener('click', () => {
-      modalLeave?.classList.add('hidden');
-    });
-    modalLeaveConfirm?.addEventListener('click', () => {
-      modalLeave?.classList.add('hidden');
-      client.leaveChat();
-    });
-
-    // Report Modal
-    menuReportBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.add('hidden');
-      modalReport?.classList.remove('hidden');
-    });
-    modalReportClose?.addEventListener('click', () => {
-      modalReport?.classList.add('hidden');
-    });
-    modalReportCancel?.addEventListener('click', () => {
-      modalReport?.classList.add('hidden');
-    });
-    reportForm?.addEventListener('submit', e => {
-      e.preventDefault();
-      const reason = reportReasonSelect.value as ReportReason;
-      const details = reportDetailsInput.value;
-      client.submitReport(reason, details);
-      modalReport?.classList.add('hidden');
-      alert('Report submitted. Thank you.');
-    });
-
-    // Block Modal
-    menuBlockBtn?.addEventListener('click', () => {
-      chatDropdown?.classList.add('hidden');
-      modalBlock?.classList.remove('hidden');
-    });
-    modalBlockCancel?.addEventListener('click', () => {
-      modalBlock?.classList.add('hidden');
-    });
-    modalBlockConfirm?.addEventListener('click', () => {
-      modalBlock?.classList.add('hidden');
-      client.blockStranger();
-    });
-
-    // Disconnect Actions
-    disconnectFindBtn?.addEventListener('click', () => {
-      client.enterQueue(client.nickname, client.gender, client.preference, client.country, client.language);
-    });
-    disconnectHomeBtn?.addEventListener('click', () => {
-      client.setState('LANDING');
-    });
-  </script>
-</BaseLayout>
+    </script>
+  </body>
+</html>
