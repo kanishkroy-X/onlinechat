@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import AgeGateModal from '../components/AgeGateModal.astro';
+import { SITE, canonicalUrl, ogImageUrl } from '../config/site';
 
 interface Props {
   title?: string;
@@ -9,67 +9,77 @@ interface Props {
   lang?: string;
 }
 
-const {
-  title = 'randomcaht.online — Free Anonymous Random Text Chat',
-  description = 'Connect and chat with compatible strangers instantly. Free, anonymous-by-default random text chat. No account, no signup required.',
-  canonical = 'https://randomcaht.online',
-  lang = 'en'
-} = Astro.props;
-
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || lang || 'en';
+const currentLang =
+  Astro.cookies.get('rc_language')?.value ||
+  Astro.url.searchParams.get('lang') ||
+  Astro.props.lang ||
+  'en';
 const isRtl = currentLang === 'ar';
+const origin = Astro.url.origin;
+const {
+  title = `${SITE.name} — ${SITE.tagline}`,
+  description = SITE.description,
+  canonical = canonicalUrl(Astro.url.pathname, origin),
+} = Astro.props;
+const ogImage = ogImageUrl(origin);
+const gaId = SITE.gaId;
 ---
 
 <!doctype html>
 <html lang={currentLang} dir={isRtl ? 'rtl' : 'ltr'}>
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-GJTQW9LZ5W"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-GJTQW9LZ5W');
-    </script>
+    {gaId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+        <script is:inline define:vars={{ gaId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){ dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaId, { anonymize_ip: true });
+        </script>
+      </>
+    )}
 
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
-    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- SEO & Metadata -->
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#492351" />
+    <meta name="theme-color" content="#F1EBE1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#161310" media="(prefers-color-scheme: dark)" />
+    <meta name="application-name" content={SITE.name} />
+    <meta name="apple-mobile-web-app-title" content={SITE.name} />
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="randomcaht.online" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="en_US" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
-    <!-- Zero-FOUC Theme & Language Script -->
     <script is:inline>
       (function () {
         const theme = localStorage.getItem('theme') || 'system';
         const isDark =
           theme === 'dark' ||
           (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        if (isDark) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-
+        document.documentElement.classList.toggle('dark', isDark);
         const savedLang = localStorage.getItem('rc_language');
         if (savedLang) {
           document.documentElement.lang = savedLang;
@@ -78,16 +88,10 @@ const isRtl = currentLang === 'ar';
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col antialiased selection:bg-[#FF808A] selection:text-white">
-    <!-- Accessible Screen Reader Announcer -->
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <div id="sr-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-    <!-- 18+ Age Verification Modal -->
-    <AgeGateModal />
-
     <slot />
-
-    <!-- Client-side script initialization -->
     <script>
       import { initTheme } from '../scripts/theme';
       initTheme();

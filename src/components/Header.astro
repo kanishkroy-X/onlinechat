@@ -1,44 +1,82 @@
 ---
-import { getTranslations } from '../i18n/translations';
+import { SITE } from '../config/site';
+import BrandMark from './BrandMark.astro';
+import Icon from './Icon.astro';
 
 interface Props {
-  lang?: string;
+  current?: 'home' | 'safety' | 'faq' | 'privacy' | 'terms' | 'about' | 'contact';
 }
 
-const { lang = 'en' } = Astro.props;
-const t = getTranslations(lang);
+const { current = 'home' } = Astro.props;
+const isHome = current === 'home';
 ---
 
-<header class="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)]/80 backdrop-blur-md sticky top-0 z-40 transition-colors">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
-      <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-        </svg>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-bold text-lg tracking-tight leading-none text-[var(--text-main)]">
-          randomcaht<span class="text-[#FF808A]">.online</span>
-        </span>
-        <div class="flex items-center gap-1.5 mt-0.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-600 dark:text-emerald-400 leading-tight">
-            Online
-          </span>
-        </div>
-      </div>
+<header id="site-header" class="site-header">
+  <div class="wrap site-header-inner">
+    <a href="/" class="brand">
+      <BrandMark />
+      <span>
+        <span class="brand-word">{SITE.name}</span>
+        <span class="brand-note">Text chat · 18+</span>
+      </span>
     </a>
 
-    <div class="flex items-center gap-2.5 sm:gap-3">
-      <nav class="hidden md:flex items-center gap-4 text-sm font-medium text-[var(--text-muted)] mr-1">
-        <a href="/safety" class="hover:text-[var(--text-main)] transition-colors py-1 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-          {t.nav.safety}
-        </a>
-        <a href="/faq" class="hover:text-[var(--text-main)] transition-colors py-1 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-          {t.nav.faq}
-        </a>
-      </nav>
+    <nav class="nav-links" aria-label="Primary">
+      <a href={isHome ? '#product' : '/#product'}>Product</a>
+      <a href={isHome ? '#how' : '/#how'}>How it works</a>
+      <a href="/safety" aria-current={current === 'safety' ? 'page' : undefined}>Safety</a>
+      <a href="/faq" aria-current={current === 'faq' ? 'page' : undefined}>FAQ</a>
+    </nav>
+
+    <div class="header-actions">
+      <button
+        id="theme-toggle"
+        class="icon-btn"
+        type="button"
+        aria-label="Toggle color theme"
+      >
+        <span class="theme-icon-light">
+          <Icon name="moon" size={18} />
+        </span>
+        <span class="theme-icon-dark" hidden>
+          <Icon name="sun" size={18} />
+        </span>
+      </button>
+      <button
+        id="header-cta"
+        class="btn btn-primary btn-sm"
+        type="button"
+        data-open-setup
+      >
+        Try {SITE.name}
+      </button>
     </div>
   </div>
 </header>
+
+<script>
+  import { getStoredTheme, applyTheme } from '../scripts/theme';
+
+  const btn = document.getElementById('theme-toggle');
+  const light = btn?.querySelector('.theme-icon-light') as HTMLElement | null;
+  const dark = btn?.querySelector('.theme-icon-dark') as HTMLElement | null;
+
+  function syncThemeIcons() {
+    const isDark = document.documentElement.classList.contains('dark');
+    if (light) light.hidden = isDark;
+    if (dark) dark.hidden = !isDark;
+    btn?.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+
+  syncThemeIcons();
+
+  btn?.addEventListener('click', () => {
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(next);
+    syncThemeIcons();
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (getStoredTheme() === 'system') syncThemeIcons();
+  });
+</script>

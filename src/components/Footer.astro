@@ -1,34 +1,82 @@
 ---
-import { getTranslations } from '../i18n/translations';
+import { SITE, contactEmail } from '../config/site';
+import BrandMark from './BrandMark.astro';
+import { SUPPORTED_LANGUAGES } from '../i18n/translations';
 
 interface Props {
   lang?: string;
 }
 
 const { lang = 'en' } = Astro.props;
-const t = getTranslations(lang);
+const email = contactEmail(Astro.url.host);
+const year = new Date().getFullYear();
 ---
 
-<footer class="w-full border-t border-[var(--border-color)] bg-[var(--bg-surface)] py-8 px-4 mt-auto">
-  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[var(--text-muted)]">
-    <!-- Brand / Copyright -->
-    <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-      <span class="font-bold text-[var(--text-main)]">randomcaht.online</span>
-      <span>&copy; {new Date().getFullYear()} {t.footer.allRightsReserved}</span>
-      <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold">18+ Only</span>
+<footer id="site-footer" class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="brand">
+        <BrandMark />
+        <span class="brand-word">{SITE.name}</span>
+      </a>
+      <p>
+        A one-time text conversation with a stranger. No account, no email, no
+        profile. Built for adults.
+      </p>
     </div>
 
-    <!-- Navigation Links -->
-    <nav class="flex flex-wrap items-center justify-center gap-4 text-[var(--text-muted)]">
-      <a href="/safety" class="hover:text-[var(--text-main)] transition-colors">{t.nav.safety}</a>
-      <a href="/faq" class="hover:text-[var(--text-main)] transition-colors">{t.nav.faq}</a>
-      <a href="/privacy" class="hover:text-[var(--text-main)] transition-colors">{t.nav.privacy}</a>
-      <a href="/terms" class="hover:text-[var(--text-main)] transition-colors">{t.nav.terms}</a>
-      <a href="/about" class="hover:text-[var(--text-main)] transition-colors">{t.nav.about}</a>
-      <a href="/contact" class="hover:text-[var(--text-main)] transition-colors">{t.nav.contact}</a>
-    </nav>
+    <div class="footer-cols">
+      <div>
+        <h2>Product</h2>
+        <a href="/#product">What it is</a>
+        <a href="/#how">How it works</a>
+        <a href="/faq">FAQ</a>
+        <a href="/about">About</a>
+      </div>
+      <div>
+        <h2>Safety</h2>
+        <a href="/safety">Safety</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div>
+        <h2>Language</h2>
+        <label class="sr-only" for="footer-language">Interface language</label>
+        <select id="footer-language" name="language">
+          {SUPPORTED_LANGUAGES.map((item) => (
+            <option value={item.code} selected={item.code === lang}>
+              {item.nativeName}
+            </option>
+          ))}
+        </select>
+        {email && (
+          <a href={`mailto:${email}`} style="margin-top:0.7rem">
+            {email}
+          </a>
+        )}
+      </div>
+    </div>
   </div>
-  <div class="max-w-6xl mx-auto mt-4 text-center text-[10px] text-[var(--text-subtle)]">
-    {t.footer.disclaimer}
+
+  <div class="wrap footer-meta">
+    <span>© {year} {SITE.name}</span>
+    <span class="age-pill">{SITE.minAge}+ only</span>
+    <span>
+      The other person can still copy or screenshot a chat. Do not share
+      anything you would not say in public.
+    </span>
   </div>
 </footer>
+
+<script>
+  const select = document.getElementById('footer-language') as HTMLSelectElement | null;
+  select?.addEventListener('change', () => {
+    const value = select.value;
+    localStorage.setItem('rc_language', value);
+    document.cookie = `rc_language=${encodeURIComponent(value)}; path=/; max-age=31536000; samesite=lax`;
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', value);
+    window.location.assign(url.toString());
+  });
+</script>
