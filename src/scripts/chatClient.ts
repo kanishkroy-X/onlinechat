@@ -1,11 +1,14 @@
 import type {
   Gender,
   MatchPreference,
+  MatchMode,
   Country,
   Language,
   ClientMessage,
   ServerMessage,
-  ReportReason
+  ReportReason,
+  WebRTCSignalingPayload,
+  VoiceStatePayload
 } from '../server/types';
 import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
 
@@ -29,28 +32,51 @@ export interface ChatMessageItem {
   timestamp: number;
 }
 
+const ICE_SERVERS: RTCIceServer[] = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' }
+];
+
 export class ChatClient {
   public state: UIState = 'LANDING';
   public sessionId: string = '';
   public nickname: string = '';
   public gender: Gender = 'male';
   public preference: MatchPreference = 'anyone';
+  public mode: MatchMode = 'text';
   public country: Country = 'anywhere';
   public language: Language = 'any';
-  public partner: { nickname: string; gender: Gender; country: Country; language: Language } | null = null;
+  public partner: {
+    sessionId?: string;
+    nickname: string;
+    gender: Gender;
+    country: Country;
+    language: Language;
+  } | null = null;
   public messages: ChatMessageItem[] = [];
   public outgoingCount: number = 0;
   public isColdGated: boolean = false;
   public isPartnerTyping: boolean = false;
   public errorMessage: string = '';
 
+  // WebRTC Voice Chat State (VOICE-001)
+  public isVoiceActive: boolean = false;
+  public isMicMuted: boolean = false;
+  public isPartnerVoiceMuted: boolean = false;
+  public voiceStatusText: string = 'Idle';
+
   private socket: WebSocket | null = null;
+  private peerConnection: RTCPeerConnection | null = null;
+  private localAudioStream: MediaStream | null = null;
   private pingInterval: number | null = null;
   private typingTimeout: number | null = null;
   private listeners: Set<(client: ChatClient) => void> = new Set();
+  private blockedIds: Set<string> = new Set();
 
   constructor() {
     this.sessionId = this.getOrGenerateSessionId();
+    this.loadBlockedIds();
   }
 
   private getOrGenerateSessionId(): string {
@@ -63,6 +89,32 @@ export class ChatClient {
       return id;
     }
     return `sess_${crypto.randomUUID()}`;
+  }
+
+  private loadBlockedIds(): void {
+    if (typeof sessionStorage !== 'undefined') {
+      try {
+        const raw = sessionStorage.getItem('rc_blocked_ids');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            this.blockedIds = new Set(parsed);
+          }
+        }
+      } catch {
+        this.blockedIds = new Set();
+      }
+    }
+  }
+
+  private saveBlockedIds(): void {
+    if (typeof sessionStorage !== 'undefined') {
+      try {
+        sessionStorage.setItem('rc_blocked_ids', JSON.stringify(Array.from(this.blockedIds)));
+      } catch {
+        // Fallback
+      }
+    }
   }
 
   public subscribe(callback: (client: ChatClient) => void): () => void {
@@ -98,18 +150,27 @@ export class ChatClient {
     this.setState('LANDING');
   }
 
-  public enterQueue(nickname: string, gender: Gender, preference: MatchPreference, country: Country = 'anywhere', language: Language = 'any'): void {
+  public enterQueue(
+    nickname: string,
+    gender: Gender,
+    preference: MatchPreference,
+    country: Country = 'anywhere',
+    language: Language = 'any',
+    mode: MatchMode = 'text'
+  ): void {
     this.nickname = nickname;
     this.gender = gender;
     this.preference = preference;
     this.country = country;
     this.language = language;
+    this.mode = mode;
     this.partner = null;
     this.messages = [];
     this.outgoingCount = 0;
     this.isColdGated = false;
     this.isPartnerTyping = false;
     this.errorMessage = '';
+    this.endVoiceCall(false);
 
     this.setState('MATCHING');
     this.announceToScreenReader('Searching for a compatible stranger to chat with...');
@@ -141,15 +202,27 @@ export class ChatClient {
       return false;
     }
 
+    // Add message locally
+    const msgItem: ChatMessageItem = {
+      id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      sender: 'me',
+      text: trimmed,
+      mediaType,
+      mediaData,
+      timestamp: Date.now()
+    };
+    this.messages.push(msgItem);
+    this.outgoingCount++;
+    this.notify();
+
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'message.send',
         payload: { content: trimmed, mediaType, mediaData }
       });
-      return true;
     }
 
-    return false;
+    return true;
   }
 
   public notifyTyping(): void {
@@ -161,6 +234,7 @@ export class ChatClient {
   }
 
   public nextStranger(): void {
+    this.endVoiceCall(false);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.next',
@@ -168,10 +242,11 @@ export class ChatClient {
       });
     }
     this.closeSocket();
-    this.enterQueue(this.nickname, this.gender, this.preference, this.country, this.language);
+    this.enterQueue(this.nickname, this.gender, this.preference, this.country, this.language, this.mode);
   }
 
   public leaveChat(): void {
+    this.endVoiceCall(false);
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
         type: 'chat.leave',
@@ -186,21 +261,29 @@ export class ChatClient {
   public submitReport(reason: ReportReason, details?: string): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
-        type: 'safety.report',
+        type: 'chat.report',
         payload: { reason, details }
       });
     }
-    this.leaveChat();
+    this.blockPartner();
   }
 
   public blockPartner(): void {
+    this.endVoiceCall(false);
+    if (this.partner?.sessionId) {
+      this.blockedIds.add(this.partner.sessionId);
+      this.saveBlockedIds();
+    }
+
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.send({
-        type: 'safety.block',
+        type: 'chat.block',
         payload: {}
       });
     }
-    this.leaveChat();
+    this.closeSocket();
+    this.setState('DISCONNECTED');
+    this.announceToScreenReader('Stranger blocked.');
   }
 
   public blockStranger(): void {
@@ -212,6 +295,197 @@ export class ChatClient {
     this.notify();
   }
 
+  // ==========================================
+  // WebRTC Ephemeral Voice Chat Engine (VOICE-001)
+  // ==========================================
+
+  public async startVoiceCall(): Promise<void> {
+    if (this.isVoiceActive) return;
+
+    try {
+      this.voiceStatusText = 'Requesting Microphone Permission...';
+      this.notify();
+
+      // Explicit permission guardrail: request microphone stream
+      this.localAudioStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        },
+        video: false
+      });
+
+      this.isVoiceActive = true;
+      this.isMicMuted = false;
+      this.voiceStatusText = 'Connecting Voice...';
+      this.notify();
+
+      this.createPeerConnection();
+
+      // Add local audio tracks to peer connection
+      for (const track of this.localAudioStream.getAudioTracks()) {
+        this.peerConnection?.addTrack(track, this.localAudioStream);
+      }
+
+      // Create WebRTC Offer
+      const offer = await this.peerConnection?.createOffer();
+      if (offer) {
+        await this.peerConnection?.setLocalDescription(offer);
+        this.send({
+          type: 'webrtc.offer',
+          payload: { sdp: { type: offer.type, sdp: offer.sdp || '' } }
+        });
+      }
+    } catch (err) {
+      console.error('Failed to start voice call', err);
+      this.voiceStatusText = 'Microphone Access Denied or Unavailable';
+      this.isVoiceActive = false;
+      this.notify();
+    }
+  }
+
+  public toggleMicMute(): void {
+    if (!this.localAudioStream) return;
+    this.isMicMuted = !this.isMicMuted;
+    for (const track of this.localAudioStream.getAudioTracks()) {
+      track.enabled = !this.isMicMuted;
+    }
+    this.send({
+      type: 'voice.state',
+      payload: { isMuted: this.isMicMuted }
+    });
+    this.notify();
+  }
+
+  public endVoiceCall(notifyPartner: boolean = true): void {
+    if (this.localAudioStream) {
+      for (const track of this.localAudioStream.getTracks()) {
+        track.stop();
+      }
+      this.localAudioStream = null;
+    }
+
+    if (this.peerConnection) {
+      this.peerConnection.close();
+      this.peerConnection = null;
+    }
+
+    this.isVoiceActive = false;
+    this.isMicMuted = false;
+    this.isPartnerVoiceMuted = false;
+    this.voiceStatusText = 'Idle';
+
+    if (notifyPartner && this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.send({
+        type: 'voice.state',
+        payload: { isMuted: true, isSpeaking: false }
+      });
+    }
+
+    this.notify();
+  }
+
+  private createPeerConnection(): void {
+    if (this.peerConnection) {
+      this.peerConnection.close();
+    }
+
+    this.peerConnection = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate && this.socket && this.socket.readyState === WebSocket.OPEN) {
+        this.send({
+          type: 'webrtc.ice_candidate',
+          payload: {
+            candidate: {
+              candidate: event.candidate.candidate,
+              sdpMid: event.candidate.sdpMid,
+              sdpMLineIndex: event.candidate.sdpMLineIndex
+            }
+          }
+        });
+      }
+    };
+
+    this.peerConnection.ontrack = (event) => {
+      const remoteAudio = document.getElementById('chat-remote-audio') as HTMLAudioElement | null;
+      if (remoteAudio && event.streams[0]) {
+        remoteAudio.srcObject = event.streams[0];
+        remoteAudio.play().catch((e) => console.warn('Autoplay audio interaction pending', e));
+      }
+      this.voiceStatusText = 'Live Voice Connected';
+      this.notify();
+    };
+
+    this.peerConnection.onconnectionstatechange = () => {
+      const state = this.peerConnection?.connectionState;
+      if (state === 'connected') {
+        this.voiceStatusText = 'Live Voice Connected';
+      } else if (state === 'disconnected' || state === 'failed') {
+        this.voiceStatusText = 'Voice Disconnected';
+      }
+      this.notify();
+    };
+  }
+
+  private async handleWebRTCOffer(sdp: { type: string; sdp: string }): Promise<void> {
+    try {
+      if (!this.localAudioStream) {
+        this.localAudioStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+          video: false
+        });
+      }
+
+      this.isVoiceActive = true;
+      this.isMicMuted = false;
+      this.createPeerConnection();
+
+      for (const track of this.localAudioStream.getAudioTracks()) {
+        this.peerConnection?.addTrack(track, this.localAudioStream);
+      }
+
+      await this.peerConnection?.setRemoteDescription(new RTCSessionDescription(sdp as RTCSessionDescriptionInit));
+      const answer = await this.peerConnection?.createAnswer();
+      if (answer) {
+        await this.peerConnection?.setLocalDescription(answer);
+        this.send({
+          type: 'webrtc.answer',
+          payload: { sdp: { type: answer.type, sdp: answer.sdp || '' } }
+        });
+      }
+      this.voiceStatusText = 'Live Voice Connected';
+      this.notify();
+    } catch (err) {
+      console.error('Failed to handle incoming WebRTC offer', err);
+    }
+  }
+
+  private async handleWebRTCAnswer(sdp: { type: string; sdp: string }): Promise<void> {
+    try {
+      if (this.peerConnection) {
+        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp as RTCSessionDescriptionInit));
+      }
+    } catch (err) {
+      console.error('Failed to handle WebRTC answer', err);
+    }
+  }
+
+  private async handleWebRTCIceCandidate(candidate: { candidate: string; sdpMid?: string | null; sdpMLineIndex?: number | null }): Promise<void> {
+    try {
+      if (this.peerConnection && candidate?.candidate) {
+        await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate as RTCIceCandidateInit));
+      }
+    } catch (err) {
+      console.warn('Failed to add ICE candidate', err);
+    }
+  }
+
+  // ==========================================
+  // WebSocket Connection & Dispatch
+  // ==========================================
+
   private send(message: ClientMessage): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
@@ -221,8 +495,9 @@ export class ChatClient {
   private connectWebSocket(): void {
     this.closeSocket();
 
+    const blockedQuery = Array.from(this.blockedIds).join(',');
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/api/ws?sessionId=${encodeURIComponent(this.sessionId)}&nickname=${encodeURIComponent(this.nickname)}&gender=${this.gender}&preference=${this.preference}&country=${encodeURIComponent(this.country)}&language=${encodeURIComponent(this.language)}`;
+    const wsUrl = `${protocol}//${window.location.host}/api/ws?sessionId=${encodeURIComponent(this.sessionId)}&nickname=${encodeURIComponent(this.nickname)}&gender=${this.gender}&preference=${this.preference}&country=${encodeURIComponent(this.country)}&language=${encodeURIComponent(this.language)}&mode=${this.mode}&blocked=${encodeURIComponent(blockedQuery)}`;
 
     try {
       this.socket = new WebSocket(wsUrl);
@@ -235,8 +510,10 @@ export class ChatClient {
             nickname: this.nickname,
             gender: this.gender,
             preference: this.preference,
+            mode: this.mode,
             country: this.country,
-            language: this.language
+            language: this.language,
+            blockedSessionIds: Array.from(this.blockedIds)
           }
         });
       });
@@ -252,6 +529,7 @@ export class ChatClient {
 
       this.socket.addEventListener('close', () => {
         this.stopPing();
+        this.endVoiceCall(false);
         if (this.state === 'CONNECTED' || this.state === 'MATCH_FOUND') {
           this.setState('DISCONNECTED');
           this.announceToScreenReader('Stranger disconnected.');
@@ -274,15 +552,36 @@ export class ChatClient {
       }
 
       case 'match.found': {
-        const payload = msg.payload as { partner: { nickname: string; gender: Gender; country: Country; language: Language } };
+        const payload = msg.payload as {
+          partner: {
+            sessionId?: string;
+            nickname: string;
+            gender: Gender;
+            country: Country;
+            language: Language;
+          };
+        };
         this.partner = payload.partner;
         this.setState('MATCH_FOUND');
         this.announceToScreenReader(`Match found with ${this.partner.nickname}!`);
+
+        // If in voice mode, automatically initiate peer voice connection
+        if (this.mode === 'voice') {
+          this.startVoiceCall();
+        }
         break;
       }
 
       case 'chat.connected': {
-        const payload = msg.payload as { partner: { nickname: string; gender: Gender; country: Country; language: Language } };
+        const payload = msg.payload as {
+          partner: {
+            sessionId?: string;
+            nickname: string;
+            gender: Gender;
+            country: Country;
+            language: Language;
+          };
+        };
         if (payload?.partner) this.partner = payload.partner;
         this.setState('CONNECTED');
         this.announceToScreenReader('Connected! You can now start chatting.');
@@ -320,7 +619,9 @@ export class ChatClient {
           this.outgoingCount = 0;
           this.isColdGated = false;
           this.isPartnerTyping = false;
-          this.announceToScreenReader(`Message from ${this.partner?.nickname || 'Stranger'}: ${payload.content || 'Photo attachment'}`);
+          this.announceToScreenReader(
+            `Message from ${this.partner?.nickname || 'Stranger'}: ${payload.content || 'Photo attachment'}`
+          );
         }
 
         this.notify();
@@ -348,22 +649,55 @@ export class ChatClient {
         break;
       }
 
+      case 'chat.partner_disconnected':
       case 'chat.ended': {
+        this.endVoiceCall(false);
         this.setState('DISCONNECTED');
         this.announceToScreenReader('Stranger disconnected.');
         break;
       }
 
-      case 'error.rate_limited': {
-        const payload = msg.payload as { retryAfterSeconds?: number };
-        this.errorMessage = `You are sending messages too quickly. Please wait ${payload.retryAfterSeconds || 10} seconds.`;
+      case 'webrtc.offer': {
+        const payload = msg.payload as WebRTCSignalingPayload;
+        if (payload?.sdp) {
+          this.handleWebRTCOffer(payload.sdp);
+        }
+        break;
+      }
+
+      case 'webrtc.answer': {
+        const payload = msg.payload as WebRTCSignalingPayload;
+        if (payload?.sdp) {
+          this.handleWebRTCAnswer(payload.sdp);
+        }
+        break;
+      }
+
+      case 'webrtc.ice_candidate': {
+        const payload = msg.payload as WebRTCSignalingPayload;
+        if (payload?.candidate) {
+          this.handleWebRTCIceCandidate(payload.candidate);
+        }
+        break;
+      }
+
+      case 'voice.state': {
+        const payload = msg.payload as VoiceStatePayload;
+        this.isPartnerVoiceMuted = !!payload.isMuted;
+        this.notify();
+        break;
+      }
+
+      case 'rate_limit.reached': {
+        const payload = msg.payload as { message?: string };
+        this.errorMessage = payload.message || 'You are sending messages too quickly. Please wait a moment.';
         this.setState('RATE_LIMITED');
         break;
       }
 
-      case 'error.generic': {
-        const payload = msg.payload as { message: string };
-        this.errorMessage = payload.message || 'An unexpected error occurred.';
+      case 'error': {
+        const payload = msg.payload as { message?: string };
+        this.errorMessage = payload.message || 'An error occurred.';
         this.setState('ERROR');
         break;
       }
@@ -374,7 +708,7 @@ export class ChatClient {
     this.stopPing();
     this.pingInterval = window.setInterval(() => {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        this.send({ type: 'system.ping', payload: {} });
+        this.send({ type: 'ping', payload: {} });
       }
     }, 25000);
   }

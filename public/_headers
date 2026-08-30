@@ -11,8 +11,21 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Fonts and static media
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=604800
+
+/*.png
+  Cache-Control: public, max-age=604800
+
 # Favicon / SVGs
 /*.svg
+  Cache-Control: public, max-age=86400
+
+/*.ico
   Cache-Control: public, max-age=86400
 
 # Prevent indexing on pages.dev preview domains

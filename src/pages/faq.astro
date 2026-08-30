@@ -1,24 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
 
 const FAQS = [
-  { q: 'What is RandomChat?', a: 'RandomChat (randomcaht.online) is a free, anonymous-by-default random text chat website that connects adults for spontaneous, one-on-one real-time conversations without accounts or registration.' },
-  { q: 'Do I need an account to use RandomChat?', a: 'No. RandomChat requires no email, password, phone number, or profile creation. You enter a temporary nickname, pick your preferences, and start chatting instantly.' },
-  { q: 'Is RandomChat completely free?', a: 'Yes. RandomChat is 100% free with no paid subscriptions, hidden fees, premium tiers, or credits.' },
-  { q: 'How does the matchmaking system work?', a: 'Matching is performed server-side with strict mutual compatibility. For example, if you are Male looking for Female, you will only be paired with a Female user whose preference includes Male.' },
-  { q: 'Can I choose who I chat with?', a: 'You can select your gender (Male/Female) and your matching preference (Male/Female/Anyone). The matchmaker only connects you when both users agree on the criteria.' },
-  { q: 'Can I skip or leave a conversation at any time?', a: 'Yes. You can click "Next Stranger" or "Leave" at any time. This immediately disconnects the current session and lets you find a fresh partner.' },
-  { q: 'How do I report someone for inappropriate behavior?', a: 'Click the menu icon (⋯) at the top of the chat window and select "Report". Choose the reason (Spam, Harassment, Underage, Inappropriate Content) and submit.' },
-  { q: 'How do I block someone?', a: 'In the chat menu (⋯), select "Block". This immediately severs the connection and places a mutual cooldown to ensure you will not be paired with that session again.' },
-  { q: 'Is RandomChat private?', a: 'RandomChat is anonymous-by-default because we do not collect personal identities. However, we advise all users never to share personal, financial, or sensitive information, as the other participant could screenshot or record text.' },
-  { q: 'Does RandomChat store my chat messages?', a: 'No. Messages are processed in ephemeral memory inside Cloudflare Durable Objects and are deleted the moment the chat room closes or both participants disconnect.' },
-  { q: 'Why is RandomChat strictly 18+?', a: 'To protect minors and ensure a safe, mature environment for adult conversation, RandomChat enforces a strict 18+ minimum age policy across all features.' },
-  { q: 'Can I use RandomChat on mobile devices?', a: 'Yes. RandomChat is fully responsive and optimized for all mobile smartphones and tablets with smooth touch controls and responsive virtual keyboard support.' },
-  { q: 'What should I do if someone makes me uncomfortable?', a: 'Immediately leave the conversation using "Next Stranger" or "Block". You can also file a report via the chat menu.' }
+  { q: `What is ${siteConfig.name}?`, a: `${siteConfig.name} is a free, anonymous-by-default random text chat platform that connects adults for spontaneous, 1-on-1 real-time conversations without requiring email accounts or registrations.` },
+  { q: `Do I need an account to use ${siteConfig.name}?`, a: 'No. We require no email, password, phone number, or profile creation. You enter a temporary nickname, pick your preferences, and start chatting instantly.' },
+  { q: `Is ${siteConfig.name} completely free?`, a: 'Yes. The platform is 100% free with no paid subscriptions, hidden fees, premium tiers, or locked paywalls.' },
+  { q: 'How does the matchmaking system work?', a: 'Matching is performed server-side with strict mutual compatibility. For example, if you are looking for specific chat preferences or topic rooms, you will only be paired with users whose criteria mutually match yours.' },
+  { q: 'Can I skip or leave a conversation at any time?', a: 'Yes. You can click "Next Stranger" or "Leave" at any time. This immediately terminates the current session in RAM and lets you find a fresh partner.' },
+  { q: 'How do I report someone for inappropriate behavior?', a: 'Click the Safety / Flag icon in the chat window to report or block the user. Blocked users are immediately disconnected and placed on mutual restriction.' },
+  { q: `Does ${siteConfig.name} store my chat messages?`, a: 'No. Messages are processed in ephemeral server memory and are wiped the instant the chat session closes or either participant disconnects.' },
+  { q: `Why is ${siteConfig.name} strictly 18+?`, a: 'To protect minors and maintain a mature, respectful community for adult conversation, we enforce a strict 18+ minimum age policy across all features.' },
+  { q: 'Can I use this on mobile devices?', a: 'Yes. The entire platform is built with a responsive mobile-first interface optimized for touch interactions and on-screen keyboards.' }
 ];
 
 const schemaJson = {
@@ -36,60 +34,53 @@ const schemaJson = {
 ---
 
 <BaseLayout
-  title="Frequently Asked Questions (FAQ) — randomcaht.online"
-  description="Common questions about anonymous matching, privacy, safety, 18+ policy, and chat features on randomcaht.online."
-  canonical="https://randomcaht.online/faq"
+  title={`Frequently Asked Questions (FAQ) — ${siteConfig.name}`}
+  description={`Common questions about anonymous matching, privacy, safety, 18+ policy, and chat features on ${siteConfig.name}.`}
+  canonical={`${siteConfig.url}/faq`}
   lang={currentLang}
 >
   <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
-  <Header lang={currentLang} />
+  <LandingNavbar lang={currentLang} />
 
   <main class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-10">
     <div class="text-center max-w-xl mx-auto flex flex-col items-center gap-2">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold">
-        Help & Support
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="help-circle" class="w-3.5 h-3.5" />
+        <span>Help & Support</span>
       </div>
-      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-main)] tracking-tight">
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-primary)] tracking-tight">
         Frequently Asked Questions
       </h1>
-      <p class="text-sm text-[var(--text-muted)]">
-        Everything you need to know about RandomChat, privacy, and matchmaking.
+      <p class="text-sm text-[var(--text-secondary)]">
+        Everything you need to know about {siteConfig.name}, privacy, and matchmaking.
       </p>
     </div>
 
     <!-- Accordion List -->
-    <div class="flex flex-col gap-3.5">
-      {FAQS.map((faq, idx) => (
-        <details class="group p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-sm transition-all open:border-[#D55882]/40">
-          <summary class="flex items-center justify-between font-bold text-sm sm:text-base text-[var(--text-main)] cursor-pointer list-none select-none">
+    <div class="flex flex-col gap-4 text-left">
+      {FAQS.map(faq => (
+        <details class="card-tactile group p-5 open:pb-6 transition-all duration-200 cursor-pointer">
+          <summary class="flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[var(--text-primary)] list-none select-none">
             <span>{faq.q}</span>
-            <span class="w-6 h-6 rounded-full bg-[var(--bg-page)] border border-[var(--border-color)] flex items-center justify-center text-xs text-[var(--text-muted)] group-open:rotate-180 transition-transform shrink-0 ml-2">
-              &darr;
+            <span class="w-6 h-6 rounded-lg bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)] group-open:rotate-90 transition-transform shrink-0">
+              <Icon name="chevron-right" class="w-3.5 h-3.5" />
             </span>
           </summary>
-          <div class="mt-3.5 pt-3.5 border-t border-[var(--border-subtle)] text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+          <p class="mt-3 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed pr-6 border-t border-[var(--border-subtle)] pt-3">
             {faq.a}
-          </div>
+          </p>
         </details>
       ))}
     </div>
 
-    <!-- CTA Box -->
-    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-8 text-center flex flex-col items-center gap-4 shadow-sm">
-      <h2 class="text-xl font-bold text-[var(--text-main)]">Still have questions?</h2>
-      <p class="text-xs sm:text-sm text-[var(--text-muted)] max-w-md">
-        Feel free to review our Safety Center guidelines or get in touch with our team directly.
-      </p>
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <a href="/safety" class="px-5 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold text-[var(--text-main)] transition-colors">
-          Safety Center
-        </a>
-        <a href="/contact" class="gradient-accent gradient-accent-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition-all">
-          Contact Support
-        </a>
-      </div>
+    <div class="pt-4 border-t border-[var(--border)] flex items-center justify-between">
+      <a href="/" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline">&larr; Back to Home</a>
+      <a href="/start" class="btn-primary text-xs py-2.5 px-5">
+        <span>Start Chatting</span>
+        <Icon name="arrow-right" class="w-4 h-4" />
+      </a>
     </div>
   </main>
 
-  <Footer lang={currentLang} />
+  <LandingFooter />
 </BaseLayout>

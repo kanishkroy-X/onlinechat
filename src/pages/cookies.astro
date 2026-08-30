@@ -1,87 +1,93 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { getTranslations } from '../i18n/translations';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
 const lang = 'en';
-const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title="Cookie Policy & Settings — randomcaht.online"
-  description="Learn about our minimal cookie usage and manage your anonymous session preferences on randomcaht.online."
-  canonical="https://randomcaht.online/cookies"
+  title={`Cookie Settings & Preferences — ${siteConfig.name}`}
+  description={`Manage your anonymous session preferences and cookie settings on ${siteConfig.name}.`}
+  canonical={`${siteConfig.url}/cookie-policy`}
   lang={lang}
+  noindex={true}
 >
-  <Header lang={lang} />
+  <LandingNavbar lang={lang} />
 
   <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-12">
-    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-sm flex flex-col gap-8">
+    <div class="card-tactile p-6 sm:p-10 shadow-sm flex flex-col gap-8 text-left">
       <!-- Page Header -->
-      <div class="border-b border-[var(--border-color)] pb-6 flex flex-col gap-2">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit">
-          Privacy & Transparency
+      <div class="border-b border-[var(--border)] pb-6 flex flex-col gap-2">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold w-fit">
+          <Icon name="shield-check" class="w-3.5 h-3.5" />
+          <span>Privacy & Transparency</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
-          Cookie Policy & Settings
+        <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+          Cookie Settings & Preferences
         </h1>
-        <p class="text-xs text-[var(--text-subtle)]">
-          Last Updated: February 2026 &bull; randomcaht.online
+        <p class="text-xs text-[var(--text-muted)]">
+          Last Updated: February 2026 &bull; {siteConfig.name}
         </p>
       </div>
 
       <!-- Quick Toggle Settings Card -->
-      <div class="p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="p-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div class="flex flex-col gap-1">
-          <span class="font-bold text-sm text-[var(--text-main)]">Your Cookie Choice</span>
-          <span id="current-cookie-status" class="text-xs text-[var(--text-muted)]">Active setting: Essential session cookies only</span>
+          <span class="font-bold text-sm text-[var(--text-primary)]">Your Cookie Choice</span>
+          <span id="current-cookie-status" class="text-xs text-[var(--text-secondary)]">Active setting: Essential session cookies only</span>
         </div>
         <div class="flex items-center gap-2">
-          <button id="reset-cookie-btn" type="button" class="px-4 py-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-xs font-semibold text-[var(--text-main)] transition-colors cursor-pointer">
+          <button id="reset-cookie-btn" type="button" class="btn-secondary text-xs py-2 px-4">
             Reset Preferences
           </button>
         </div>
       </div>
 
       <!-- Content Sections -->
-      <div class="prose dark:prose-invert max-w-none text-sm text-[var(--text-muted)] space-y-6 leading-relaxed">
-        <section class="space-y-3">
-          <h2 class="text-xl font-bold text-[var(--text-main)]">1. Overview</h2>
+      <div class="max-w-none text-sm text-[var(--text-secondary)] space-y-6 leading-relaxed">
+        <section class="space-y-2">
+          <h2 class="text-xl font-bold text-[var(--text-primary)]">1. Overview</h2>
           <p>
-            RandomChat uses minimal, privacy-respecting client storage to enable real-time text matching and preserve your interface theme (Dark/Light) and language preferences.
+            {siteConfig.name} uses minimal, privacy-respecting client storage to enable real-time text matching and preserve your interface theme (Dark/Light) and language preferences.
           </p>
         </section>
 
         <section class="space-y-3">
-          <h2 class="text-xl font-bold text-[var(--text-main)]">2. Categories of Storage We Use</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
-            <div class="p-4 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col gap-1.5">
-              <span class="font-bold text-xs text-[var(--text-main)]">Essential Session Tokens</span>
-              <p class="text-xs text-[var(--text-muted)]">
+          <h2 class="text-xl font-bold text-[var(--text-primary)]">2. Categories of Storage We Use</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] flex flex-col gap-1.5">
+              <span class="font-bold text-xs text-[var(--text-primary)]">Essential Session Tokens</span>
+              <p class="text-xs text-[var(--text-secondary)]">
                 Temporary tokens used exclusively to route your active WebSocket connection and enforce rate limits.
               </p>
             </div>
-            <div class="p-4 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] flex flex-col gap-1.5">
-              <span class="font-bold text-xs text-[var(--text-main)]">Local UI Preferences</span>
-              <p class="text-xs text-[var(--text-muted)]">
+            <div class="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] flex flex-col gap-1.5">
+              <span class="font-bold text-xs text-[var(--text-primary)]">Local UI Preferences</span>
+              <p class="text-xs text-[var(--text-secondary)]">
                 Stored in your browser's <code>localStorage</code> to remember your selected theme and language.
               </p>
             </div>
           </div>
         </section>
 
-        <section class="space-y-3">
-          <h2 class="text-xl font-bold text-[var(--text-main)]">3. Third-Party Trackers</h2>
+        <section class="space-y-2">
+          <h2 class="text-xl font-bold text-[var(--text-primary)]">3. Third-Party Trackers</h2>
           <p>
             We do not use advertising tracking cookies, behavioral tracking pixels, or third-party data broker networks.
           </p>
         </section>
       </div>
+
+      <div class="pt-4 border-t border-[var(--border)]">
+        <a href="/" class="font-semibold text-[var(--primary)] hover:underline">&larr; Back to Home</a>
+      </div>
     </div>
   </main>
 
-  <Footer lang={lang} />
+  <LandingFooter />
 </BaseLayout>
 
 <script>

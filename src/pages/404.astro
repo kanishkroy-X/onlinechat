@@ -1,50 +1,54 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
 ---
 
-<BaseLayout title="404 — Something Went Off Track | randomcaht.online" lang={currentLang}>
-  <Header lang={currentLang} />
+<BaseLayout
+  title={`404 — Page Not Found | ${siteConfig.name}`}
+  canonical={`${siteConfig.url}/404`}
+  lang={currentLang}
+  noindex={true}
+>
+  <LandingNavbar lang={currentLang} />
 
   <main class="flex-1 flex flex-col items-center justify-center text-center p-6 my-12">
-    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 sm:p-10 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-xl animate-modal-in">
-      <!-- Sunset Disconnected Orb Graphic -->
-      <div class="relative w-24 h-24 flex items-center justify-center my-1">
-        <div class="w-12 h-12 rounded-full bg-[#7F376D]/20 border border-[#D55882]/40 flex items-center justify-center">
-          <div class="w-4 h-4 rounded-full bg-[#D55882]/60 blur-[2px]"></div>
-        </div>
-        <div class="absolute top-1 right-1 w-6 h-6 rounded-full bg-[#FF808A]/30 blur-[4px]"></div>
+    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 sm:p-10 card-tactile shadow-xl animate-modal-in">
+      <div class="w-16 h-16 rounded-2xl bg-[var(--primary-soft)] text-[var(--primary)] flex items-center justify-center">
+        <Icon name="help-circle" class="w-8 h-8" />
       </div>
 
       <div class="flex flex-col gap-2">
-        <span class="text-xs font-bold uppercase tracking-widest text-[#FF808A]">Error 404</span>
-        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-main)]">
-          Something went off track.
+        <span class="text-xs font-bold uppercase tracking-widest text-[var(--primary)]">Error 404</span>
+        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">
+          Page not found
         </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          The conversation you're looking for isn't here. Let's get you connected with someone new.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          The page or conversation room you're looking for isn't here. Let's get you back on track.
         </p>
       </div>
 
       <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
         <a
           href="/"
-          class="w-full py-3 px-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold text-[var(--text-main)] transition-colors text-center"
+          class="btn-secondary text-xs py-3 px-5 w-full text-center"
         >
           Back Home
         </a>
         <a
           href="/start"
-          class="w-full gradient-accent gradient-accent-hover text-white text-xs font-bold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition-all text-center"
+          class="btn-primary text-xs py-3 px-5 w-full text-center"
         >
-          Start Chat
+          <span>Start Chatting</span>
+          <Icon name="arrow-right" class="w-4 h-4" />
         </a>
       </div>
     </div>
   </main>
 
-  <Footer lang={currentLang} />
+  <LandingFooter />
 </BaseLayout>

@@ -2,66 +2,101 @@
 import '../styles/global.css';
 import AgeGateModal from '../components/AgeGateModal.astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import { siteConfig } from '../config/site';
 
 interface Props {
   title?: string;
   description?: string;
   canonical?: string;
   lang?: string;
+  ogImage?: string;
+  noindex?: boolean;
 }
 
 const {
-  title = 'randomcaht.online — Free Anonymous Random Text Chat',
-  description = 'Connect and chat with compatible strangers instantly. Free, anonymous-by-default random text chat. No account, no signup required.',
-  canonical = 'https://randomcaht.online',
-  lang = 'en'
+  title = `${siteConfig.name} — ${siteConfig.tagline}`,
+  description = siteConfig.description,
+  canonical = siteConfig.url,
+  lang = 'en',
+  ogImage = `${siteConfig.url}/og-image.png`,
+  noindex = false
 } = Astro.props;
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || lang || 'en';
+let cookieLang: string | undefined;
+try {
+  cookieLang = Astro.cookies?.get('rc_language')?.value;
+} catch {
+  // Prerender build context fallback
+}
+
+let urlLang: string | null = null;
+try {
+  urlLang = Astro.url?.searchParams?.get('lang');
+} catch {
+  // Prerender build context fallback
+}
+
+const currentLang = cookieLang || urlLang || lang || 'en';
 const isRtl = currentLang === 'ar';
 ---
 
 <!doctype html>
 <html lang={currentLang} dir={isRtl ? 'rtl' : 'ltr'}>
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-GJTQW9LZ5W"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-GJTQW9LZ5W');
-    </script>
-
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter (Optimized Non-Blocking) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    </noscript>
 
     <!-- SEO & Metadata -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#07111B" />
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow" />
+    )}
+    <meta name="theme-color" content="#0B111A" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="RandomChat" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:image" content={ogImage} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": siteConfig.name,
+      "url": siteConfig.url,
+      "description": siteConfig.description,
+      "applicationCategory": "CommunicationApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    })} />
 
     <!-- Zero-FOUC Theme & Language Script -->
     <script is:inline>
@@ -81,7 +116,7 @@ const isRtl = currentLang === 'ar';
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col antialiased bg-[var(--bg-page)] text-[var(--text-primary)] font-sans selection:bg-[#6C4DFF] selection:text-white">
+  <body class="min-h-screen flex flex-col antialiased bg-[var(--bg-page)] text-[var(--text-primary)] font-sans selection:bg-[var(--primary)] selection:text-white">
     <!-- Accessible Screen Reader Announcer -->
     <div id="sr-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 

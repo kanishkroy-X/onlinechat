@@ -59,6 +59,15 @@ export class MatchmakerDO {
       // Don't match with self
       if (candidate.sessionId === entry.sessionId) continue;
 
+      // Mode matching (text with text, voice with voice)
+      const entryMode = entry.mode || 'text';
+      const candidateMode = candidate.mode || 'text';
+      if (entryMode !== candidateMode) continue;
+
+      // Block-aware matching (MATCH-001 / SEC-001): Bidirectional block exclusion
+      if (entry.blockedSessionIds && entry.blockedSessionIds.includes(candidate.sessionId)) continue;
+      if (candidate.blockedSessionIds && candidate.blockedSessionIds.includes(entry.sessionId)) continue;
+
       // Check recent match exclusion (avoid immediate rematching)
       const pairKey = this.getPairKey(entry.sessionId, candidate.sessionId);
       if (this.recentMatches.has(pairKey)) continue;

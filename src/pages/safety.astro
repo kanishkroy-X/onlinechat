@@ -1,157 +1,115 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
 ---
 
 <BaseLayout
-  title="Stay Safe While Chatting — randomcaht.online"
-  description="Comprehensive safety guidelines, minimum age policy (18+), and privacy protection practices for RandomChat."
-  canonical="https://randomcaht.online/safety"
+  title={`Safety Guidelines & Best Practices — ${siteConfig.name}`}
+  description={`Comprehensive safety guidelines, minimum age policy (18+), and privacy protection practices for ${siteConfig.name}.`}
+  canonical={`${siteConfig.url}/safety`}
   lang={currentLang}
 >
-  <Header lang={currentLang} />
+  <LandingNavbar lang={currentLang} />
 
   <main class="flex-1 max-w-4xl mx-auto px-4 py-12 flex flex-col gap-10">
-    <!-- Header with Calm Plum/Rose Shield Visual -->
-    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-8 sm:p-12 shadow-sm flex flex-col sm:flex-row items-center gap-8 text-center sm:text-left">
-      <!-- Tier B Calm Shield Illustration (Organic Plum outline with Rose glow) -->
-      <div class="w-24 h-24 rounded-3xl bg-[#7F376D]/15 border border-[#D55882]/30 flex items-center justify-center relative shrink-0">
-        <div class="w-8 h-8 rounded-full bg-[#D55882] blur-[8px] opacity-75"></div>
-        <svg class="w-12 h-12 text-[#D55882] z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        </svg>
+    <!-- Header with Shield Visual -->
+    <div class="card-tactile p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-8 text-center sm:text-left">
+      <div class="w-20 h-20 rounded-2xl bg-[var(--primary-soft)] border border-[var(--primary)]/30 flex items-center justify-center relative shrink-0 text-[var(--primary)]">
+        <Icon name="shield-check" class="w-10 h-10" />
       </div>
 
       <div class="flex flex-col gap-2">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D55882]/10 text-[#D55882] text-xs font-bold w-fit mx-auto sm:mx-0">
-          Safety First &bull; 18+ Adults
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold w-fit mx-auto sm:mx-0">
+          <Icon name="shield-check" class="w-3.5 h-3.5" />
+          <span>Safety First &bull; 18+ Adults</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+        <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
           Stay Safe While Chatting
         </h1>
-        <p class="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed max-w-xl">
-          RandomChat is designed for open, spontaneous, and respectful adult conversations. Follow these essential principles to protect yourself online.
+        <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-xl">
+          {siteConfig.name} is designed for open, spontaneous, and respectful adult conversations. Follow these essential principles to protect yourself online.
         </p>
 
         <!-- Quick CTAs -->
         <div class="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-          <a href="/start" class="gradient-accent gradient-accent-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition-all">
-            Start Chat
+          <a href="/start" class="btn-primary text-xs py-2.5 px-5">
+            <span>Start Chatting</span>
+            <Icon name="arrow-right" class="w-4 h-4" />
           </a>
-          <a href="#report" class="px-5 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold text-[var(--text-main)] transition-colors">
-            Report a User
+          <a href="#report" class="btn-secondary text-xs py-2.5 px-5">
+            <span>Report a User</span>
           </a>
         </div>
       </div>
     </div>
 
-    <!-- 9 Core Safety Sections -->
+    <!-- Core Safety Guidelines Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- 1. Protect Personal Information -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--primary)] font-bold text-sm">
           <span>01</span>
-          <h2 class="text-base text-[var(--text-main)]">Protect Personal Information</h2>
+          <h2 class="text-base text-[var(--text-primary)]">Protect Personal Information</h2>
         </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          Never share your full legal name, home or work address, phone number, social security/national ID, banking credentials, or social media handles.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          Never share your full legal name, physical address, workplace, phone number, financial details, or external social media profiles.
         </p>
       </div>
 
-      <!-- 2. Suspicious Links -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
+      <!-- 2. Beware of Scams and External Links -->
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--primary)] font-bold text-sm">
           <span>02</span>
-          <h2 class="text-base text-[var(--text-main)]">Suspicious Links</h2>
+          <h2 class="text-base text-[var(--text-primary)]">Avoid Suspicious Links</h2>
         </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          Do not click external URLs or download third-party files sent by strangers. Phishing sites often disguise themselves as image hosts or gaming surveys.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          Do not click on unsolicited URLs, third-party payment requests, cryptocurrency promotions, or suspicious external download links.
         </p>
       </div>
 
-      <!-- 3. Scams & Money Requests -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
+      <!-- 3. Zero Tolerance for Exploitation -->
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--danger)] font-bold text-sm">
           <span>03</span>
-          <h2 class="text-base text-[var(--text-main)]">Scams & Money Requests</h2>
+          <h2 class="text-base text-[var(--text-primary)]">Zero Tolerance Policy</h2>
         </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          Anyone asking for money, gift cards, cryptocurrency transfers, or financial favors is attempting a scam. Disconnect and report immediately.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          Any illegal activity, threats of violence, non-consensual sexual content, hate speech, or harassment results in immediate bans.
         </p>
       </div>
 
-      <!-- 4. Harassment & Hate Speech -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
+      <!-- 4. Strictly 18+ Adults Only -->
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--warning)] font-bold text-sm">
           <span>04</span>
-          <h2 class="text-base text-[var(--text-main)]">Harassment & Bullying</h2>
+          <h2 class="text-base text-[var(--text-primary)]">Strictly 18+ Platform</h2>
         </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          We maintain zero tolerance for threats, hate speech, bullying, extortion, or discriminatory language. Violators face permanent IP connection blocks.
-        </p>
-      </div>
-
-      <!-- 5. Impersonation -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
-          <span>05</span>
-          <h2 class="text-base text-[var(--text-main)]">Impersonation & Bots</h2>
-        </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          Do not claim to be website moderators, celebrities, or other individuals. Automated spam bots and repetitive marketing scripts are strictly banned.
-        </p>
-      </div>
-
-      <!-- 6. Offline Meetings -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
-          <span>06</span>
-          <h2 class="text-base text-[var(--text-main)]">In-Person & Offline Meetings</h2>
-        </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          RandomChat is intended for online text chat. We strongly advise against meeting online strangers in the physical world.
-        </p>
-      </div>
-
-      <!-- 7. Screenshots & Recordings -->
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
-          <span>07</span>
-          <h2 class="text-base text-[var(--text-main)]">Screenshots & Screen Captures</h2>
-        </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          While our servers never store chat history permanently, you should assume that anything typed on a screen could be saved or captured by the other person.
-        </p>
-      </div>
-
-      <!-- 8. Report & Block Controls -->
-      <div id="report" class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-2.5 shadow-sm">
-        <div class="flex items-center gap-2 text-[#D55882] font-bold text-sm">
-          <span>08</span>
-          <h2 class="text-base text-[var(--text-main)]">Report & Block Controls</h2>
-        </div>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          Use the in-chat menu (<code>...</code>) to instantly report bad actors. Blocking someone immediately severs the connection and prevents future rematches.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          {siteConfig.name} is strictly intended for adults 18 and older. Minors are strictly prohibited from using the website.
         </p>
       </div>
     </div>
 
-    <!-- 9. 18+ Minimum Age Policy Banner -->
-    <div class="p-8 rounded-3xl border border-amber-500/30 bg-amber-500/5 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-xl font-black">
-        18+
+    <!-- How to Report Section -->
+    <div id="report" class="card-tactile p-8 flex flex-col gap-4 text-left">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+          <Icon name="flag" class="w-5 h-5" />
+        </div>
+        <h2 class="text-xl font-bold text-[var(--text-primary)]">
+          How to Report a User
+        </h2>
       </div>
-      <div class="flex flex-col gap-1">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">Strict 18+ Minimum Age Requirement</h2>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          RandomChat is exclusively for adults aged 18 and older. Minors are strictly prohibited from using the platform. Any suspected underage access will result in immediate termination of the session.
-        </p>
-      </div>
+      <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+        If you encounter a user who violates these rules or engages in abusive behavior, click the Safety / Flag icon in the chat interface. You can also email our safety moderation team directly at <a href={`mailto:${siteConfig.supportEmail}`} class="text-[var(--primary)] font-medium underline">{siteConfig.supportEmail}</a> with relevant session context.
+      </p>
     </div>
   </main>
 
-  <Footer lang={currentLang} />
+  <LandingFooter />
 </BaseLayout>

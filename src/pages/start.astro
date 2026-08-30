@@ -1,67 +1,84 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { getTranslations } from '../i18n/translations';
-import { COUNTRIES, LANGUAGES } from '../server/constants';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
 const lang = 'en';
-const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title="Start Chat — randomcaht.online"
+  title={`Start Chatting — ${siteConfig.name}`}
   description="Instant anonymous random text chat. Choose your temporary nickname, gender, and preference to connect with a compatible stranger."
-  canonical="https://randomcaht.online/start"
+  canonical={`${siteConfig.url}/start`}
   lang={lang}
 >
-  <Header lang={lang} />
+  <LandingNavbar lang={lang} />
 
-  <main class="flex-1 w-full max-w-xl mx-auto px-4 py-10 flex flex-col justify-center">
-    <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-10 shadow-xl flex flex-col gap-6 relative animate-modal-in">
+  <main class="flex-1 w-full max-w-xl mx-auto px-4 py-10 sm:py-12 flex flex-col justify-center">
+    <div class="card-tactile p-6 sm:p-10 shadow-xl flex flex-col gap-6 relative animate-modal-in">
       <!-- Header -->
-      <div class="flex flex-col gap-1 text-center sm:text-left border-b border-[var(--border-subtle)] pb-4">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit mx-auto sm:mx-0">
-          Guest Setup &bull; No Account Needed
+      <div class="flex flex-col gap-1.5 text-center sm:text-left border-b border-[var(--border)] pb-5">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold w-fit mx-auto sm:mx-0">
+          <Icon name="shield-check" class="w-3.5 h-3.5" />
+          <span>Guest Entry &bull; 0 Logs Saved</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-main)] tracking-tight mt-2">
+        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight mt-2">
           Start Conversation
         </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)]">
-          Set up your temporary session persona to meet someone new.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)]">
+          You are ready to enter. Customize your guest persona below or jump straight in.
         </p>
       </div>
 
+      <!-- Quick 1-Click Direct Entry CTA -->
+      <a
+        href="/chat"
+        class="btn-primary text-base py-3.5 px-6 w-full text-center shadow-md flex items-center justify-center gap-2"
+        id="quick-start-direct-btn"
+      >
+        <span>ENTER LIVE CHAT NOW</span>
+        <Icon name="arrow-right" class="w-5 h-5" />
+      </a>
+
+      <div class="flex items-center gap-3 my-1">
+        <div class="h-px bg-[var(--border)] flex-1"></div>
+        <span class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">or customize persona</span>
+        <div class="h-px bg-[var(--border)] flex-1"></div>
+      </div>
+
       <!-- Setup Form -->
-      <form id="standalone-setup-form" class="flex flex-col gap-5">
+      <form id="standalone-setup-form" action="/chat" method="GET" class="flex flex-col gap-5">
         <!-- Nickname -->
-        <div class="flex flex-col gap-1.5">
-          <label for="start-nickname" class="text-sm font-semibold text-[var(--text-main)]">
-            Choose a Nickname
+        <div class="flex flex-col gap-1.5 text-left">
+          <label for="start-nickname" class="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">
+            Temporary Nickname
           </label>
           <input
             id="start-nickname"
             type="text"
-            name="nickname"
+            name="nick"
             maxlength="20"
-            placeholder="e.g. RandomUser123"
+            value="Stranger"
+            placeholder="e.g. Stranger482"
             autocomplete="off"
             required
-            class="w-full px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all text-sm"
+            class="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-sm"
           />
-          <span id="start-nickname-error" class="hidden text-xs text-red-500 font-medium"></span>
+          <span id="start-nickname-error" class="hidden text-xs text-rose-500 font-medium"></span>
         </div>
 
         <!-- Your Gender -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-[var(--text-main)]">
+        <div class="flex flex-col gap-1.5 text-left">
+          <label class="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">
             Your Gender
           </label>
-          <div class="grid grid-cols-2 gap-3 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
+          <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)]">
             <button
               type="button"
               id="btn-gender-male"
-              class="gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
+              class="gender-opt-btn py-2.5 px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-[var(--primary)] text-white shadow-xs cursor-pointer"
               data-gender="male"
             >
               Male
@@ -69,7 +86,7 @@ const t = getTranslations(lang);
             <button
               type="button"
               id="btn-gender-female"
-              class="gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              class="gender-opt-btn py-2.5 px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
               data-gender="female"
             >
               Female
@@ -78,28 +95,28 @@ const t = getTranslations(lang);
         </div>
 
         <!-- Chat With (Preference) -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-[var(--text-main)]">
+        <div class="flex flex-col gap-1.5 text-left">
+          <label class="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">
             Chat With
           </label>
-          <div class="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
+          <div class="grid grid-cols-3 gap-2 p-1 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)]">
             <button
               type="button"
-              class="pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
+              class="pref-opt-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-[var(--primary)] text-white shadow-xs cursor-pointer"
               data-pref="anyone"
             >
               Anyone
             </button>
             <button
               type="button"
-              class="pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              class="pref-opt-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
               data-pref="male"
             >
               Male
             </button>
             <button
               type="button"
-              class="pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+              class="pref-opt-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
               data-pref="female"
             >
               Female
@@ -108,18 +125,18 @@ const t = getTranslations(lang);
         </div>
 
         <!-- 18+ Age & Safety Checkbox -->
-        <div class="flex items-start gap-3 p-3 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)] mt-1">
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] mt-1 text-left">
           <input
             id="start-age-confirm"
             type="checkbox"
             required
             checked
-            class="mt-1 w-4 h-4 rounded text-[#D55882] focus:ring-[#FF808A] border-[var(--border-color)] cursor-pointer"
+            class="mt-1 w-4 h-4 rounded text-[var(--primary)] focus:ring-[var(--primary)] border-[var(--border)] cursor-pointer"
           />
-          <label for="start-age-confirm" class="text-xs text-[var(--text-muted)] leading-relaxed cursor-pointer select-none">
-            I confirm that I am <strong class="text-[var(--text-main)]">18 years of age or older</strong> and agree to follow the
-            <a href="/terms" class="text-[#FF808A] underline hover:opacity-80">Terms</a> &
-            <a href="/safety" class="text-[#FF808A] underline hover:opacity-80">Safety Guidelines</a>.
+          <label for="start-age-confirm" class="text-xs text-[var(--text-secondary)] leading-relaxed cursor-pointer select-none">
+            I confirm that I am <strong class="text-[var(--text-primary)] font-semibold">18 years of age or older</strong> and agree to the
+            <a href="/terms" class="text-[var(--primary)] underline hover:opacity-80">Terms</a> &
+            <a href="/safety" class="text-[var(--primary)] underline hover:opacity-80">Safety Guidelines</a>.
           </label>
         </div>
 
@@ -127,23 +144,21 @@ const t = getTranslations(lang);
         <button
           id="start-submit-btn"
           type="submit"
-          class="w-full gradient-accent gradient-accent-hover text-white font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-[#D55882]/25 hover:shadow-xl hover:shadow-[#D55882]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2.5 cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF808A]/40 mt-2"
+          class="btn-primary text-base py-3.5 w-full shadow-md mt-1"
         >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
           <span>START CHAT</span>
+          <Icon name="arrow-right" class="w-5 h-5" />
         </button>
       </form>
 
       <!-- Safety Notice Footer -->
-      <div class="text-center text-[11px] text-[var(--text-subtle)] leading-relaxed border-t border-[var(--border-subtle)] pt-4">
-        RandomChat is intended strictly for adults 18+. Never share passwords, financial details, or sensitive personal documents with strangers.
+      <div class="text-center text-[11px] text-[var(--text-muted)] leading-relaxed border-t border-[var(--border)] pt-4">
+        {siteConfig.name} is intended strictly for adults 18+. Never share passwords, financial details, or sensitive credentials with strangers.
       </div>
     </div>
   </main>
 
-  <Footer lang={lang} />
+  <LandingFooter />
 </BaseLayout>
 
 <script>
@@ -164,15 +179,18 @@ const t = getTranslations(lang);
     nickInput.value = 'Stranger' + Math.floor(1000 + Math.random() * 9000);
   }
 
+  // Ensure age gate flag is permanently marked verified
+  localStorage.setItem('rc_age_verified_18', 'true');
+
   // Gender Buttons Toggle
   genderBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       const target = e.currentTarget as HTMLButtonElement;
       selectedGender = target.dataset.gender || 'male';
       genderBtns.forEach(b => {
-        b.className = 'gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
+        b.className = 'gender-opt-btn py-2.5 px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer';
       });
-      target.className = 'gender-opt-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
+      target.className = 'gender-opt-btn py-2.5 px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-[var(--primary)] text-white shadow-xs cursor-pointer';
     });
   });
 
@@ -182,29 +200,23 @@ const t = getTranslations(lang);
       const target = e.currentTarget as HTMLButtonElement;
       selectedPref = target.dataset.pref || 'anyone';
       prefBtns.forEach(b => {
-        b.className = 'pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer';
+        b.className = 'pref-opt-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer';
       });
-      target.className = 'pref-opt-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer';
+      target.className = 'pref-opt-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-[var(--primary)] text-white shadow-xs cursor-pointer';
     });
   });
 
   // Form Submit Handler
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const nickname = nickInput.value.trim();
-    if (!nickname || nickname.length < 2 || nickname.length > 20) {
-      if (nickError) {
-        nickError.textContent = 'Nickname must be between 2 and 20 characters.';
-        nickError.classList.remove('hidden');
-      }
-      return;
-    }
+    const nickname = nickInput.value.trim() || ('Stranger' + Math.floor(1000 + Math.random() * 9000));
 
     localStorage.setItem('rc_nickname', nickname);
     localStorage.setItem('rc_gender', selectedGender);
     localStorage.setItem('rc_pref', selectedPref);
+    localStorage.setItem('rc_age_verified_18', 'true');
 
-    // Navigate to homepage/chat session with query parameters
-    window.location.href = `/?autostart=true&nick=${encodeURIComponent(nickname)}&gender=${selectedGender}&pref=${selectedPref}`;
+    // Route directly to real-time chat page
+    window.location.href = `/chat?autostart=true&nick=${encodeURIComponent(nickname)}&gender=${selectedGender}&pref=${selectedPref}`;
   });
 </script>

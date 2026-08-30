@@ -1,50 +1,54 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
 ---
 
-<BaseLayout title="500 — Server Error | randomcaht.online" lang={currentLang}>
-  <Header lang={currentLang} />
+<BaseLayout
+  title={`500 — Server Error | ${siteConfig.name}`}
+  canonical={`${siteConfig.url}/500`}
+  lang={currentLang}
+  noindex={true}
+>
+  <LandingNavbar lang={currentLang} />
 
   <main class="flex-1 flex flex-col items-center justify-center text-center p-6 my-12">
-    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 sm:p-10 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-xl animate-modal-in">
-      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
+    <div class="max-w-md mx-auto flex flex-col items-center gap-6 p-8 sm:p-10 card-tactile shadow-xl animate-modal-in">
+      <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+        <Icon name="shield-check" class="w-8 h-8" />
       </div>
 
       <div class="flex flex-col gap-2">
-        <span class="text-xs font-bold uppercase tracking-widest text-[#FF808A]">Error 500</span>
-        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-main)]">
-          Something went wrong.
+        <span class="text-xs font-bold uppercase tracking-widest text-[var(--danger)]">Error 500</span>
+        <h1 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">
+          Server error
         </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          We're having trouble connecting right now. Our servers may be experiencing heavy matchmaking traffic.
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          Something unexpected occurred on our end. Please refresh or try again in a few moments.
         </p>
       </div>
 
       <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
         <a
           href="/"
-          class="w-full py-3 px-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold text-[var(--text-main)] transition-colors text-center"
+          class="btn-secondary text-xs py-3 px-5 w-full text-center"
         >
           Back Home
         </a>
-        <button
-          onclick="window.location.reload()"
-          class="w-full gradient-accent gradient-accent-hover text-white text-xs font-bold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition-all text-center cursor-pointer"
+        <a
+          href="/start"
+          class="btn-primary text-xs py-3 px-5 w-full text-center"
         >
-          Try Again
-        </button>
+          <span>Try Again</span>
+          <Icon name="arrow-right" class="w-4 h-4" />
+        </a>
       </div>
     </div>
   </main>
 
-  <Footer lang={currentLang} />
+  <LandingFooter />
 </BaseLayout>

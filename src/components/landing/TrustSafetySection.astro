@@ -1,0 +1,86 @@
+---
+import Icon from '../icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+---
+
+<section id="trust-safety" class="w-full py-16 sm:py-24 px-4 bg-[var(--bg-surface-elevated)]/30 border-y border-[var(--border)]">
+  <div class="max-w-5xl mx-auto flex flex-col items-center gap-14">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+        <Icon name="shield-check" class="w-3.5 h-3.5" />
+        <span>Privacy & Safety Architecture</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+        A platform built on transparency
+      </h2>
+      <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+        We believe you shouldn't have to give away your personal identity or trust blind promises just to have a conversation online.
+      </p>
+    </div>
+
+    <!-- 2-Column Split: Protective Glass Visual (Reference 1) + Concrete Safety Bullet Matrix -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 w-full items-center">
+      <!-- Visual Column (5 cols) -->
+      <div class="md:col-span-5 p-2 rounded-[2.5rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] shadow-xl overflow-hidden group">
+        <div class="relative w-full rounded-[calc(2.5rem-0.5rem)] overflow-hidden bg-[var(--bg-surface)] aspect-square flex items-center justify-center">
+          <img
+            src="/assets/protective_glass_bubble.webp"
+            alt="Protective Glass Privacy"
+            class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-surface)]/80 via-transparent to-transparent pointer-events-none"></div>
+          <div class="absolute bottom-4 left-4 right-4 p-3 rounded-2xl bg-[var(--bg-surface)]/90 border border-[var(--border)] text-xs text-[var(--text-primary)] font-medium backdrop-blur-md flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+              <Icon name="lock" class="w-4 h-4" />
+            </div>
+            <span>Zero Data Stored • Ephemeral Sessions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Column (7 cols) -->
+      <div class="md:col-span-7 flex flex-col gap-4">
+        <!-- Benefit 1 -->
+        <div class="p-5 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex items-start gap-4 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0 mt-0.5">
+            <Icon name="eye-off" class="w-4 h-4" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <h3 class="text-sm font-bold text-[var(--text-primary)]">No Accounts or Profiles</h3>
+            <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+              No email addresses, phone numbers, or passwords. Join in 1 click and leave anytime with zero digital footprint.
+            </p>
+          </div>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="p-5 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex items-start gap-4 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
+            <Icon name="trash-2" class="w-4 h-4" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <h3 class="text-sm font-bold text-[var(--text-primary)]">Volatile Memory Routing</h3>
+            <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Messages flow directly through active WebSocket RAM. When a conversation ends, everything is immediately wiped from memory.
+            </p>
+          </div>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="p-5 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex items-start gap-4 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0 mt-0.5">
+            <Icon name="user-x" class="w-4 h-4" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <h3 class="text-sm font-bold text-[var(--text-primary)]">Instant Block & Report</h3>
+            <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Prominent safety controls let you block and report disruptive peers. Our bidirectional exclusion ensures you never rematch with a blocked stranger.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

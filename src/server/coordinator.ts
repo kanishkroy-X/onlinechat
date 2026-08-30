@@ -1,4 +1,4 @@
-import type { Gender, MatchPreference, Country, Language, ServerMessage } from './types';
+import type { Gender, MatchPreference, MatchMode, Country, Language, ServerMessage, WebRTCSignalingPayload, VoiceStatePayload } from './types';
 import { isCompatible } from './compatibility';
 import { validateNickname, validateMessage, validateReportReason } from './sanitizer';
 import { SlidingWindowRateLimiter } from './rateLimiter';
@@ -8,11 +8,13 @@ export interface ConnectedClient {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  mode: MatchMode;
   country: Country;
   language: Language;
   socket: WebSocket;
   currentMatchId?: string;
   outgoingCount: number;
+  blockedSessionIds: Set<string>;
 }
 
 /**
@@ -52,7 +54,9 @@ export class ChatCoordinator {
     preference: MatchPreference,
     country: Country,
     language: Language,
-    socket: WebSocket
+    socket: WebSocket,
+    mode: MatchMode = 'text',
+    blockedSessionIds: string[] = []
   ): ConnectedClient {
     const sanitizedNick = validateNickname(nickname).sanitizedValue || `User_${sessionId.slice(0, 5)}`;
     const client: ConnectedClient = {
@@ -60,10 +64,12 @@ export class ChatCoordinator {
       nickname: sanitizedNick,
       gender,
       preference,
+      mode,
       country,
       language,
       socket,
-      outgoingCount: 0
+      outgoingCount: 0,
+      blockedSessionIds: new Set(blockedSessionIds)
     };
     this.clients.set(sessionId, client);
     return client;
@@ -103,6 +109,13 @@ export class ChatCoordinator {
 
     for (const candidate of this.queue.values()) {
       if (candidate.sessionId === sessionId) continue;
+
+      // Mode matching: text with text, voice with voice
+      if (candidate.mode !== client.mode) continue;
+
+      // Block-aware matching (MATCH-001 / SEC-001): Bidirectional block exclusion
+      if (client.blockedSessionIds.has(candidate.sessionId)) continue;
+      if (candidate.blockedSessionIds.has(client.sessionId)) continue;
 
       const pairKey = this.getPairKey(sessionId, candidate.sessionId);
       if (this.recentMatches.has(pairKey)) continue;
@@ -331,6 +344,72 @@ export class ChatCoordinator {
         payload: { message: 'Report recorded. Thank you for keeping our community safe.' },
         timestamp: Date.now()
       });
+    }
+  }
+
+  public handleBlock(sessionId: string): void {
+    const client = this.clients.get(sessionId);
+    if (!client) return;
+
+    if (client.currentMatchId) {
+      for (const other of this.clients.values()) {
+        if (other.currentMatchId === client.currentMatchId && other.sessionId !== sessionId) {
+          // Bidirectional block enforcement
+          client.blockedSessionIds.add(other.sessionId);
+          other.blockedSessionIds.add(client.sessionId);
+          other.currentMatchId = undefined;
+
+          this.send(other.socket, {
+            type: 'chat.ended',
+            payload: { reason: 'Stranger disconnected' },
+            timestamp: Date.now()
+          });
+          break;
+        }
+      }
+      client.currentMatchId = undefined;
+    }
+
+    this.send(client.socket, {
+      type: 'chat.ended',
+      payload: { reason: 'User blocked' },
+      timestamp: Date.now()
+    });
+  }
+
+  public handleWebRTCSignaling(
+    sessionId: string,
+    type: 'webrtc.offer' | 'webrtc.answer' | 'webrtc.ice_candidate',
+    payload: WebRTCSignalingPayload
+  ): void {
+    const client = this.clients.get(sessionId);
+    if (!client || !client.currentMatchId) return;
+
+    for (const other of this.clients.values()) {
+      if (other.currentMatchId === client.currentMatchId && other.sessionId !== sessionId) {
+        this.send(other.socket, {
+          type,
+          payload,
+          timestamp: Date.now()
+        });
+        break;
+      }
+    }
+  }
+
+  public handleVoiceState(sessionId: string, payload: VoiceStatePayload): void {
+    const client = this.clients.get(sessionId);
+    if (!client || !client.currentMatchId) return;
+
+    for (const other of this.clients.values()) {
+      if (other.currentMatchId === client.currentMatchId && other.sessionId !== sessionId) {
+        this.send(other.socket, {
+          type: 'voice.state',
+          payload,
+          timestamp: Date.now()
+        });
+        break;
+      }
     }
   }
 

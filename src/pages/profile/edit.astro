@@ -3,16 +3,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getTranslations } from '../../i18n/translations';
+import { siteConfig } from '../../config/site';
 
 const lang = 'en';
 const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title="Edit Profile (Future Preview) — randomcaht.online"
-  description="Edit your conversational profile preferences."
-  canonical="https://randomcaht.online/profile/edit"
+  title={`Edit Profile (Preview) — ${siteConfig.name}`}
+  description={`Edit your conversational profile preferences on ${siteConfig.name}.`}
+  canonical={`${siteConfig.url}/profile/edit`}
   lang={lang}
+  noindex={true}
 >
   <Header lang={lang} />
 

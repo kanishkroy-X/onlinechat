@@ -1,0 +1,96 @@
+---
+import Icon from '../icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+---
+
+<section class="relative w-full overflow-hidden py-12 sm:py-20 px-4 flex flex-col items-center justify-center text-center">
+  <!-- Subtle Ambient Glow -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-gradient-to-tr from-indigo-500/10 via-purple-500/5 to-emerald-500/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <div class="max-w-4xl mx-auto flex flex-col items-center gap-6 sm:gap-8">
+    <!-- Live Presence Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)] shadow-xs backdrop-blur-md">
+      <span class="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></span>
+      <span class="text-[var(--text-primary)] font-bold">{siteConfig.metrics.onlineUsersEstimate} People Online Now</span>
+      <span class="text-[var(--text-subtle)]">•</span>
+      <span>Instant 1-on-1 Matching</span>
+    </div>
+
+    <!-- Main Headline - Calm, quiet, confident -->
+    <div class="flex flex-col gap-3 max-w-3xl">
+      <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-[var(--text-primary)] leading-[1.08]">
+        Talk to someone new.
+      </h1>
+      <p class="text-base sm:text-xl text-[var(--text-secondary)] max-w-xl mx-auto font-normal leading-relaxed">
+        Spontaneous human connection via instant text and voice. No accounts, no algorithms, 100% private.
+      </p>
+    </div>
+
+    <!-- Island CTA Buttons -->
+    <div class="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto pt-1">
+      <a
+        href="/chat"
+        class="group inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold text-sm sm:text-base shadow-md hover:shadow-indigo-500/20 transition-all duration-300 active:scale-[0.98] cursor-pointer"
+      >
+        <span>Start Random Chat</span>
+        <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1">
+          <Icon name="arrow-right" class="w-4 h-4 text-white" />
+        </span>
+      </a>
+
+      <a
+        href="/random-voice-chat"
+        class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-bold text-sm transition-all duration-200 active:scale-[0.98]"
+      >
+        <Icon name="phone" class="w-4 h-4 text-emerald-500" />
+        <span>Voice Chat</span>
+      </a>
+    </div>
+
+    <!-- Abstract Human Connection Visual (Reference 3: soft_abstract_connection.webp) -->
+    <div class="relative w-full max-w-2xl mt-4 sm:mt-6 p-2 rounded-[2.5rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] shadow-xl overflow-hidden group">
+      <!-- Outer Double-Bezel Shell -->
+      <div class="relative w-full rounded-[calc(2.5rem-0.5rem)] overflow-hidden bg-[var(--bg-surface)] aspect-[16/9] sm:aspect-[2/1] flex items-center justify-center">
+        <img
+          src="/assets/soft_abstract_connection.webp"
+          alt="Abstract Human Connection"
+          class="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
+          loading="eager"
+        />
+
+        <!-- Subtle Gradient Scrim & Overlay Floating Nodes -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-surface)]/60 via-transparent to-transparent pointer-events-none"></div>
+
+        <!-- Floating Connection Tag -->
+        <div class="absolute bottom-4 left-4 sm:left-6 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface)]/90 border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] shadow-sm backdrop-blur-md flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></span>
+          <span>Encrypted Peer-to-Peer Stream</span>
+        </div>
+
+        <div class="absolute bottom-4 right-4 sm:right-6 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface)]/90 border border-[var(--border)] text-xs font-semibold text-[var(--text-muted)] shadow-sm backdrop-blur-md">
+          {siteConfig.metrics.averageMatchSeconds} Average Match
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust Signals Micro-Row -->
+    <div class="pt-4 border-t border-[var(--border)] flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs text-[var(--text-muted)] font-medium">
+      <div class="flex items-center gap-1.5">
+        <Icon name="lock" class="w-4 h-4 text-[var(--success)]" />
+        <span>0 Logs Saved</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <Icon name="eye-off" class="w-4 h-4 text-[var(--text-secondary)]" />
+        <span>100% Anonymous</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <Icon name="zap" class="w-4 h-4 text-amber-500" />
+        <span>Sub-second Dispatch</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <Icon name="shield-check" class="w-4 h-4 text-[var(--primary)]" />
+        <span>18+ Adults Only</span>
+      </div>
+    </div>
+  </div>
+</section>

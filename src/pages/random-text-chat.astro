@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
+
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
+
+const textFaqItems = [
+  {
+    q: "Why is anonymous text chat better than video chat?",
+    a: "Text chat offers complete visual privacy and low pressure. You can express thoughts freely, share stories, practice languages, and meet intriguing people without turning on a camera or worrying about appearances."
+  },
+  {
+    q: "How does the Cold-Message Anti-Spam Gate work?",
+    a: "To keep text chat respectful and prevent automated spam or harassment, each participant can send up to 2 consecutive messages initially. Once the stranger replies, full two-way messaging unlocks seamlessly."
+  },
+  {
+    q: "Can I share images or media in text chat?",
+    a: "Yes! You can attach lightweight photos or video clips directly in the composer. All media is sent ephemerally over encrypted WebSockets and is never stored on permanent servers."
+  },
+  {
+    q: "What keyboard shortcuts are available?",
+    a: "You can press Enter to send messages instantly, and quickly tab between actions for high-speed, distraction-free chatting."
+  }
+];
+---
+
+<BaseLayout
+  title={`Random Text Chat — Anonymous 1-on-1 Text Messaging | ${siteConfig.name}`}
+  description="Enjoy fast, private anonymous text chat with strangers worldwide. 100% ephemeral, anti-spam cold-gate, zero registration."
+  canonical={`${siteConfig.url}/random-text-chat`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 w-full flex flex-col items-center">
+    <!-- Hero Section -->
+    <section class="w-full py-16 sm:py-24 px-4 max-w-5xl mx-auto flex flex-col items-center text-center gap-8">
+      <!-- Eyebrow Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-xs font-bold tracking-wide">
+        <Icon name="message-square" class="w-3.5 h-3.5" />
+        <span>100% Anonymous &bull; No Webcam Required</span>
+      </div>
+
+      <!-- Main Headline -->
+      <div class="flex flex-col gap-4 max-w-3xl">
+        <h1 class="text-4xl sm:text-6xl font-black text-[var(--text-primary)] tracking-tight leading-[1.1]">
+          Random Text Chat for Pure, Distraction-Free Conversation.
+        </h1>
+        <p class="text-base sm:text-xl text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
+          No video pressure, no social awkwardness. Just pure text messaging with verified human strangers who share your interests.
+        </p>
+      </div>
+
+      <!-- Primary Action Island Button -->
+      <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
+        <a
+          href="/start"
+          class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 active:scale-[0.98]"
+        >
+          <span>Start Text Chat</span>
+          <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-1">
+            <Icon name="arrow-right" class="w-4 h-4 text-white" />
+          </span>
+        </a>
+        <a
+          href="/random-voice-chat"
+          class="px-6 py-4 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-bold text-sm transition-colors"
+        >
+          Switch to Voice Chat &rarr;
+        </a>
+      </div>
+    </section>
+
+    <!-- Text Chat Feature Bento Grid -->
+    <section class="w-full py-16 px-4 bg-[var(--bg-surface-elevated)] border-y border-[var(--border)]">
+      <div class="max-w-5xl mx-auto flex flex-col gap-10">
+        <div class="text-center flex flex-col gap-2 max-w-xl mx-auto">
+          <h2 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">Designed for Real Conversations</h2>
+          <p class="text-sm text-[var(--text-secondary)]">Experience smooth typing indicators, lightning fast message delivery, and intelligent spam protection.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
+            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
+                <Icon name="lock" class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">Cold-Message Gate</h3>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Prevents spam bombs. Users can send up to 2 messages before receiving a reply, ensuring high-quality mutual dialog.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
+            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold">
+                <Icon name="image" class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">Rich Media Support</h3>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Share photos and short video clips ephemerally. Encrypted in transit and wiped the moment your session concludes.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
+            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
+                <Icon name="refresh-cw" class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">Instant Skip / Rematch</h3>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Not feeling the vibe? Hit "Next Stranger" to seamlessly connect to a brand new conversation in under 1 second.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="w-full py-16 px-4 max-w-4xl mx-auto flex flex-col gap-10">
+      <div class="text-center flex flex-col gap-2">
+        <h2 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">Text Chat FAQ</h2>
+        <p class="text-sm text-[var(--text-secondary)]">Frequently asked questions about anonymous text chat on {siteConfig.name}.</p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        {textFaqItems.map((item) => (
+          <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex flex-col gap-2 shadow-xs">
+            <h3 class="font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
+              <span class="text-indigo-500">Q:</span> {item.q}
+            </h3>
+            <p class="text-sm text-[var(--text-secondary)] leading-relaxed pl-6">
+              {item.a}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div class="p-8 rounded-[2rem] bg-indigo-600 text-white flex flex-col sm:flex-row items-center justify-between gap-6 mt-8 shadow-xl">
+        <div class="flex flex-col gap-1 text-center sm:text-left">
+          <h3 class="text-2xl font-black">Ready to chat with a stranger?</h3>
+          <p class="text-xs text-white/80">Start your private text conversation right now.</p>
+        </div>
+        <a
+          href="/start"
+          class="px-8 py-3.5 rounded-full bg-white text-indigo-600 font-bold text-sm shadow-md hover:bg-slate-100 transition-colors shrink-0"
+        >
+          Open Text Chat &rarr;
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": textFaqItems.map(item => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  })} />
+
+  <LandingFooter />
+</BaseLayout>

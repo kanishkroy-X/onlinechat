@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getTranslations } from '../../i18n/translations';
+import { siteConfig } from '../../config/site';
 
 const lang = 'en';
 const t = getTranslations(lang);
@@ -128,9 +129,9 @@ const ROOMS = [
 ---
 
 <BaseLayout
-  title="Live Chat Rooms & Topics — randomcaht.online"
-  description="Explore active topic chat rooms on RandomChat. Join rooms for dating, gaming, music, tech, and regional communities."
-  canonical="https://randomcaht.online/chat-rooms"
+  title={`Live Chat Rooms & Topics — ${siteConfig.name}`}
+  description={`Explore active topic chat rooms on ${siteConfig.name}. Join rooms for gaming, music, tech, and global communities.`}
+  canonical={`${siteConfig.url}/chat-rooms`}
   lang={lang}
 >
   <Header lang={lang} />

@@ -1,5 +1,6 @@
 export type Gender = 'male' | 'female';
 export type MatchPreference = 'male' | 'female' | 'anyone';
+export type MatchMode = 'text' | 'voice';
 export type Country = string;
 export type Language = string;
 
@@ -17,12 +18,14 @@ export interface GuestSession {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  mode: MatchMode;
   country: Country;
   language: Language;
   status: SessionStatus;
   createdAt: number;
   lastSeenAt: number;
   activeMatchId: string | null;
+  blockedSessionIds?: string[];
 }
 
 export interface QueueEntry {
@@ -30,14 +33,17 @@ export interface QueueEntry {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  mode: MatchMode;
   country: Country;
   language: Language;
   queuedAt: number;
   socketId?: string;
+  blockedSessionIds?: string[];
 }
 
 export interface ActiveMatch {
   matchId: string;
+  mode: MatchMode;
   participantA: {
     sessionId: string;
     nickname: string;
@@ -89,6 +95,10 @@ export type ClientEventType =
   | 'chat.leave'
   | 'chat.report'
   | 'chat.block'
+  | 'webrtc.offer'
+  | 'webrtc.answer'
+  | 'webrtc.ice_candidate'
+  | 'voice.state'
   | 'ping';
 
 export type ServerEventType =
@@ -101,6 +111,10 @@ export type ServerEventType =
   | 'chat.typing'
   | 'chat.ended'
   | 'chat.partner_disconnected'
+  | 'webrtc.offer'
+  | 'webrtc.answer'
+  | 'webrtc.ice_candidate'
+  | 'voice.state'
   | 'rate_limit.reached'
   | 'report.submitted'
   | 'error'
@@ -129,11 +143,27 @@ export interface QueuePayload {
   nickname: string;
   gender: Gender;
   preference: MatchPreference;
+  mode?: MatchMode;
   country: Country;
   language: Language;
+  blockedSessionIds?: string[];
 }
 
 export interface ReportPayload {
   reason: ReportReason;
   details?: string;
+}
+
+export interface WebRTCSignalingPayload {
+  sdp?: { type: string; sdp: string };
+  candidate?: {
+    candidate: string;
+    sdpMid?: string | null;
+    sdpMLineIndex?: number | null;
+  };
+}
+
+export interface VoiceStatePayload {
+  isMuted: boolean;
+  isSpeaking?: boolean;
 }

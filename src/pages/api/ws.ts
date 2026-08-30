@@ -18,6 +18,10 @@ export const GET: APIRoute = async ({ request }) => {
   const country = (url.searchParams.get('country') as Country) || 'anywhere';
   const language = (url.searchParams.get('language') as Language) || 'any';
 
+  const mode = (url.searchParams.get('mode') as 'text' | 'voice') || 'text';
+  const blockedRaw = url.searchParams.get('blocked') || '';
+  const blockedSessionIds = blockedRaw ? blockedRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
   // Cloudflare WebSocket Pair
   // @ts-expect-error WebSocketPair is standard in Cloudflare Workers
   const pair = new WebSocketPair();
@@ -27,7 +31,17 @@ export const GET: APIRoute = async ({ request }) => {
   serverSocket.accept();
 
   const coordinator = ChatCoordinator.getInstance();
-  coordinator.registerClient(sessionId, nickname, gender, preference, country, language, serverSocket);
+  coordinator.registerClient(
+    sessionId,
+    nickname,
+    gender,
+    preference,
+    country,
+    language,
+    serverSocket,
+    mode,
+    blockedSessionIds
+  );
 
   serverSocket.addEventListener('message', (event: MessageEvent) => {
     try {
@@ -71,12 +85,22 @@ export const GET: APIRoute = async ({ request }) => {
 
         case 'chat.report': {
           const payload = msg.payload as { reason: string; details?: string };
-          coordinator.handleReport(sessionId, payload.reason, payload.details);
+          coordinator.handleReport(sessionId, payload?.reason, payload?.details);
           break;
         }
 
         case 'chat.block':
-          coordinator.handleLeave(sessionId);
+          coordinator.handleBlock(sessionId);
+          break;
+
+        case 'webrtc.offer':
+        case 'webrtc.answer':
+        case 'webrtc.ice_candidate':
+          coordinator.handleWebRTCSignaling(sessionId, msg.type, msg.payload as any);
+          break;
+
+        case 'voice.state':
+          coordinator.handleVoiceState(sessionId, msg.payload as any);
           break;
       }
     } catch (e) {

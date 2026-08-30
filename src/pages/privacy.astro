@@ -1,74 +1,82 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
+
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
 ---
 
-<BaseLayout title="Privacy Policy — randomcaht.online" description="Privacy policy and data retention disclosure for randomcaht.online." lang={currentLang}>
-  <Header lang={currentLang} />
+<BaseLayout
+  title={`Privacy Policy — ${siteConfig.name}`}
+  description={`Privacy policy and data retention disclosure for ${siteConfig.name}.`}
+  canonical={`${siteConfig.url}/privacy`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
 
   <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
-    <div class="flex flex-col gap-6 text-[var(--text-muted)] text-sm leading-relaxed">
+    <div class="flex flex-col gap-6 text-[var(--text-secondary)] text-sm leading-relaxed text-left">
       <div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)] mb-2">
+        <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] mb-2 tracking-tight">
           Privacy Policy
         </h1>
-        <p class="text-xs text-[var(--text-subtle)]">
-          Last Updated: February 2025
+        <p class="text-xs text-[var(--text-muted)]">
+          Last Updated: February 2026 &bull; {siteConfig.name}
         </p>
       </div>
 
-      <section class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">1. Anonymous by Default</h2>
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">1. Anonymous by Default</h2>
         <p>
-          randomcaht.online is built from the ground up to minimize personal data collection. We do not require, collect, or store your real name, email address, password, phone number, physical address, or social media profiles.
+          {siteConfig.name} is built from the ground up to minimize personal data collection. We do not require, collect, or store your real name, email address, password, phone number, physical address, or external social media profiles.
         </p>
       </section>
 
-      <section class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">2. Ephemeral Chat Messages</h2>
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">2. Ephemeral Chat Messages</h2>
         <p>
-          Chat messages exchanged between participants are transmitted in real-time over encrypted WebSockets and are <strong>ephemeral</strong>. We do not maintain a permanent database of chat history. Once a conversation ends or both participants disconnect, message data is cleared from memory.
+          Chat messages exchanged between participants are transmitted in real-time over encrypted WebSockets and are <strong>strictly ephemeral</strong> in server RAM. We do not maintain an archival database of chat history. Once a conversation ends or either participant disconnects, message data is immediately cleared from memory.
         </p>
       </section>
 
-      <section class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">3. Temporary Operational Data</h2>
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">3. Temporary Operational Data</h2>
         <p>To operate matchmaking and protect users against spam and abuse, we process minimal temporary data:</p>
-        <ul class="list-disc pl-5 flex flex-col gap-1">
-          <li><strong>Temporary Session Identifiers:</strong> Random, non-sequential cryptographic UUIDs generated per browser visit.</li>
+        <ul class="list-disc pl-5 flex flex-col gap-1 text-xs sm:text-sm">
+          <li><strong>Temporary Session Identifiers:</strong> Random cryptographic UUIDs generated per browser visit.</li>
           <li><strong>Self-Declared Matching Attributes:</strong> Temporary nickname, self-declared gender, and matching preference.</li>
           <li><strong>Abuse Prevention & Rate Limits:</strong> Temporary counters to limit message flooding, connection abuse, and bot activity.</li>
         </ul>
       </section>
 
-      <section class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">4. Abuse Reports and Moderation</h2>
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">4. Abuse Reports and Moderation</h2>
         <p>
-          When a user submits an abuse report (e.g. for harassment or spam), the report reason, brief optional details, timestamps, and associated anonymous session IDs are temporarily recorded to enforce bans and protect the community.
+          When a user submits an abuse report (e.g. for harassment or illicit content), the report reason, optional details, timestamp, and associated anonymous session ID are temporarily processed to enforce bans and protect the community.
         </p>
       </section>
 
-      <section class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">5. Cookies and Local Storage</h2>
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">5. Cookies and Local Storage</h2>
         <p>
-          We do not use tracking or advertising cookies. We only use browser local storage / session storage to remember your chosen theme (Light, Dark, or System) and temporary session ID during your active visit.
+          We do not use tracking or advertising cookies. We only use browser local storage to remember your chosen theme (Light, Dark, or System) and temporary session ID during your active visit.
         </p>
       </section>
 
-      <section class="flex flex-col gap-2">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">6. Contact Us</h2>
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">6. Contact Us</h2>
         <p>
-          If you have questions regarding our privacy practices, please contact us at <a href="mailto:hello@randomcaht.online" class="text-[#D55882] underline font-medium">hello@randomcaht.online</a> or via our <a href="/contact" class="text-[#D55882] underline">contact form</a>.
+          If you have questions regarding our privacy practices, please contact us at <a href={`mailto:${siteConfig.supportEmail}`} class="text-[var(--primary)] underline font-medium">{siteConfig.supportEmail}</a> or via our <a href="/contact" class="text-[var(--primary)] underline">contact page</a>.
         </p>
       </section>
 
-      <div class="pt-4 border-t border-[var(--border-color)]">
-        <a href="/" class="font-semibold text-[#D55882] hover:underline">&larr; Back to Home</a>
+      <div class="pt-4 border-t border-[var(--border)]">
+        <a href="/" class="font-semibold text-[var(--primary)] hover:underline">&larr; Back to Home</a>
       </div>
     </div>
   </main>
 
-  <Footer lang={currentLang} />
+  <LandingFooter />
 </BaseLayout>

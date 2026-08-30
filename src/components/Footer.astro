@@ -1,63 +1,68 @@
 ---
-import { getTranslations } from '../i18n/translations';
+import Icon from './icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
 interface Props {
   lang?: string;
 }
 
 const { lang = 'en' } = Astro.props;
-const t = getTranslations(lang);
 ---
 
-<footer class="w-full border-t border-[var(--border-color)] bg-[var(--bg-surface)] py-12 px-4 mt-auto">
-  <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-muted)]">
+<footer class="w-full border-t border-[var(--border)] bg-[var(--bg-surface)] py-12 px-4 mt-auto">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-secondary)]">
     <!-- Brand Info & 18+ Badge -->
     <div class="flex flex-col gap-3">
       <a href="/" class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg gradient-accent flex items-center justify-center text-white font-bold text-xs">
-          RC
+        <div class="w-7 h-7 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white font-bold text-xs shadow-xs">
+          <Icon name="message-square" class="w-4 h-4" />
         </div>
-        <span class="font-bold text-base text-[var(--text-main)]">randomcaht<span class="text-[#FF808A]">.online</span></span>
+        <span class="font-bold text-base text-[var(--text-primary)]">
+          Random<span class="text-[var(--primary)]">Chat</span>
+        </span>
       </a>
-      <p class="text-xs text-[var(--text-subtle)] leading-relaxed">
+      <p class="text-xs text-[var(--text-muted)] leading-relaxed">
         Free, anonymous-by-default random text chat for adults. Meet compatible strangers without accounts or passwords.
       </p>
-      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold w-fit">
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold w-fit text-[11px]">
+        <Icon name="shield-check" class="w-3.5 h-3.5" />
         <span>18+ Adults Only</span>
       </div>
     </div>
 
     <!-- Product Links -->
     <div class="flex flex-col gap-2.5">
-      <span class="font-bold text-sm text-[var(--text-main)] uppercase tracking-wider text-[11px]">Product</span>
-      <a href="/start" class="hover:text-[var(--text-main)] transition-colors">Start Chat</a>
-      <a href="/how-it-works" class="hover:text-[var(--text-main)] transition-colors">How It Works</a>
-      <a href="/chat-rooms" class="hover:text-[var(--text-main)] transition-colors">Chat Topics</a>
-      <a href="/faq" class="hover:text-[var(--text-main)] transition-colors">{t.nav.faq}</a>
+      <span class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-wider text-[11px]">Product</span>
+      <a href="/start" class="hover:text-[var(--text-primary)] transition-colors">Start Chat</a>
+      <a href="/how-it-works" class="hover:text-[var(--text-primary)] transition-colors">How It Works</a>
+      <a href="/chat-rooms" class="hover:text-[var(--text-primary)] transition-colors">Chat Topics</a>
+      <a href="/faq" class="hover:text-[var(--text-primary)] transition-colors">FAQ</a>
     </div>
 
     <!-- Safety & Moderation -->
     <div class="flex flex-col gap-2.5">
-      <span class="font-bold text-sm text-[var(--text-main)] uppercase tracking-wider text-[11px]">Safety & Trust</span>
-      <a href="/safety" class="hover:text-[var(--text-main)] transition-colors">{t.nav.safety}</a>
-      <a href="/safety#report" class="hover:text-[var(--text-main)] transition-colors">Report a User</a>
-      <a href="/privacy" class="hover:text-[var(--text-main)] transition-colors">{t.nav.privacy}</a>
-      <a href="/cookies" class="hover:text-[var(--text-main)] transition-colors">Cookie Policy</a>
+      <span class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-wider text-[11px]">Safety & Trust</span>
+      <a href="/safety" class="hover:text-[var(--text-primary)] transition-colors">Safety Guidelines</a>
+      <a href="/safety#report" class="hover:text-[var(--text-primary)] transition-colors">Report a User</a>
+      <a href="/privacy" class="hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a>
+      <a href="/cookie-policy" class="hover:text-[var(--text-primary)] transition-colors">Cookie Policy</a>
     </div>
 
     <!-- Company & Legal -->
     <div class="flex flex-col gap-2.5">
-      <span class="font-bold text-sm text-[var(--text-main)] uppercase tracking-wider text-[11px]">Legal & Support</span>
-      <a href="/about" class="hover:text-[var(--text-main)] transition-colors">{t.nav.about}</a>
-      <a href="/contact" class="hover:text-[var(--text-main)] transition-colors">{t.nav.contact}</a>
-      <a href="/terms" class="hover:text-[var(--text-main)] transition-colors">{t.nav.terms}</a>
-      <a href="/profile" class="hover:text-[var(--text-main)] text-[var(--text-subtle)] transition-colors">Profile (Preview)</a>
+      <span class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-wider text-[11px]">Legal & Support</span>
+      <a href="/about" class="hover:text-[var(--text-primary)] transition-colors">About Us</a>
+      <a href="/contact" class="hover:text-[var(--text-primary)] transition-colors">Contact Support</a>
+      <a href="/terms" class="hover:text-[var(--text-primary)] transition-colors">Terms of Service</a>
+      <div class="pt-1 text-[11px] text-[var(--text-muted)]">
+        Support: <a href={`mailto:${siteConfig.supportEmail}`} class="text-[var(--primary)] underline">{siteConfig.supportEmail}</a>
+      </div>
     </div>
   </div>
 
   <!-- Bottom Bar: Copyright & Disclaimer -->
-  <div class="max-w-6xl mx-auto pt-6 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[var(--text-subtle)] text-center sm:text-left">
-    <span>&copy; {new Date().getFullYear()} randomcaht.online &bull; All rights reserved.</span>
-    <span>{t.footer.disclaimer}</span>
+  <div class="max-w-6xl mx-auto pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[var(--text-muted)] text-center sm:text-left">
+    <span>&copy; {new Date().getFullYear()} {siteConfig.name} &bull; All rights reserved.</span>
+    <span>{siteConfig.name} is an anonymous random chat platform. Never disclose passwords or financial information.</span>
   </div>
 </footer>

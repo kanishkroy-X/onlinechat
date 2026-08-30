@@ -1,0 +1,287 @@
+---
+import Icon from '../icons/Icon.astro';
+---
+
+<section id="demo" class="w-full py-12 sm:py-16 px-4 bg-[var(--bg-surface-elevated)]/40 border-y border-[var(--border)]">
+  <div class="max-w-4xl mx-auto flex flex-col items-center gap-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl flex flex-col items-center gap-2.5">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="sparkles" class="w-3.5 h-3.5" />
+        <span>Interactive Product Sandbox</span>
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+        See how simple & safe chatting is
+      </h2>
+      <p class="text-sm sm:text-base text-[var(--text-secondary)]">
+        Try the sandbox below. Type a message or click a prompt to experience our clean interface and progressive safety unlocks in real time.
+      </p>
+    </div>
+
+    <!-- Interactive Chat Simulator Card -->
+    <div class="w-full max-w-2xl bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-xl overflow-hidden flex flex-col transition-all">
+      <!-- Chat Simulator Header -->
+      <div class="p-3.5 sm:p-4 border-b border-[var(--border)] bg-[var(--bg-surface)] flex items-center justify-between gap-3">
+        <!-- Stranger Info -->
+        <div class="flex items-center gap-3">
+          <div class="relative w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            <span id="demo-stranger-avatar">A</span>
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[var(--success)] border-2 border-[var(--bg-surface)]"></span>
+          </div>
+          <div class="flex flex-col text-left">
+            <div class="flex items-center gap-2">
+              <span id="demo-stranger-name" class="font-bold text-sm text-[var(--text-primary)]">Stranger #4829</span>
+              <span id="demo-stranger-badge" class="px-2 py-0.5 rounded-md bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-[10px] font-medium text-[var(--text-secondary)]">🇯🇵 Tokyo</span>
+            </div>
+            <span class="text-xs text-[var(--success)] font-medium flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--success)] animate-pulse"></span>
+              Encrypted 1-on-1 Session
+            </span>
+          </div>
+        </div>
+
+        <!-- Header Actions: Skip Stranger & Reset -->
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            id="demo-skip-btn"
+            class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Match with another simulated stranger"
+          >
+            <Icon name="refresh-cw" class="w-3.5 h-3.5" />
+            <span>Next Stranger</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progressive Feature Unlock Progression Bar -->
+      <div class="px-4 py-2 bg-[var(--bg-surface-elevated)]/60 border-b border-[var(--border)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+        <div class="flex items-center gap-2">
+          <Icon name="shield-check" class="w-4 h-4 text-[var(--primary)]" />
+          <span class="font-medium">Mutual Trust Stage:</span>
+          <span id="demo-unlock-status" class="font-bold text-[var(--text-primary)]">Text Phase (1/3)</span>
+        </div>
+        <div class="flex items-center gap-2 text-[11px]">
+          <span id="demo-badge-voice" class="px-2 py-0.5 rounded bg-[var(--border)] text-[var(--text-muted)] font-medium">🔒 Voice Notes (3 msgs)</span>
+          <span id="demo-badge-media" class="hidden sm:inline-block px-2 py-0.5 rounded bg-[var(--border)] text-[var(--text-muted)] font-medium">🔒 Media (5 msgs)</span>
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="demo-messages-container" class="h-64 sm:h-72 p-4 overflow-y-auto flex flex-col gap-3 bg-[var(--bg-page)]/40 text-sm">
+        <!-- Stranger Message -->
+        <div class="flex items-start gap-2.5 max-w-[85%] animate-msg-in">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+            S
+          </div>
+          <div class="bg-[var(--bg-surface)] border border-[var(--border)] px-3.5 py-2.5 rounded-2xl rounded-tl-sm text-[var(--text-primary)] text-xs sm:text-sm shadow-xs leading-relaxed text-left">
+            Hey there! 👋 What's something interesting you've been reading or listening to recently?
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator Banner -->
+      <div id="demo-typing-indicator" class="hidden px-4 py-1.5 bg-[var(--bg-page)]/80 border-t border-[var(--border-subtle)] flex items-center gap-2 text-xs text-[var(--text-muted)] italic text-left">
+        <div class="flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)] typing-dot"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)] typing-dot"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)] typing-dot"></span>
+        </div>
+        <span>Stranger is typing a reply...</span>
+      </div>
+
+      <!-- Quick Suggestion Prompt Chips -->
+      <div class="px-3 pt-2.5 pb-1 bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-center gap-1.5 overflow-x-auto text-xs no-scrollbar">
+        <span class="text-[10px] uppercase font-bold text-[var(--text-subtle)] shrink-0 px-1">Prompts:</span>
+        <button type="button" class="demo-prompt-chip px-2.5 py-1 rounded-full border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--primary-soft)] hover:border-[var(--primary)] text-[var(--text-secondary)] hover:text-[var(--primary)] whitespace-nowrap transition-colors cursor-pointer">
+          Just discovering some lo-fi tracks! 🎧
+        </button>
+        <button type="button" class="demo-prompt-chip px-2.5 py-1 rounded-full border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--primary-soft)] hover:border-[var(--primary)] text-[var(--text-secondary)] hover:text-[var(--primary)] whitespace-nowrap transition-colors cursor-pointer">
+          Greetings from London! 🇬🇧
+        </button>
+        <button type="button" class="demo-prompt-chip px-2.5 py-1 rounded-full border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--primary-soft)] hover:border-[var(--primary)] text-[var(--text-secondary)] hover:text-[var(--primary)] whitespace-nowrap transition-colors cursor-pointer">
+          Any movie recommendations tonight? 🍿
+        </button>
+      </div>
+
+      <!-- Chat Input Form -->
+      <form id="demo-chat-form" class="p-3 bg-[var(--bg-surface)] flex items-center gap-2">
+        <input
+          type="text"
+          id="demo-chat-input"
+          placeholder="Type a message to test the chat..."
+          maxlength="150"
+          autocomplete="off"
+          class="flex-1 px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-input)] text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all"
+        />
+        <button
+          type="submit"
+          id="demo-send-btn"
+          class="btn-primary text-xs sm:text-sm py-2.5 px-4 shrink-0"
+        >
+          <span>Send</span>
+          <Icon name="send" class="w-4 h-4" />
+        </button>
+      </form>
+    </div>
+
+    <!-- Explanation Note below Demo -->
+    <div class="text-xs text-[var(--text-muted)] flex items-center justify-center gap-2 max-w-lg text-center">
+      <Icon name="lock" class="w-4 h-4 text-[var(--success)] shrink-0" />
+      <span>When you chat on RandomChat, your session is 100% ephemeral in RAM. No messages are ever saved or stored on our servers.</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Interactive Demo Logic
+  const demoForm = document.getElementById('demo-chat-form') as HTMLFormElement;
+  const demoInput = document.getElementById('demo-chat-input') as HTMLInputElement;
+  const demoMessages = document.getElementById('demo-messages-container');
+  const demoTyping = document.getElementById('demo-typing-indicator');
+  const demoSkipBtn = document.getElementById('demo-skip-btn');
+  const demoStrangerAvatar = document.getElementById('demo-stranger-avatar');
+  const demoStrangerName = document.getElementById('demo-stranger-name');
+  const demoStrangerBadge = document.getElementById('demo-stranger-badge');
+  const demoUnlockStatus = document.getElementById('demo-unlock-status');
+  const demoBadgeVoice = document.getElementById('demo-badge-voice');
+  const demoBadgeMedia = document.getElementById('demo-badge-media');
+  const promptChips = document.querySelectorAll('.demo-prompt-chip');
+
+  let messageCount = 0;
+
+  const STRANGERS = [
+    { name: 'Stranger #4829', city: '🇯🇵 Tokyo', avatar: 'A', intro: "Hey there! 👋 What's something interesting you've been reading or listening to recently?" },
+    { name: 'Stranger #7104', city: '🇫🇷 Paris', avatar: 'M', intro: "Hello! What's the weather like where you are right now? ☕" },
+    { name: 'Stranger #9321', city: '🇨🇦 Toronto', avatar: 'K', intro: "Hey! If you could travel anywhere tomorrow, where would you go? ✈️" }
+  ];
+
+  let currentStrangerIdx = 0;
+
+  function updateUnlockProgress() {
+    messageCount++;
+    if (messageCount >= 5) {
+      if (demoUnlockStatus) demoUnlockStatus.textContent = 'Full Access Unlocked (Media & Voice)';
+      if (demoBadgeVoice) {
+        demoBadgeVoice.textContent = '✓ Voice Notes Active';
+        demoBadgeVoice.className = 'px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold';
+      }
+      if (demoBadgeMedia) {
+        demoBadgeMedia.textContent = '✓ Media Sharing Active';
+        demoBadgeMedia.className = 'hidden sm:inline-block px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold';
+      }
+    } else if (messageCount >= 3) {
+      if (demoUnlockStatus) demoUnlockStatus.textContent = 'Voice Unlocked (3/5)';
+      if (demoBadgeVoice) {
+        demoBadgeVoice.textContent = '✓ Voice Notes Active';
+        demoBadgeVoice.className = 'px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold';
+      }
+    } else {
+      if (demoUnlockStatus) demoUnlockStatus.textContent = `Text Phase (${messageCount}/3)`;
+    }
+  }
+
+  function appendMessage(text: string, isMe: boolean) {
+    if (!demoMessages) return;
+
+    const bubbleWrapper = document.createElement('div');
+    bubbleWrapper.className = isMe
+      ? 'flex items-start gap-2.5 max-w-[85%] ml-auto flex-row-reverse animate-msg-in'
+      : 'flex items-start gap-2.5 max-w-[85%] animate-msg-in';
+
+    const avatar = document.createElement('div');
+    avatar.className = isMe
+      ? 'w-7 h-7 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5'
+      : 'w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5';
+    avatar.textContent = isMe ? 'Me' : (STRANGERS[currentStrangerIdx].avatar);
+
+    const bubble = document.createElement('div');
+    bubble.className = isMe
+      ? 'bg-[var(--primary)] text-white px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-xs sm:text-sm shadow-xs leading-relaxed text-left'
+      : 'bg-[var(--bg-surface)] border border-[var(--border)] px-3.5 py-2.5 rounded-2xl rounded-tl-sm text-[var(--text-primary)] text-xs sm:text-sm shadow-xs leading-relaxed text-left';
+    bubble.textContent = text;
+
+    bubbleWrapper.appendChild(avatar);
+    bubbleWrapper.appendChild(bubble);
+    demoMessages.appendChild(bubbleWrapper);
+    demoMessages.scrollTop = demoMessages.scrollHeight;
+  }
+
+  function simulateStrangerReply(userText: string) {
+    if (demoTyping) demoTyping.classList.remove('hidden');
+
+    setTimeout(() => {
+      if (demoTyping) demoTyping.classList.add('hidden');
+
+      let reply = "That's awesome! I totally agree. Real conversations like this are so much better without endless feeds or ads.";
+      const lower = userText.toLowerCase();
+
+      if (lower.includes('lo-fi') || lower.includes('music') || lower.includes('tracks')) {
+        reply = "Nice! I love lo-fi beats while focusing or winding down in the evening. Any favorite artists? 🎧";
+      } else if (lower.includes('london') || lower.includes('hello') || lower.includes('hey')) {
+        reply = "Greetings! Hope your day is going well over there. It's really cool connecting instantly like this! 🌍";
+      } else if (lower.includes('movie') || lower.includes('watch')) {
+        reply = "If you like thrillers or sci-fi, I'd recommend 'Arrival' or 'Blade Runner 2049'! Have you seen those? 🎬";
+      }
+
+      appendMessage(reply, false);
+      updateUnlockProgress();
+    }, 1200);
+  }
+
+  demoForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = demoInput?.value.trim();
+    if (!text) return;
+
+    appendMessage(text, true);
+    demoInput.value = '';
+    updateUnlockProgress();
+    simulateStrangerReply(text);
+  });
+
+  promptChips.forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      const btn = e.currentTarget as HTMLButtonElement;
+      const text = btn.textContent?.trim() || '';
+      if (!text) return;
+
+      appendMessage(text, true);
+      updateUnlockProgress();
+      simulateStrangerReply(text);
+    });
+  });
+
+  demoSkipBtn?.addEventListener('click', () => {
+    currentStrangerIdx = (currentStrangerIdx + 1) % STRANGERS.length;
+    const nextStranger = STRANGERS[currentStrangerIdx];
+
+    if (demoStrangerName) demoStrangerName.textContent = nextStranger.name;
+    if (demoStrangerBadge) demoStrangerBadge.textContent = nextStranger.city;
+    if (demoStrangerAvatar) demoStrangerAvatar.textContent = nextStranger.avatar;
+
+    messageCount = 0;
+    if (demoUnlockStatus) demoUnlockStatus.textContent = 'Text Phase (1/3)';
+    if (demoBadgeVoice) {
+      demoBadgeVoice.textContent = '🔒 Voice Notes (3 msgs)';
+      demoBadgeVoice.className = 'px-2 py-0.5 rounded bg-[var(--border)] text-[var(--text-muted)] font-medium';
+    }
+    if (demoBadgeMedia) {
+      demoBadgeMedia.textContent = '🔒 Media (5 msgs)';
+      demoBadgeMedia.className = 'hidden sm:inline-block px-2 py-0.5 rounded bg-[var(--border)] text-[var(--text-muted)] font-medium';
+    }
+
+    if (demoMessages) {
+      demoMessages.innerHTML = `
+        <div class="flex items-start gap-2.5 max-w-[85%] animate-msg-in">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+            ${nextStranger.avatar}
+          </div>
+          <div class="bg-[var(--bg-surface)] border border-[var(--border)] px-3.5 py-2.5 rounded-2xl rounded-tl-sm text-[var(--text-primary)] text-xs sm:text-sm shadow-xs leading-relaxed text-left">
+            ${nextStranger.intro}
+          </div>
+        </div>
+      `;
+    }
+  });
+</script>

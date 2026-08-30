@@ -1,83 +1,87 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
 
-const currentLang = Astro.cookies.get('rc_language')?.value || Astro.url.searchParams.get('lang') || 'en';
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
 ---
 
 <BaseLayout
-  title="About RandomChat — Real Conversations Without Complexity"
-  description="Learn about RandomChat's mission to provide simple, free, anonymous text chat without accounts, algorithms, or feeds."
-  canonical="https://randomcaht.online/about"
+  title={`About ${siteConfig.name} — Real Conversations Without Complexity`}
+  description={`Learn about ${siteConfig.name}'s mission to provide simple, free, anonymous text chat without accounts, algorithms, or feeds.`}
+  canonical={`${siteConfig.url}/about`}
   lang={currentLang}
 >
-  <Header lang={currentLang} />
+  <LandingNavbar lang={currentLang} />
 
   <main class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-8">
     <!-- Header -->
-    <div class="border-b border-[var(--border-color)] pb-6 flex flex-col gap-2">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF808A]/10 text-[#FF808A] text-xs font-bold w-fit">
-        Our Vision
+    <div class="border-b border-[var(--border)] pb-6 flex flex-col gap-2">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold w-fit">
+        <Icon name="sparkles" class="w-3.5 h-3.5" />
+        <span>Our Vision</span>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-main)] tracking-tight">
-        About RandomChat
+      <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+        About {siteConfig.name}
       </h1>
-      <p class="text-sm sm:text-base text-[var(--text-muted)]">
-        Sometimes you just want to talk to someone new.
+      <p class="text-sm sm:text-base text-[var(--text-secondary)]">
+        Sometimes you just want to talk to someone new without algorithmic noise.
       </p>
     </div>
 
     <!-- Core Philosophy -->
-    <div class="prose dark:prose-invert max-w-none text-sm text-[var(--text-muted)] space-y-6 leading-relaxed">
-      <div class="p-6 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col gap-3 shadow-sm not-prose">
-        <h2 class="text-lg font-bold text-[var(--text-main)]">The Simple Idea Behind RandomChat</h2>
-        <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-          RandomChat is built around a single, foundational principle: <strong>real human dialogue should not require a lifetime identity.</strong>
+    <div class="max-w-none text-sm text-[var(--text-secondary)] space-y-6 leading-relaxed">
+      <div class="card-tactile p-6 flex flex-col gap-3">
+        <h2 class="text-lg font-bold text-[var(--text-primary)]">The Simple Idea Behind {siteConfig.name}</h2>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          {siteConfig.name} is built around a single, foundational principle: <strong class="text-[var(--text-primary)]">real human dialogue should not require a lifetime identity.</strong>
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
-          <div class="p-3 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-subtle)] text-center font-semibold text-[var(--text-main)]">
-            No complicated profiles
+          <div class="p-3 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-center font-semibold text-[var(--text-primary)]">
+            No bloated profiles
           </div>
-          <div class="p-3 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-subtle)] text-center font-semibold text-[var(--text-main)]">
-            No endless feeds
+          <div class="p-3 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-center font-semibold text-[var(--text-primary)]">
+            No infinite feeds
           </div>
-          <div class="p-3 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-subtle)] text-center font-semibold text-[var(--text-main)]">
-            No follower systems
+          <div class="p-3 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-center font-semibold text-[var(--text-primary)]">
+            No follower clout
           </div>
         </div>
       </div>
 
-      <section class="space-y-3">
-        <h2 class="text-xl font-bold text-[var(--text-main)]">How We Differ</h2>
+      <section class="space-y-2">
+        <h2 class="text-xl font-bold text-[var(--text-primary)]">How We Differ</h2>
         <p>
-          Most contemporary social platforms are designed to capture your attention and store your history forever. RandomChat does the exact opposite: we pair you with a compatible stranger for a spontaneous, ephemeral conversation. When the room closes, your words disappear.
+          Most contemporary social platforms are designed to capture your attention and store your history forever. {siteConfig.name} does the exact opposite: we pair you with a compatible stranger for a spontaneous, ephemeral conversation. When the session closes, all session RAM is permanently destroyed.
         </p>
       </section>
 
-      <section class="space-y-3">
-        <h2 class="text-xl font-bold text-[var(--text-main)]">Conversation, Not Dating</h2>
+      <section class="space-y-2">
+        <h2 class="text-xl font-bold text-[var(--text-primary)]">Conversation, Not Algorithms</h2>
         <p>
-          While you can set matching gender preferences, RandomChat is fundamentally a conversation platform. We don't ask for personal metrics, height, relationship status, or photos. We focus on ideas, stories, and genuine human connection.
+          While you can set matching preferences, {siteConfig.name} is fundamentally a conversation platform. We don't ask for personal metrics, photos, or email addresses. We focus on ideas, stories, and genuine human connection.
         </p>
       </section>
 
-      <section class="space-y-3">
-        <h2 class="text-xl font-bold text-[var(--text-main)]">A Commitment to Adult Safety</h2>
+      <section class="space-y-2">
+        <h2 class="text-xl font-bold text-[var(--text-primary)]">A Commitment to Adult Safety</h2>
         <p>
-          RandomChat is strictly an 18+ service. We protect our community through proactive rate limits, cold-message limits that stop spam, and immediate one-click blocking and reporting tools.
+          {siteConfig.name} is strictly an 18+ service. We protect our community through proactive rate limits, cold-message limits that stop spam floods, and immediate one-click blocking and reporting tools.
         </p>
       </section>
     </div>
 
     <!-- CTA -->
-    <div class="pt-6 border-t border-[var(--border-color)] flex items-center justify-between">
-      <a href="/" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] underline">&larr; Back to Home</a>
-      <a href="/start" class="gradient-accent gradient-accent-hover text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow transition-all">
-        Start Chatting &rarr;
+    <div class="pt-6 border-t border-[var(--border)] flex items-center justify-between">
+      <a href="/" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline">&larr; Back to Home</a>
+      <a href="/start" class="btn-primary text-xs py-2.5 px-5">
+        <span>Start Chatting</span>
+        <Icon name="arrow-right" class="w-4 h-4" />
       </a>
     </div>
   </main>
 
-  <Footer lang={currentLang} />
+  <LandingFooter />
 </BaseLayout>

@@ -1,0 +1,195 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import LandingFooter from '../components/landing/LandingFooter.astro';
+import Icon from '../components/icons/Icon.astro';
+import { siteConfig } from '../config/site';
+
+const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
+
+const faqItems = [
+  {
+    q: "How does RandomChat match me with strangers?",
+    a: "RandomChat uses an automated, zero-retention matching engine. You can select your conversational preference (anyone, male, female) and language. Our server matches compatible users in under 2 seconds without storing your IP address or session history."
+  },
+  {
+    q: "Do I need to sign up or create an account?",
+    a: "No. RandomChat is 100% account-free and registration-free. You do not need an email, phone number, or password. You receive an ephemeral session token that completely wipes when you disconnect."
+  },
+  {
+    q: "Is RandomChat safe and moderated?",
+    a: "Yes. Every active conversation includes direct, prominent Block and Report buttons. When you block a user, our bidirectional block exclusion guarantees you will never be matched with them again. We also enforce rate-limits and cold-message gating to prevent spam."
+  },
+  {
+    q: "Can I do both Text and Voice chat?",
+    a: "Yes! You can chat anonymously via text or toggle peer-to-peer WebRTC voice chat with crystal-clear audio and zero server audio recordings."
+  }
+];
+---
+
+<BaseLayout
+  title={`Random Chat — Instant 1-on-1 Stranger Conversations | ${siteConfig.name}`}
+  description="Connect 1-on-1 with strangers worldwide in private, ephemeral text and voice chat. 100% free, no sign up, zero logs saved."
+  canonical={`${siteConfig.url}/random-chat`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 w-full flex flex-col items-center">
+    <!-- Hero Section -->
+    <section class="w-full py-16 sm:py-24 px-4 max-w-5xl mx-auto flex flex-col items-center text-center gap-8">
+      <!-- Eyebrow Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[var(--primary)] text-xs font-bold tracking-wide">
+        <span class="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></span>
+        <span>Over {siteConfig.metrics.onlineUsersEstimate} People Online Now</span>
+      </div>
+
+      <!-- Main Headline -->
+      <div class="flex flex-col gap-4 max-w-3xl">
+        <h1 class="text-4xl sm:text-6xl font-black text-[var(--text-primary)] tracking-tight leading-[1.1]">
+          Random Chat Without Accounts, Algorithms, or Feeds.
+        </h1>
+        <p class="text-base sm:text-xl text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
+          Experience genuine, spontaneous 1-on-1 conversations with friendly strangers across the globe. Pure text & voice matching in under 2 seconds.
+        </p>
+      </div>
+
+      <!-- Primary Action Island Button -->
+      <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
+        <a
+          href="/start"
+          class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold text-base shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 active:scale-[0.98]"
+        >
+          <span>Start Random Chatting</span>
+          <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-1">
+            <Icon name="arrow-right" class="w-4 h-4 text-white" />
+          </span>
+        </a>
+        <a
+          href="/chat-rooms"
+          class="px-6 py-4 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-bold text-sm transition-colors"
+        >
+          Explore Topic Rooms &rarr;
+        </a>
+      </div>
+
+      <!-- Trust Metrics -->
+      <div class="grid grid-cols-3 gap-6 sm:gap-12 pt-8 border-t border-[var(--border)] w-full max-w-xl text-center">
+        <div class="flex flex-col">
+          <span class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">{siteConfig.metrics.averageMatchSeconds}</span>
+          <span class="text-xs text-[var(--text-muted)]">Average Match</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-2xl sm:text-3xl font-black text-[var(--primary)]">{siteConfig.metrics.retentionPolicy}</span>
+          <span class="text-xs text-[var(--text-muted)]">Privacy Guaranteed</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-2xl sm:text-3xl font-black text-[var(--success)]">100% Free</span>
+          <span class="text-xs text-[var(--text-muted)]">No Signup</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Double-Bezel Value Proposition Cards -->
+    <section class="w-full py-16 px-4 bg-[var(--bg-surface-elevated)] border-y border-[var(--border)]">
+      <div class="max-w-5xl mx-auto flex flex-col gap-12">
+        <div class="text-center flex flex-col gap-2 max-w-xl mx-auto">
+          <h2 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">Why Millions Choose RandomChat</h2>
+          <p class="text-sm text-[var(--text-secondary)]">Engineered from the ground up for speed, privacy, and meaningful human connection.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1: Double Bezel Architecture -->
+          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
+            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
+                <Icon name="zap" class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">Zero Wait Times</h3>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Our Cloudflare edge network matches you instantly with compatible peers globally. No loading delays or matchmaking queues.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2: Double Bezel -->
+          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
+            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
+                <Icon name="shield-check" class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">Absolute Anonymity</h3>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+                No profiles, no registration, and no tracking cookies. Once you disconnect, your conversation history disappears forever.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3: Double Bezel -->
+          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
+            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center font-bold">
+                <Icon name="user-x" class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">Smart Block & Safety</h3>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Block toxic users with 1 click. Our bidirectional safety matrix ensures you will never encounter the same blocked user again.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ & Structured Data Section -->
+    <section class="w-full py-16 px-4 max-w-4xl mx-auto flex flex-col gap-10">
+      <div class="text-center flex flex-col gap-2">
+        <h2 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">Frequently Asked Questions</h2>
+        <p class="text-sm text-[var(--text-secondary)]">Everything you need to know about starting a random chat on {siteConfig.name}.</p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        {faqItems.map((item) => (
+          <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex flex-col gap-2 shadow-xs">
+            <h3 class="font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
+              <span class="text-[var(--primary)]">Q:</span> {item.q}
+            </h3>
+            <p class="text-sm text-[var(--text-secondary)] leading-relaxed pl-6">
+              {item.a}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <!-- Bottom CTA Banner -->
+      <div class="p-8 rounded-[2rem] bg-[var(--primary)] text-white flex flex-col sm:flex-row items-center justify-between gap-6 mt-8 shadow-xl">
+        <div class="flex flex-col gap-1 text-center sm:text-left">
+          <h3 class="text-2xl font-black">Ready to meet someone new?</h3>
+          <p class="text-xs text-white/80">Connect immediately. No signup required.</p>
+        </div>
+        <a
+          href="/start"
+          class="px-8 py-3.5 rounded-full bg-white text-[var(--primary)] font-bold text-sm shadow-md hover:bg-slate-100 transition-colors shrink-0"
+        >
+          Start Chat Now &rarr;
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- JSON-LD FAQ Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  })} />
+
+  <LandingFooter />
+</BaseLayout>

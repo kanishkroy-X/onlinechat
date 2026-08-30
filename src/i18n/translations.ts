@@ -141,7 +141,7 @@ export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
 export const translations: Record<string, TranslationDict> = {
   en: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'Free Anonymous Random Text Chat',
       description: 'Connect instantly with compatible strangers. Ephemeral, safe, zero sign-up.',
       noAccount: 'No Account Required',
@@ -252,15 +252,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: '18+ only. By using randomcaht.online, you agree to our Terms & Privacy Policy.',
+      agePolicy: '18+ only. By using RandomChat, you agree to our Terms & Privacy Policy.',
       allRightsReserved: 'All rights reserved.',
-      disclaimer: 'randomcaht.online is an anonymous random chat platform. Never disclose personal data.'
+      disclaimer: 'RandomChat is an anonymous random chat platform. Never disclose personal data.'
     }
   },
 
   es: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'Chat de Texto Anónimo y Aleatorio Gratis',
       description: 'Conéctate al instante con desconocidos compatibles. Efímero, seguro, sin registro.',
       noAccount: 'Sin Cuenta Requerida',
@@ -371,15 +371,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: 'Solo +18 años. Al usar randomcaht.online aceptas nuestros Términos y Privacidad.',
+      agePolicy: 'Solo +18 años. Al usar RandomChat aceptas nuestros Términos y Privacidad.',
       allRightsReserved: 'Todos los derechos reservados.',
-      disclaimer: 'randomcaht.online es anónimo. Nunca reveles información personal.'
+      disclaimer: 'RandomChat es anónimo. Nunca reveles información personal.'
     }
   },
 
   fr: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'Chat Texte Anonyme et Aléatoire Gratuit',
       description: 'Connectez-vous instantanément avec des inconnus compatibles. Éphémère, sécurisé, sans inscription.',
       noAccount: 'Aucun compte requis',
@@ -490,15 +490,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: '18+ uniquement. En utilisant randomcaht.online, vous acceptez nos Conditions et notre Confidentialité.',
+      agePolicy: '18+ uniquement. En utilisant RandomChat, vous acceptez nos Conditions et notre Confidentialité.',
       allRightsReserved: 'Tous droits réservés.',
-      disclaimer: 'randomcaht.online est anonyme. Ne divulguez jamais d’informations personnelles.'
+      disclaimer: 'RandomChat est anonyme. Ne divulguez jamais d’informations personnelles.'
     }
   },
 
   de: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'Kostenloser Anonymer Zufalls-Text-Chat',
       description: 'Verbinde dich sofort mit passenden Fremden. Flüchtig, sicher, ohne Registrierung.',
       noAccount: 'Keine Registrierung erforderlich',
@@ -609,15 +609,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: 'Ab 18 Jahren. Mit der Nutzung von randomcaht.online akzeptierst du unsere Nutzungsbedingungen.',
+      agePolicy: 'Ab 18 Jahren. Mit der Nutzung von RandomChat akzeptierst du unsere Nutzungsbedingungen.',
       allRightsReserved: 'Alle Rechte vorbehalten.',
-      disclaimer: 'randomcaht.online ist anonym. Gib niemals persönliche Daten preis.'
+      disclaimer: 'RandomChat ist anonym. Gib niemals persönliche Daten preis.'
     }
   },
 
   pt: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'Chat de Texto Aleatório e Anônimo Grátis',
       description: 'Conecte-se instantaneamente com pessoas compatíveis. Efêmero, seguro, sem cadastro.',
       noAccount: 'Sem Cadastro Necessário',
@@ -728,15 +728,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: 'Apenas +18 anos. Ao usar randomcaht.online, você aceita nossos Termos e Privacidade.',
+      agePolicy: 'Apenas +18 anos. Ao usar RandomChat, você aceita nossos Termos e Privacidade.',
       allRightsReserved: 'Todos os direitos reservados.',
-      disclaimer: 'randomcaht.online é anônimo. Nunca divulgue informações pessoais.'
+      disclaimer: 'RandomChat é anônimo. Nunca divulgue informações pessoais.'
     }
   },
 
   hi: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'निःशुल्क अनाम यादृच्छिक टेक्स्ट चैट',
       description: 'अनुकूल अजनबियों से तुरंत जुड़ें। सुरक्षित, बिना किसी साइन-अप के।',
       noAccount: 'कोई खाता आवश्यक नहीं',
@@ -847,15 +847,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: 'केवल 18+। randomcaht.online का उपयोग करके, आप हमारी शर्तों और गोपनीयता नीति से सहमत होते हैं।',
+      agePolicy: 'केवल 18+। RandomChat का उपयोग करके, आप हमारी शर्तों और गोपनीयता नीति से सहमत होते हैं।',
       allRightsReserved: 'सर्वाधिकार सुरक्षित।',
-      disclaimer: 'randomcaht.online एक अनाम चैट प्लेटफॉर्म है। अपनी व्यक्तिगत जानकारी कभी साझा न करें।'
+      disclaimer: 'RandomChat एक अनाम चैट प्लेटफॉर्म है। अपनी व्यक्तिगत जानकारी कभी साझा न करें।'
     }
   },
 
   ar: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'دردشة نصية عشوائية ومجهولة مجانية',
       description: 'تواصل فوراً مع غرباء متوافقين. مؤقتة، آمنة، وبدون تسجيل.',
       noAccount: 'لا يلزم إنشاء حساب',
@@ -966,15 +966,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: 'للبالغين 18+ فقط. باستخدامك randomcaht.online توافق على الشروط والخصوصية.',
+      agePolicy: 'للبالغين 18+ فقط. باستخدامك RandomChat توافق على الشروط والخصوصية.',
       allRightsReserved: 'جميع الحقوق محفوظة.',
-      disclaimer: 'randomcaht.online منصة مجهولة. لا تفصح أبداً عن معلوماتك الشخصية.'
+      disclaimer: 'RandomChat منصة مجهولة. لا تفصح أبداً عن معلوماتك الشخصية.'
     }
   },
 
   ru: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: 'Бесплатный Анонимный Случайный Текстовый Чат',
       description: 'Мгновенное общение с подходящими собеседниками. Безопасно, анонимно, без регистрации.',
       noAccount: 'Без Регистрации',
@@ -1085,15 +1085,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: 'Только 18+. Используя randomcaht.online, вы принимаете Условия и Политику конфиденциальности.',
+      agePolicy: 'Только 18+. Используя RandomChat, вы принимаете Условия и Политику конфиденциальности.',
       allRightsReserved: 'Все права защищены.',
-      disclaimer: 'randomcaht.online — анонимный чат. Никогда не раскрывайте личные данные.'
+      disclaimer: 'RandomChat — анонимный чат. Никогда не раскрывайте личные данные.'
     }
   },
 
   zh: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: '免费匿名随机文字聊天',
       description: '即刻与志趣相投的陌生人连线。阅后即焚、安全、无需注册。',
       noAccount: '无需注册账号',
@@ -1204,15 +1204,15 @@ export const translations: Record<string, TranslationDict> = {
       }
     },
     footer: {
-      agePolicy: '仅限 18 岁以上。使用 randomcaht.online 即表示您同意服务条款与隐私政策。',
+      agePolicy: '仅限 18 岁以上。使用 RandomChat 即表示您同意服务条款与隐私政策。',
       allRightsReserved: '版权所有。',
-      disclaimer: 'randomcaht.online 是匿名聊天平台，请勿泄露任何个人隐私信息。'
+      disclaimer: 'RandomChat 是匿名聊天平台，请勿泄露任何个人隐私信息。'
     }
   },
 
   ja: {
     brand: {
-      name: 'randomcaht.online',
+      name: 'RandomChat',
       tagline: '完全無料・匿名のランダムテキストチャット',
       description: '気の合う見知らぬ人と今すぐ繋がる。登録不要・安全・履歴を残さない。',
       noAccount: 'アカウント登録不要',
@@ -1325,7 +1325,7 @@ export const translations: Record<string, TranslationDict> = {
     footer: {
       agePolicy: '18歳以上限定。利用規約およびプライバシーポリシーに同意の上ご利用ください。',
       allRightsReserved: '無断転載を禁じます。',
-      disclaimer: 'randomcaht.online は匿名チャットです。個人情報を開示しないでください。'
+      disclaimer: 'RandomChat は匿名チャットです。個人情報を開示しないでください。'
     }
   }
 };

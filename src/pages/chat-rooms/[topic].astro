@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getTranslations } from '../../i18n/translations';
+import { siteConfig } from '../../config/site';
 
 export const prerender = true;
 
@@ -37,9 +38,9 @@ const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title={`${title} Chat — randomcaht.online`}
-  description={`Join ${title.toLowerCase()} conversations on RandomChat. Meet strangers who share your passion for ${title.toLowerCase()}.`}
-  canonical={`https://randomcaht.online/chat-rooms/${topic}`}
+  title={`${title} Chat — ${siteConfig.name}`}
+  description={`Join ${title.toLowerCase()} conversations on ${siteConfig.name}. Meet strangers who share your passion for ${title.toLowerCase()}.`}
+  canonical={`${siteConfig.url}/chat-rooms/${topic}`}
   lang={lang}
 >
   <Header lang={lang} />

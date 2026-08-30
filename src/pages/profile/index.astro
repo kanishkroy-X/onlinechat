@@ -3,16 +3,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getTranslations } from '../../i18n/translations';
+import { siteConfig } from '../../config/site';
 
 const lang = 'en';
 const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title="Profile (Future Preview) — randomcaht.online"
-  description="Conversation-oriented profile preview on RandomChat."
-  canonical="https://randomcaht.online/profile"
+  title={`Profile (Preview) — ${siteConfig.name}`}
+  description={`Conversation-oriented profile preview on ${siteConfig.name}.`}
+  canonical={`${siteConfig.url}/profile`}
   lang={lang}
+  noindex={true}
 >
   <Header lang={lang} />
 

@@ -1,14 +1,27 @@
 User-agent: *
 Allow: /
+Allow: /random-chat
+Allow: /random-text-chat
+Allow: /random-voice-chat
+Allow: /start
+Allow: /chat-rooms
+Allow: /how-it-works
 Allow: /safety
 Allow: /faq
-Allow: /privacy
-Allow: /terms
 Allow: /about
 Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /cookie-policy
 
-# Exclude internal/ephemeral API endpoints
+# Exclude internal ephemeral app states and API endpoints
 Disallow: /api/
 Disallow: /ws/
+Disallow: /chat
+Disallow: /matching
+Disallow: /profile
+Disallow: /profile/
+Disallow: /404
+Disallow: /500
 
-Sitemap: https://randomcaht.online/sitemap.xml
+Sitemap: https://randomchat.online/sitemap.xml

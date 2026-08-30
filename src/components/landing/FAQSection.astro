@@ -1,0 +1,65 @@
+---
+import Icon from '../icons/Icon.astro';
+
+const FAQS = [
+  {
+    q: 'Is RandomChat completely free to use?',
+    a: 'Yes, RandomChat is 100% free. There are no subscriptions, no forced upgrades, and no hidden fees.'
+  },
+  {
+    q: 'Do I need to create an account or provide my email address?',
+    a: 'No. RandomChat does not require registration, email addresses, or phone numbers. You can start chatting immediately as a guest by simply entering a temporary nickname.'
+  },
+  {
+    q: 'Are my chat messages or voice notes saved anywhere?',
+    a: 'No. All conversations exist exclusively in ephemeral RAM during an active connection. Once you click "Next", leave the room, or close your browser tab, all session memory is permanently destroyed.'
+  },
+  {
+    q: 'How does progressive feature unlocking work?',
+    a: 'To protect users from spam and unwanted media, new chats start in pure text mode. After both participants exchange several thoughtful messages and establish mutual rapport, features like voice notes and image sharing become unlocked.'
+  },
+  {
+    q: 'What should I do if someone violates safety guidelines or is abusive?',
+    a: 'You can immediately click the Safety/Report button in the chat header to report and block the user. Blocked users are immediately disconnected from you and restricted by automated rate-limiting and IP moderation.'
+  },
+  {
+    q: 'Who is allowed to use RandomChat?',
+    a: 'RandomChat is strictly restricted to adults aged 18 years and older. Minors are strictly prohibited from using the platform.'
+  }
+];
+---
+
+<section id="faq" class="w-full py-16 sm:py-24 px-4 bg-[var(--bg-surface-elevated)]/30 border-t border-[var(--border)]">
+  <div class="max-w-4xl mx-auto flex flex-col items-center gap-12">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="help-circle" class="w-3.5 h-3.5" />
+        <span>Frequently Asked Questions</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+        Clear answers to common questions
+      </h2>
+      <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+        Everything you need to know about our privacy architecture, matching system, and community rules.
+      </p>
+    </div>
+
+    <!-- FAQ Accordion List -->
+    <div class="flex flex-col gap-4 w-full text-left">
+      {FAQS.map((faq, index) => (
+        <details class="card-tactile group p-5 open:pb-6 transition-all duration-200 cursor-pointer">
+          <summary class="flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[var(--text-primary)] list-none select-none">
+            <span>{faq.q}</span>
+            <span class="w-6 h-6 rounded-lg bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)] group-open:rotate-90 transition-transform shrink-0">
+              <Icon name="chevron-right" class="w-3.5 h-3.5" />
+            </span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed pr-6 border-t border-[var(--border-subtle)] pt-3">
+            {faq.a}
+          </p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

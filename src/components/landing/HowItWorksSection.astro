@@ -1,0 +1,90 @@
+---
+import Icon from '../icons/Icon.astro';
+---
+
+<section id="how-it-works" class="w-full py-16 sm:py-24 px-4">
+  <div class="max-w-5xl mx-auto flex flex-col items-center gap-12">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="sliders" class="w-3.5 h-3.5" />
+        <span>Simple 3-Step Flow</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+        How RandomChat works
+      </h2>
+      <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+        Start a real conversation in seconds. No email required, no passwords to remember, and no algorithmic manipulation.
+      </p>
+    </div>
+
+    <!-- 3 Step Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+      <!-- Step 01 -->
+      <div class="card-tactile p-6 flex flex-col gap-5 text-left relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <div class="w-11 h-11 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="users" class="w-5 h-5" />
+          </div>
+          <span class="text-3xl font-black text-[var(--border-strong)]">01</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <h3 class="text-lg font-bold text-[var(--text-primary)]">
+            Pick a Persona
+          </h3>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            Choose a temporary guest nickname and optional conversation preferences (e.g. topic rooms, gender, language). No personal profiles or passwords.
+          </p>
+        </div>
+        <div class="mt-auto pt-4 border-t border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center gap-1.5">
+          <Icon name="check" class="w-4 h-4 text-[var(--success)] shrink-0" />
+          <span>Zero email required</span>
+        </div>
+      </div>
+
+      <!-- Step 02 -->
+      <div class="card-tactile p-6 flex flex-col gap-5 text-left relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <div class="w-11 h-11 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="zap" class="w-5 h-5" />
+          </div>
+          <span class="text-3xl font-black text-[var(--border-strong)]">02</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <h3 class="text-lg font-bold text-[var(--text-primary)]">
+            Instant Mutual Match
+          </h3>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            Our pairing engine connects you with an active user whose preferences mutually align with yours in under 2 seconds.
+          </p>
+        </div>
+        <div class="mt-auto pt-4 border-t border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center gap-1.5">
+          <Icon name="check" class="w-4 h-4 text-[var(--success)] shrink-0" />
+          <span>Low-latency routing</span>
+        </div>
+      </div>
+
+      <!-- Step 03 -->
+      <div class="card-tactile p-6 flex flex-col gap-5 text-left relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <div class="w-11 h-11 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="shield-check" class="w-5 h-5" />
+          </div>
+          <span class="text-3xl font-black text-[var(--border-strong)]">03</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <h3 class="text-lg font-bold text-[var(--text-primary)]">
+            Safe, Ephemeral Chat
+          </h3>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            Talk privately in RAM. Progressive features (voice notes, media) unlock as mutual trust builds. Skip or leave anytime with 1 click.
+          </p>
+        </div>
+        <div class="mt-auto pt-4 border-t border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center gap-1.5">
+          <Icon name="check" class="w-4 h-4 text-[var(--success)] shrink-0" />
+          <span>0 logs saved on disconnect</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

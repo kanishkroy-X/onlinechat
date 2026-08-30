@@ -1,0 +1,192 @@
+---
+import Icon from '../icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+---
+
+<section id="demo" class="w-full py-16 sm:py-24 px-4 bg-[var(--bg-surface-elevated)]/50 border-y border-[var(--border)]">
+  <div class="max-w-5xl mx-auto flex flex-col items-center gap-12">
+    <!-- Section Header -->
+    <div class="text-center max-w-xl flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="message-square" class="w-3.5 h-3.5" />
+        <span>Instant Random Chat Preview</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+        Frictionless 1-on-1 conversations
+      </h2>
+      <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+        Experience genuine stranger conversations with zero setup. Try sending a message below:
+      </p>
+    </div>
+
+    <!-- Apple-Inspired Random Chat Interactive Simulator (Reference 2: random_chat_ios_ui.webp) -->
+    <div class="w-full max-w-xl p-2 rounded-[2.5rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] shadow-2xl">
+      <div class="w-full rounded-[calc(2.5rem-0.5rem)] bg-[var(--bg-surface)] border border-[var(--border)] overflow-hidden flex flex-col h-[520px] shadow-sm">
+        
+        <!-- Top App Header: Connected Status & Profiles -->
+        <div class="px-5 py-3.5 border-b border-[var(--border)] bg-[var(--bg-surface)] flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-xs">
+              S
+            </div>
+            <div class="flex flex-col text-left">
+              <span class="font-bold text-xs text-[var(--text-primary)]">Stranger #4829</span>
+              <span class="text-[10px] text-emerald-500 font-medium flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Connected
+              </span>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2">
+            <button id="sim-voice-btn" class="p-2 rounded-full hover:bg-[var(--bg-surface-hover)] text-[var(--text-muted)] hover:text-emerald-500 transition-colors" title="Voice Mode">
+              <Icon name="phone" class="w-4 h-4" />
+            </button>
+            <button id="sim-next-btn" class="px-3 py-1.5 rounded-full bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-xs font-semibold text-[var(--text-primary)] transition-colors border border-[var(--border)] flex items-center gap-1.5">
+              <span>Next</span>
+              <Icon name="skip-forward" class="w-3 h-3 text-[var(--text-muted)]" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Connection Indicator Pill -->
+        <div class="py-2 bg-[var(--bg-surface-elevated)]/60 text-center border-b border-[var(--border)] text-[11px] text-[var(--text-muted)] flex items-center justify-center gap-1.5">
+          <Icon name="lock" class="w-3 h-3 text-emerald-500" />
+          <span>Encrypted Ephemeral Session • Zero Logs</span>
+        </div>
+
+        <!-- Message History Feed -->
+        <div id="sim-messages" class="flex-1 p-4 overflow-y-auto flex flex-col gap-3 text-xs sm:text-sm">
+          <!-- Stranger Message -->
+          <div class="flex items-end gap-2 max-w-[80%]">
+            <div class="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-[10px] shrink-0">
+              S
+            </div>
+            <div class="p-3 rounded-2xl rounded-bl-xs bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] border border-[var(--border)] leading-relaxed shadow-2xs">
+              Hey! Where in the world are you tuning in from? 🌍
+            </div>
+          </div>
+
+          <!-- User Message -->
+          <div class="flex items-end gap-2 max-w-[80%] self-end">
+            <div class="p-3 rounded-2xl rounded-br-xs bg-[var(--primary)] text-white leading-relaxed shadow-2xs">
+              Hey! Just browsing around. Loving the instant matching here! ✨
+            </div>
+          </div>
+
+          <!-- Dynamic User Messages go here -->
+        </div>
+
+        <!-- Interactive Typing Indicator (Simulated) -->
+        <div id="sim-typing" class="px-4 py-1.5 text-[11px] text-[var(--text-muted)] flex items-center gap-1.5 hidden">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--text-muted)] animate-bounce"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--text-muted)] animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--text-muted)] animate-bounce [animation-delay:0.4s]"></span>
+          <span>Stranger is typing...</span>
+        </div>
+
+        <!-- Bottom Composer Bar -->
+        <div class="p-3 border-t border-[var(--border)] bg-[var(--bg-surface)] flex items-center gap-2">
+          <input
+            id="sim-input"
+            type="text"
+            placeholder="Type a greeting to Stranger..."
+            class="flex-1 px-4 py-2.5 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 transition-all"
+            maxlength="200"
+          />
+          <button
+            id="sim-send-btn"
+            class="w-9 h-9 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs shrink-0 cursor-pointer"
+            title="Send"
+          >
+            <Icon name="send" class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Below Interactive Demo -->
+    <div class="flex items-center gap-4">
+      <a href="/start" class="btn-primary text-sm py-3 px-8 shadow-sm">
+        <span>Enter Full Live Chat</span>
+        <Icon name="arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const simInput = document.getElementById('sim-input') as HTMLInputElement;
+  const simSendBtn = document.getElementById('sim-send-btn');
+  const simMessages = document.getElementById('sim-messages');
+  const simTyping = document.getElementById('sim-typing');
+  const simNextBtn = document.getElementById('sim-next-btn');
+
+  const cannedReplies = [
+    "That's awesome! What music or hobbies are you into lately?",
+    "Nice! I'm just drinking coffee and relaxing. What time is it over there?",
+    "Haha, totally agree! Have you tried the voice chat mode yet?",
+    "Super cool! It's so refreshing meeting real people without any algorithms."
+  ];
+
+  let replyIndex = 0;
+
+  function sendSimMessage() {
+    if (!simInput || !simMessages) return;
+    const text = simInput.value.trim();
+    if (!text) return;
+
+    // Append user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'flex items-end gap-2 max-w-[80%] self-end animate-fade-in';
+    userMsg.innerHTML = `<div class="p-3 rounded-2xl rounded-br-xs bg-[var(--primary)] text-white leading-relaxed shadow-2xs">${escapeHtml(text)}</div>`;
+    simMessages.appendChild(userMsg);
+    simInput.value = '';
+    simMessages.scrollTop = simMessages.scrollHeight;
+
+    // Show simulated typing
+    simTyping?.classList.remove('hidden');
+    setTimeout(() => {
+      simTyping?.classList.add('hidden');
+      const reply = cannedReplies[replyIndex % cannedReplies.length];
+      replyIndex++;
+
+      const strangerMsg = document.createElement('div');
+      strangerMsg.className = 'flex items-end gap-2 max-w-[80%] animate-fade-in';
+      strangerMsg.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-[10px] shrink-0">S</div>
+        <div class="p-3 rounded-2xl rounded-bl-xs bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] border border-[var(--border)] leading-relaxed shadow-2xs">${reply}</div>
+      `;
+      simMessages.appendChild(strangerMsg);
+      simMessages.scrollTop = simMessages.scrollHeight;
+    }, 1200);
+  }
+
+  simSendBtn?.addEventListener('click', sendSimMessage);
+  simInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendSimMessage();
+    }
+  });
+
+  simNextBtn?.addEventListener('click', () => {
+    if (!simMessages) return;
+    simMessages.innerHTML = `
+      <div class="text-center py-2 text-[11px] text-[var(--text-muted)] animate-fade-in">
+        ── Disconnected from previous stranger • Connected to Stranger #${Math.floor(1000 + Math.random() * 9000)} ──
+      </div>
+      <div class="flex items-end gap-2 max-w-[80%] animate-fade-in">
+        <div class="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-[10px] shrink-0">S</div>
+        <div class="p-3 rounded-2xl rounded-bl-xs bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] border border-[var(--border)] leading-relaxed shadow-2xs">
+          Hey there! Nice to meet you! How is your day going? 😊
+        </div>
+      </div>
+    `;
+  });
+
+  function escapeHtml(str: string) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+</script>

@@ -1,0 +1,46 @@
+---
+import Icon from '../icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+---
+
+<section class="w-full py-16 sm:py-24 px-4 bg-[var(--bg-surface)] border-t border-[var(--border)]">
+  <div class="max-w-4xl mx-auto rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[var(--bg-surface-elevated)] to-[var(--bg-surface)] p-8 sm:p-14 text-center flex flex-col items-center gap-6 shadow-xl relative overflow-hidden">
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-secondary)] shadow-xs">
+      <span class="w-2 h-2 rounded-full bg-[var(--success)] animate-online-dot"></span>
+      <span>{siteConfig.metrics.onlineUsersEstimate} People Online Right Now</span>
+    </div>
+
+    <!-- Title -->
+    <h2 class="text-3xl sm:text-5xl font-black text-[var(--text-primary)] tracking-tight max-w-2xl leading-tight">
+      Ready for a real conversation?
+    </h2>
+
+    <!-- Subtitle -->
+    <p class="text-sm sm:text-base text-[var(--text-secondary)] max-w-xl leading-relaxed">
+      Jump in now. Choose a temporary nickname and meet someone new in seconds. No signup, no email, and zero tracking.
+    </p>
+
+    <!-- CTA Button -->
+    <div class="mt-2 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+      <a
+        href="/start"
+        class="btn-primary text-base py-4 px-8 w-full sm:w-auto shadow-md"
+      >
+        <span>Start Chatting Free</span>
+        <Icon name="arrow-right" class="w-5 h-5" />
+      </a>
+      <a
+        href="/chat-rooms"
+        class="btn-secondary text-base py-4 px-6 w-full sm:w-auto"
+      >
+        <span>Explore Topic Rooms</span>
+      </a>
+    </div>
+
+    <!-- Micro Notice -->
+    <div class="text-[11px] text-[var(--text-subtle)]">
+      18+ Adults Only &bull; 100% Ephemeral Sessions &bull; 0 Logs Saved
+    </div>
+  </div>
+</section>

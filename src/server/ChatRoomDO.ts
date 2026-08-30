@@ -255,6 +255,42 @@ export class ChatRoomDO {
         break;
       }
 
+      case 'webrtc.offer': {
+        this.sendToSocket(partnerSessionId, {
+          type: 'webrtc.offer',
+          payload: msg.payload,
+          timestamp: Date.now()
+        });
+        break;
+      }
+
+      case 'webrtc.answer': {
+        this.sendToSocket(partnerSessionId, {
+          type: 'webrtc.answer',
+          payload: msg.payload,
+          timestamp: Date.now()
+        });
+        break;
+      }
+
+      case 'webrtc.ice_candidate': {
+        this.sendToSocket(partnerSessionId, {
+          type: 'webrtc.ice_candidate',
+          payload: msg.payload,
+          timestamp: Date.now()
+        });
+        break;
+      }
+
+      case 'voice.state': {
+        this.sendToSocket(partnerSessionId, {
+          type: 'voice.state',
+          payload: msg.payload,
+          timestamp: Date.now()
+        });
+        break;
+      }
+
       case 'chat.block': {
         this.match.status = 'closed';
         this.sendToSocket(partnerSessionId, {

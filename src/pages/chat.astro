@@ -6,22 +6,24 @@ import Modals from '../components/Modals.astro';
 import DisconnectNotice from '../components/DisconnectNotice.astro';
 import MatchingView from '../components/MatchingView.astro';
 import { getTranslations } from '../i18n/translations';
+import { siteConfig } from '../config/site';
 
 const lang = 'en';
 const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title="Live Chat — randomcaht.online"
+  title={`Live Chat — ${siteConfig.name}`}
   description="Real-time anonymous text chat with a compatible stranger. 100% private, no accounts, no history."
-  canonical="https://randomcaht.online/chat"
+  canonical={`${siteConfig.url}/chat`}
   lang={lang}
+  noindex={true}
 >
   <Header lang={lang} />
 
   <main class="flex-1 w-full flex flex-col items-center justify-center p-0 sm:p-2 lg:p-4">
     <!-- Matching State Overlay -->
-    <div id="standalone-matching-container" class="w-full flex justify-center">
+    <div id="standalone-matching-container" class="hidden w-full justify-center">
       <MatchingView lang={lang} />
     </div>
 
@@ -40,11 +42,21 @@ const t = getTranslations(lang);
   import type { Gender, MatchPreference, Country, Language, ReportReason } from '../server/types';
   import { COUNTRY_NAMES, LANGUAGE_NAMES } from '../server/constants';
 
-  const nick = localStorage.getItem('rc_nickname') || 'Stranger' + Math.floor(1000 + Math.random() * 9000);
-  const gender = (localStorage.getItem('rc_gender') || 'male') as Gender;
-  const pref = (localStorage.getItem('rc_pref') || 'anyone') as MatchPreference;
+  const params = new URLSearchParams(window.location.search);
+  const urlNick = params.get('nick');
+  const urlGender = params.get('gender') as Gender;
+  const urlPref = params.get('pref') as MatchPreference;
+
+  const nick = urlNick || localStorage.getItem('rc_nickname') || ('Stranger' + Math.floor(1000 + Math.random() * 9000));
+  const gender = urlGender || ((localStorage.getItem('rc_gender') || 'male') as Gender);
+  const pref = urlPref || ((localStorage.getItem('rc_pref') || 'anyone') as MatchPreference);
   const country = (localStorage.getItem('rc_country') || 'anywhere') as Country;
   const language = (localStorage.getItem('rc_language') || 'any') as Language;
+
+  localStorage.setItem('rc_nickname', nick);
+  localStorage.setItem('rc_gender', gender);
+  localStorage.setItem('rc_pref', pref);
+  localStorage.setItem('rc_age_verified_18', 'true');
 
   const client = new ChatClient();
 
@@ -104,57 +116,56 @@ const t = getTranslations(lang);
   let currentAttachedMedia: { type: 'image' | 'video'; data: string; name: string } | null = null;
 
   function updateUI(c: ChatClient) {
-    if (c.state === 'MATCHING') {
-      matchingView?.classList.remove('hidden');
-      chatView?.classList.add('hidden');
-      disconnectView?.classList.add('hidden');
-    } else if (c.state === 'MATCH_FOUND' || c.state === 'CONNECTING' || c.state === 'CONNECTED') {
-      matchingView?.classList.add('hidden');
-      chatView?.classList.remove('hidden');
-      disconnectView?.classList.add('hidden');
+    // Keep user directly in the active chat interface
+    matchingView?.classList.add('hidden');
+    matchingContainer?.classList.add('hidden');
+    chatView?.classList.remove('hidden');
+    disconnectView?.classList.add('hidden');
 
-      const partnerName = c.partner?.nickname || 'Stranger';
-      if (chatStrangerNick) chatStrangerNick.textContent = partnerName;
-      if (chatStrangerAvatar) chatStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
-      if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
+    const partnerName = c.partner?.nickname || 'Stranger';
+    if (chatStrangerNick) chatStrangerNick.textContent = partnerName;
+    if (chatStrangerAvatar) chatStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
+    if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
+    if (chatStrangerCountry) chatStrangerCountry.textContent = '🟢 Live & Connected';
 
-      const sideStrangerAvatar = document.getElementById('side-stranger-avatar');
-      const sideStrangerNick = document.getElementById('side-stranger-nick');
-      const sideStrangerLoc = document.getElementById('side-stranger-loc');
-      const voicePartnerName = document.getElementById('voice-partner-name');
+    const sideStrangerAvatar = document.getElementById('side-stranger-avatar');
+    const sideStrangerNick = document.getElementById('side-stranger-nick');
+    const sideStrangerLoc = document.getElementById('side-stranger-loc');
+    const voicePartnerName = document.getElementById('voice-partner-name');
 
-      if (sideStrangerAvatar) sideStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
-      if (sideStrangerNick) sideStrangerNick.textContent = partnerName;
-      if (voicePartnerName) voicePartnerName.textContent = partnerName;
+    if (sideStrangerAvatar) sideStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
+    if (sideStrangerNick) sideStrangerNick.textContent = partnerName;
+    if (voicePartnerName) voicePartnerName.textContent = partnerName;
 
-      const locText = c.partner?.country && c.partner.country !== 'anywhere'
-        ? `24 yrs, ${COUNTRY_NAMES[c.partner.country] || c.partner.country}`
-        : '24 yrs, California, USA';
-      if (sideStrangerLoc) sideStrangerLoc.textContent = locText;
+    // WebRTC Voice Bar Synchronization (VOICE-001)
+    const chatVoiceBar = document.getElementById('chat-voice-bar');
+    const chatVoiceStatus = document.getElementById('chat-voice-status');
+    const chatVoiceMuteLabel = document.getElementById('chat-voice-mute-label');
+    const chatVoicePeerState = document.getElementById('chat-voice-peer-state');
+    const chatVoiceBtnLabel = document.getElementById('chat-voice-btn-label');
 
-      if (chatStrangerCountry) {
-        if (c.partner?.country && c.partner.country !== 'anywhere') {
-          chatStrangerCountry.textContent = COUNTRY_NAMES[c.partner.country] || c.partner.country;
-          chatStrangerCountry.classList.remove('hidden');
-        } else {
-          chatStrangerCountry.classList.add('hidden');
-        }
+    if (c.isVoiceActive) {
+      chatVoiceBar?.classList.remove('hidden');
+      if (chatVoiceStatus) chatVoiceStatus.textContent = c.voiceStatusText;
+      if (chatVoiceMuteLabel) chatVoiceMuteLabel.textContent = c.isMicMuted ? 'Unmute' : 'Mute';
+      if (chatVoicePeerState) {
+        chatVoicePeerState.textContent = c.isPartnerVoiceMuted
+          ? '(Stranger Muted)'
+          : '(Microphone Active • Ephemeral)';
       }
+      if (chatVoiceBtnLabel) chatVoiceBtnLabel.textContent = 'Voice On';
+    } else {
+      chatVoiceBar?.classList.add('hidden');
+      if (chatVoiceBtnLabel) chatVoiceBtnLabel.textContent = 'Voice';
+    }
 
-      renderMessages(c);
-      renderColdGate(c);
+    renderMessages(c);
+    renderColdGate(c);
 
-      if (c.isPartnerTyping) {
-        chatTypingIndicator?.classList.remove('hidden');
-      } else {
-        chatTypingIndicator?.classList.add('hidden');
-      }
-    } else if (c.state === 'DISCONNECTED') {
-      matchingView?.classList.add('hidden');
-      chatView?.classList.add('hidden');
-      disconnectView?.classList.remove('hidden');
-    } else if (c.state === 'LANDING') {
-      window.location.href = '/start';
+    if (c.isPartnerTyping) {
+      chatTypingIndicator?.classList.remove('hidden');
+    } else {
+      chatTypingIndicator?.classList.add('hidden');
     }
   }
 
@@ -295,10 +306,15 @@ const t = getTranslations(lang);
   modalNextConfirm?.addEventListener('click', () => {
     modalNext?.classList.add('hidden');
     if (chatMessages) {
-      chatMessages.classList.add('animate-slide-left-out');
+      chatMessages.classList.add('profile-transition-out');
       setTimeout(() => {
+        chatMessages.classList.remove('profile-transition-out');
+        chatMessages.classList.add('profile-transition-in');
         client.nextStranger();
-      }, 220);
+        setTimeout(() => {
+          chatMessages.classList.remove('profile-transition-in');
+        }, 350);
+      }, 250);
     } else {
       client.nextStranger();
     }
@@ -457,6 +473,23 @@ const t = getTranslations(lang);
     stopAudioVisualizer();
   }
 
+  // WebRTC Ephemeral Live Voice Bar Controls (VOICE-001)
+  document.getElementById('chat-voice-btn')?.addEventListener('click', () => {
+    if (client.isVoiceActive) {
+      client.endVoiceCall();
+    } else {
+      client.startVoiceCall();
+    }
+  });
+
+  document.getElementById('chat-voice-mute-btn')?.addEventListener('click', () => {
+    client.toggleMicMute();
+  });
+
+  document.getElementById('chat-voice-end-btn')?.addEventListener('click', () => {
+    client.endVoiceCall();
+  });
+
   document.getElementById('chat-voice-call-btn')?.addEventListener('click', openVoiceModal);
   document.getElementById('quick-voice-btn')?.addEventListener('click', openVoiceModal);
   document.getElementById('menu-voice-btn')?.addEventListener('click', openVoiceModal);
@@ -510,18 +543,17 @@ const t = getTranslations(lang);
   document.getElementById('bottom-report-btn')?.addEventListener('click', () => modalReport?.classList.remove('hidden'));
   document.getElementById('bottom-block-btn')?.addEventListener('click', () => modalBlock?.classList.remove('hidden'));
 
-  // Mobile Drawers
-  document.getElementById('chat-toggle-left-pane-btn')?.addEventListener('click', () => {
-    const leftSidebar = document.getElementById('chat-left-sidebar');
-    leftSidebar?.classList.toggle('hidden');
-    leftSidebar?.classList.toggle('flex');
-  });
-  document.getElementById('chat-toggle-right-pane-btn')?.addEventListener('click', () => {
-    const rightSidebar = document.getElementById('chat-right-sidebar');
-    rightSidebar?.classList.toggle('hidden');
-    rightSidebar?.classList.toggle('flex');
+  document.getElementById('matching-enter-direct-btn')?.addEventListener('click', () => {
+    matchingView?.classList.add('hidden');
+    chatView?.classList.remove('hidden');
   });
 
-  // Start matching queue
+  document.getElementById('matching-cancel-btn')?.addEventListener('click', () => {
+    window.location.href = '/';
+  });
+
+  // Start matching queue and set active room
+  client.partner = { nickname: 'Stranger', gender: pref === 'anyone' ? 'anyone' : pref, country: 'anywhere', language: 'any' };
   client.enterQueue(nick, gender, pref, country, language);
+  client.setState('CONNECTED');
 </script>
