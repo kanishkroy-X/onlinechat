@@ -9,81 +9,83 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 ---
 
-<header class="w-full h-16 border-b border-[var(--border)] bg-[var(--bg-surface)]/90 backdrop-blur-md sticky top-0 z-40 px-4 transition-colors">
-  <div class="max-w-6xl mx-auto h-full flex items-center justify-between gap-3">
-    <!-- Left: Mobile Menu Trigger + Brand Logo -->
-    <div class="flex items-center gap-2.5">
-      <!-- Mobile Hamburger Toggle -->
-      <button
-        id="landing-mobile-menu-toggle"
-        type="button"
-        class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-      >
-        <span id="menu-icon-open">
-          <Icon name="menu" class="w-5 h-5" />
-        </span>
-        <span id="menu-icon-close" class="hidden">
-          <Icon name="x" class="w-5 h-5" />
-        </span>
-      </button>
+<header class="w-full sticky top-0 z-50 transition-colors">
+  <div class="w-full h-16 border-b border-[var(--border)] bg-[var(--bg-surface)]/95 backdrop-blur-md px-4">
+    <div class="max-w-6xl mx-auto h-full flex items-center justify-between gap-3">
+      <!-- Left: Mobile Menu Trigger + Brand Logo -->
+      <div class="flex items-center gap-2.5">
+        <!-- Mobile Hamburger Toggle -->
+        <button
+          id="landing-mobile-menu-toggle"
+          type="button"
+          class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+        >
+          <span id="menu-icon-open">
+            <Icon name="menu" class="w-5 h-5" />
+          </span>
+          <span id="menu-icon-close" class="hidden">
+            <Icon name="x" class="w-5 h-5" />
+          </span>
+        </button>
 
-      <!-- Brand Logo -->
-      <a href="/" class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg p-1" aria-label="RandomChat Home">
-        <div class="w-8 h-8 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-          <Icon name="message-square" class="w-4.5 h-4.5" />
-        </div>
-        <div class="flex items-baseline font-bold text-xl tracking-tight">
-          <span class="text-[var(--text-primary)]">Random</span>
-          <span class="text-[var(--primary)]">Chat</span>
-        </div>
-      </a>
-    </div>
+        <!-- Brand Logo -->
+        <a href="/" class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg p-1" aria-label="RandomChat Home">
+          <div class="w-8 h-8 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+            <Icon name="message-square" class="w-4.5 h-4.5" />
+          </div>
+          <div class="flex items-baseline font-bold text-xl tracking-tight">
+            <span class="text-[var(--text-primary)]">Random</span>
+            <span class="text-[var(--primary)]">Chat</span>
+          </div>
+        </a>
+      </div>
 
-    <!-- Desktop Navigation Links -->
-    <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--text-secondary)]" aria-label="Desktop Navigation">
-      <a href="#how-it-works" class="hover:text-[var(--text-primary)] transition-colors">How It Works</a>
-      <a href="#demo" class="hover:text-[var(--text-primary)] transition-colors">Live Demo</a>
-      <a href="#trust-safety" class="hover:text-[var(--text-primary)] transition-colors">Safety & Privacy</a>
-      <a href="/chat-rooms" class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
-      <a href="#faq" class="hover:text-[var(--text-primary)] transition-colors">FAQ</a>
-    </nav>
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--text-secondary)]" aria-label="Desktop Navigation">
+        <a href="#how-it-works" class="hover:text-[var(--text-primary)] transition-colors">How It Works</a>
+        <a href="#demo" class="hover:text-[var(--text-primary)] transition-colors">Live Demo</a>
+        <a href="#trust-safety" class="hover:text-[var(--text-primary)] transition-colors">Safety & Privacy</a>
+        <a href="/chat-rooms" class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
+        <a href="#faq" class="hover:text-[var(--text-primary)] transition-colors">FAQ</a>
+      </nav>
 
-    <!-- Right Controls: Theme Toggle & Primary CTA -->
-    <div class="flex items-center gap-2.5">
-      <!-- Theme Switcher -->
-      <button
-        type="button"
-        id="landing-theme-toggle"
-        class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-        title="Toggle Theme"
-        aria-label="Toggle Theme"
-      >
-        <span class="hidden dark:block text-amber-400">
-          <Icon name="sun" class="w-4.5 h-4.5" />
-        </span>
-        <span class="block dark:hidden text-[var(--primary)]">
-          <Icon name="moon" class="w-4.5 h-4.5" />
-        </span>
-      </button>
+      <!-- Right Controls: Theme Toggle & Primary CTA -->
+      <div class="flex items-center gap-2.5">
+        <!-- Theme Switcher -->
+        <button
+          type="button"
+          id="landing-theme-toggle"
+          class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          title="Toggle Theme"
+          aria-label="Toggle Theme"
+        >
+          <span class="hidden dark:block text-amber-400">
+            <Icon name="sun" class="w-4.5 h-4.5" />
+          </span>
+          <span class="block dark:hidden text-[var(--primary)]">
+            <Icon name="moon" class="w-4.5 h-4.5" />
+          </span>
+        </button>
 
-      <!-- Primary CTA -->
-      <a
-        href="/chat"
-        class="btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 shadow-xs"
-      >
-        <span class="hidden sm:inline">Start Chatting</span>
-        <span class="sm:hidden">Chat</span>
-        <Icon name="arrow-right" class="w-3.5 h-3.5" />
-      </a>
+        <!-- Primary CTA -->
+        <a
+          href="/chat"
+          class="btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 shadow-xs"
+        >
+          <span class="hidden sm:inline">Start Chatting</span>
+          <span class="sm:hidden">Chat</span>
+          <Icon name="arrow-right" class="w-3.5 h-3.5" />
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Mobile Slide-out Drawer Menu -->
+  <!-- Mobile Slide-out Drawer Menu with High Z-Index -->
   <div
     id="landing-mobile-drawer"
-    class="hidden md:hidden fixed inset-x-0 top-16 bg-[var(--bg-surface)] border-b border-[var(--border)] p-5 shadow-2xl z-50 flex flex-col gap-4 animate-drawer-in"
+    class="hidden md:hidden fixed inset-x-0 top-16 bg-[var(--bg-surface)] border-b border-[var(--border)] p-5 shadow-2xl z-[9999] flex flex-col gap-4 animate-drawer-in"
     aria-label="Mobile Navigation"
   >
     <nav class="flex flex-col gap-1 text-sm font-semibold text-[var(--text-primary)]">

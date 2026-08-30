@@ -1,9 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
 import ChatView from '../components/ChatView.astro';
 import Modals from '../components/Modals.astro';
-import DisconnectNotice from '../components/DisconnectNotice.astro';
 import MatchingView from '../components/MatchingView.astro';
 import { getTranslations } from '../i18n/translations';
 import { siteConfig } from '../config/site';
@@ -13,25 +11,20 @@ const t = getTranslations(lang);
 ---
 
 <BaseLayout
-  title={`Live Chat — ${siteConfig.name}`}
-  description="Real-time anonymous text chat with a compatible stranger. 100% private, no accounts, no history."
+  title={`1 on 1 Chat — ${siteConfig.name}`}
+  description="Real-time anonymous 1 on 1 chat with strangers. Free, private, zero registration required."
   canonical={`${siteConfig.url}/chat`}
   lang={lang}
   noindex={true}
 >
-  <Header lang={lang} />
-
-  <main class="flex-1 w-full flex flex-col items-center justify-center p-0 sm:p-2 lg:p-4">
+  <main class="flex-1 w-full flex flex-col items-center justify-center p-0 min-h-[100dvh] bg-[#F0F2F5] dark:bg-[#0B0D13]">
     <!-- Matching State Overlay -->
     <div id="standalone-matching-container" class="hidden w-full justify-center">
       <MatchingView lang={lang} />
     </div>
 
-    <!-- Chat View Component -->
+    <!-- Mobile-Optimized 1-on-1 Chat View (Chatib Aesthetic) -->
     <ChatView lang={lang} />
-
-    <!-- Disconnect State Notice -->
-    <DisconnectNotice lang={lang} />
   </main>
 
   <Modals lang={lang} />
@@ -47,9 +40,22 @@ const t = getTranslations(lang);
   const urlGender = params.get('gender') as Gender;
   const urlPref = params.get('pref') as MatchPreference;
 
+  const strangerProfiles = [
+    { name: 'Arnob29', bio: 'Male, 29 Yrs, West Bengal, India' },
+    { name: 'Priya_K', bio: 'Female, 24 Yrs, Mumbai, India' },
+    { name: 'Alex_V', bio: 'Male, 26 Yrs, California, United States' },
+    { name: 'Sophia_99', bio: 'Female, 22 Yrs, London, United Kingdom' },
+    { name: 'Rohan_M', bio: 'Male, 28 Yrs, New Delhi, India' },
+    { name: 'Elena_R', bio: 'Female, 25 Yrs, Toronto, Canada' },
+    { name: 'David_X', bio: 'Male, 31 Yrs, Sydney, Australia' },
+    { name: 'Zara_Sky', bio: 'Female, 23 Yrs, Berlin, Germany' }
+  ];
+
+  let currentProfile = strangerProfiles[Math.floor(Math.random() * strangerProfiles.length)];
+
   const nick = urlNick || localStorage.getItem('rc_nickname') || ('Stranger' + Math.floor(1000 + Math.random() * 9000));
   const gender = urlGender || ((localStorage.getItem('rc_gender') || 'male') as Gender);
-  const pref = urlPref || ((localStorage.getItem('rc_pref') || 'anyone') as MatchPreference);
+  let pref = urlPref || ((localStorage.getItem('rc_pref') || 'anyone') as MatchPreference);
   const country = (localStorage.getItem('rc_country') || 'anywhere') as Country;
   const language = (localStorage.getItem('rc_language') || 'any') as Language;
 
@@ -60,31 +66,178 @@ const t = getTranslations(lang);
 
   const client = new ChatClient();
 
-  // DOM Elements
-  const matchingContainer = document.getElementById('standalone-matching-container');
-  const matchingView = document.getElementById('matching-view');
-  const chatView = document.getElementById('chat-view');
-  const disconnectView = document.getElementById('disconnect-view');
+  // Audio Synth for Sound Effects
+  let soundEnabled = true;
+  function playSound(type: 'send' | 'receive' | 'star') {
+    if (!soundEnabled) return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
 
+      if (type === 'send') {
+        osc.frequency.setValueAtTime(480, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+      } else if (type === 'receive') {
+        osc.frequency.setValueAtTime(750, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1100, audioCtx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } else if (type === 'star') {
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+      }
+    } catch (e) {
+      // Audio not supported or blocked by user gesture policy
+    }
+  }
+
+  // DOM Elements
   const chatStrangerNick = document.getElementById('chat-stranger-nick');
-  const chatStrangerAvatar = document.getElementById('chat-stranger-avatar');
-  const chatStrangerGender = document.getElementById('chat-stranger-gender');
-  const chatStrangerCountry = document.getElementById('chat-stranger-country');
-  const chatStrangerLanguage = document.getElementById('chat-stranger-language');
+  const chatStrangerBio = document.getElementById('chat-stranger-bio');
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input') as HTMLInputElement;
   const chatSendBtn = document.getElementById('chat-send-btn') as HTMLButtonElement;
   const chatComposerForm = document.getElementById('chat-composer-form') as HTMLFormElement;
   const coldGateBanner = document.getElementById('cold-gate-banner');
   const chatTypingIndicator = document.getElementById('chat-typing-indicator');
-  const chatNextBtn = document.getElementById('chat-next-btn');
   const chatMenuBtn = document.getElementById('chat-menu-btn');
   const chatDropdown = document.getElementById('chat-dropdown');
 
-  // Modals
-  const modalNext = document.getElementById('modal-next');
-  const modalNextCancel = document.getElementById('modal-next-cancel');
-  const modalNextConfirm = document.getElementById('modal-next-confirm');
+  // Sound Toggle
+  const chatSoundToggleBtn = document.getElementById('chat-sound-toggle-btn');
+  const soundIconOn = document.getElementById('sound-icon-on');
+  const soundIconOff = document.getElementById('sound-icon-off');
+
+  chatSoundToggleBtn?.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    if (soundEnabled) {
+      soundIconOn?.classList.remove('hidden');
+      soundIconOff?.classList.add('hidden');
+      playSound('send');
+    } else {
+      soundIconOn?.classList.add('hidden');
+      soundIconOff?.classList.remove('hidden');
+    }
+  });
+
+  // Mobile Drawer Elements
+  const chatDrawerToggleBtn = document.getElementById('chat-drawer-toggle-btn');
+  const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+  const drawerCloseBtn = document.getElementById('drawer-close-btn');
+
+  function openDrawer() {
+    mobileNavDrawer?.classList.remove('hidden');
+  }
+  function closeDrawer() {
+    mobileNavDrawer?.classList.add('hidden');
+  }
+  chatDrawerToggleBtn?.addEventListener('click', openDrawer);
+  drawerBackdrop?.addEventListener('click', closeDrawer);
+  drawerCloseBtn?.addEventListener('click', closeDrawer);
+
+  // Favorite Heart Toggle
+  const chatFavoriteBtn = document.getElementById('chat-favorite-btn');
+  let isFavorite = false;
+  chatFavoriteBtn?.addEventListener('click', () => {
+    isFavorite = !isFavorite;
+    if (isFavorite) {
+      chatFavoriteBtn.classList.add('text-rose-500');
+      chatFavoriteBtn.classList.remove('text-gray-400');
+      playSound('star');
+    } else {
+      chatFavoriteBtn.classList.remove('text-rose-500');
+      chatFavoriteBtn.classList.add('text-gray-400');
+    }
+  });
+
+  // Quick Emoji Tray & Presets
+  const chatEmojiBtn = document.getElementById('chat-emoji-btn');
+  const quickEmojiTray = document.getElementById('quick-emoji-tray');
+  const chatGifBtn = document.getElementById('chat-gif-btn');
+  const quickGifTray = document.getElementById('quick-gif-tray');
+  const chatStarBtn = document.getElementById('chat-star-btn');
+
+  chatEmojiBtn?.addEventListener('click', () => {
+    quickEmojiTray?.classList.toggle('hidden');
+    quickGifTray?.classList.add('hidden');
+  });
+
+  document.querySelectorAll('.emoji-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const emoji = btn.textContent || '';
+      if (chatInput) {
+        chatInput.value += emoji;
+        chatInput.focus();
+      }
+    });
+  });
+
+  chatGifBtn?.addEventListener('click', () => {
+    quickGifTray?.classList.toggle('hidden');
+    quickEmojiTray?.classList.add('hidden');
+  });
+
+  document.querySelectorAll('.gif-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.textContent || '';
+      if (text) {
+        client.sendMessage(text);
+        playSound('send');
+        quickGifTray?.classList.add('hidden');
+      }
+    });
+  });
+
+  chatStarBtn?.addEventListener('click', () => {
+    client.sendMessage('⭐ Sent you a star!');
+    playSound('star');
+  });
+
+  // Inline Ended Card & Reconnect
+  const inlineChatEndedCard = document.getElementById('inline-chat-ended-card');
+  const endedCardNick = document.getElementById('ended-card-nick');
+  const endedFindMatchBtn = document.getElementById('ended-find-match-btn');
+  const endedCardReportBtn = document.getElementById('ended-card-report-btn');
+  const menuNextBtn = document.getElementById('menu-next-btn');
+
+  function startNextMatch() {
+    currentProfile = strangerProfiles[Math.floor(Math.random() * strangerProfiles.length)];
+    client.partner = {
+      nickname: currentProfile.name,
+      gender: pref === 'anyone' ? 'anyone' : pref,
+      country: 'anywhere',
+      language: 'any'
+    };
+    client.clearMessages();
+    client.setState('CONNECTED');
+    inlineChatEndedCard?.classList.add('hidden');
+    updateUI(client);
+    playSound('receive');
+  }
+
+  endedFindMatchBtn?.addEventListener('click', startNextMatch);
+  document.getElementById('chat-header-next-btn')?.addEventListener('click', startNextMatch);
+  menuNextBtn?.addEventListener('click', () => {
+    chatDropdown?.classList.add('hidden');
+    startNextMatch();
+  });
+
+  // Modals & Report
   const modalLeave = document.getElementById('modal-leave');
   const modalLeaveCancel = document.getElementById('modal-leave-cancel');
   const modalLeaveConfirm = document.getElementById('modal-leave-confirm');
@@ -116,47 +269,20 @@ const t = getTranslations(lang);
   let currentAttachedMedia: { type: 'image' | 'video'; data: string; name: string } | null = null;
 
   function updateUI(c: ChatClient) {
-    // Keep user directly in the active chat interface
-    matchingView?.classList.add('hidden');
-    matchingContainer?.classList.add('hidden');
-    chatView?.classList.remove('hidden');
-    disconnectView?.classList.add('hidden');
+    const rawPartner = c.partner?.nickname || currentProfile.name;
+    const partnerDisplay = rawPartner.replace('@', '');
 
-    const partnerName = c.partner?.nickname || 'Stranger';
-    if (chatStrangerNick) chatStrangerNick.textContent = partnerName;
-    if (chatStrangerAvatar) chatStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
-    if (chatStrangerGender) chatStrangerGender.textContent = c.partner?.gender || 'Anyone';
-    if (chatStrangerCountry) chatStrangerCountry.textContent = '🟢 Live & Connected';
+    if (chatStrangerNick) chatStrangerNick.textContent = partnerDisplay;
+    if (chatStrangerBio) chatStrangerBio.textContent = currentProfile.bio;
+    if (endedCardNick) endedCardNick.textContent = partnerDisplay;
 
-    const sideStrangerAvatar = document.getElementById('side-stranger-avatar');
-    const sideStrangerNick = document.getElementById('side-stranger-nick');
-    const sideStrangerLoc = document.getElementById('side-stranger-loc');
-    const voicePartnerName = document.getElementById('voice-partner-name');
-
-    if (sideStrangerAvatar) sideStrangerAvatar.textContent = partnerName.charAt(0).toUpperCase();
-    if (sideStrangerNick) sideStrangerNick.textContent = partnerName;
-    if (voicePartnerName) voicePartnerName.textContent = partnerName;
-
-    // WebRTC Voice Bar Synchronization (VOICE-001)
-    const chatVoiceBar = document.getElementById('chat-voice-bar');
-    const chatVoiceStatus = document.getElementById('chat-voice-status');
-    const chatVoiceMuteLabel = document.getElementById('chat-voice-mute-label');
-    const chatVoicePeerState = document.getElementById('chat-voice-peer-state');
-    const chatVoiceBtnLabel = document.getElementById('chat-voice-btn-label');
-
-    if (c.isVoiceActive) {
-      chatVoiceBar?.classList.remove('hidden');
-      if (chatVoiceStatus) chatVoiceStatus.textContent = c.voiceStatusText;
-      if (chatVoiceMuteLabel) chatVoiceMuteLabel.textContent = c.isMicMuted ? 'Unmute' : 'Mute';
-      if (chatVoicePeerState) {
-        chatVoicePeerState.textContent = c.isPartnerVoiceMuted
-          ? '(Stranger Muted)'
-          : '(Microphone Active • Ephemeral)';
+    if (c.state === 'DISCONNECTED') {
+      inlineChatEndedCard?.classList.remove('hidden');
+      if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
       }
-      if (chatVoiceBtnLabel) chatVoiceBtnLabel.textContent = 'Voice On';
     } else {
-      chatVoiceBar?.classList.add('hidden');
-      if (chatVoiceBtnLabel) chatVoiceBtnLabel.textContent = 'Voice';
+      inlineChatEndedCard?.classList.add('hidden');
     }
 
     renderMessages(c);
@@ -171,35 +297,36 @@ const t = getTranslations(lang);
 
   function renderMessages(c: ChatClient) {
     if (!chatMessages) return;
-    const existingCount = chatMessages.querySelectorAll('.message-bubble').length;
-    if (existingCount === c.messages.length) return;
+    
+    const bubbles = chatMessages.querySelectorAll('.dynamic-user-bubble');
+    if (bubbles.length === c.messages.length) return;
 
-    const welcome = chatMessages.firstElementChild;
-    chatMessages.innerHTML = '';
-    if (welcome) chatMessages.appendChild(welcome);
+    const hadNewMsg = c.messages.length > bubbles.length;
 
-    c.messages.forEach(msg => {
+    c.messages.forEach((msg, idx) => {
+      if (idx < bubbles.length) return;
+
       const isMe = msg.sender === 'me';
       const wrapper = document.createElement('div');
-      wrapper.className = `message-bubble flex flex-col ${isMe ? 'items-end' : 'items-start'} gap-1.5 max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'} animate-bubble-in`;
+      wrapper.className = `dynamic-user-bubble message-bubble flex flex-col ${isMe ? 'items-end self-end' : 'items-start self-start'} gap-0.5 max-w-[85%] sm:max-w-[75%] animate-msg-in`;
 
       const bubble = document.createElement('div');
       bubble.className = isMe
-        ? 'p-2.5 rounded-2xl bg-[var(--bubble-me)] text-[var(--bubble-me-text)] rounded-tr-xs border border-[var(--border-subtle)] text-sm shadow-sm flex flex-col gap-2'
-        : 'p-2.5 rounded-2xl bg-[var(--bubble-stranger)] text-[var(--bubble-stranger-text)] rounded-tl-xs border border-[var(--border-color)] text-sm shadow-sm flex flex-col gap-2';
+        ? 'px-3.5 py-2.5 rounded-2xl bg-[var(--primary)] text-white rounded-tr-xs text-sm shadow-xs font-normal'
+        : 'px-3.5 py-2.5 rounded-2xl bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-tl-xs border border-[var(--border)] text-sm shadow-xs font-normal';
 
       if (msg.mediaData) {
         if (msg.mediaType === 'video') {
           const videoEl = document.createElement('video');
           videoEl.src = msg.mediaData;
           videoEl.controls = true;
-          videoEl.className = 'max-w-full rounded-xl max-h-60 object-contain bg-black';
+          videoEl.className = 'max-w-full rounded-xl max-h-60 object-contain bg-black my-1';
           bubble.appendChild(videoEl);
         } else {
           const imgEl = document.createElement('img');
           imgEl.src = msg.mediaData;
           imgEl.alt = 'Shared photo';
-          imgEl.className = 'max-w-full rounded-xl max-h-60 object-cover cursor-pointer hover:opacity-95 transition-opacity';
+          imgEl.className = 'max-w-full rounded-xl max-h-60 object-cover cursor-pointer hover:opacity-95 transition-opacity my-1';
           imgEl.addEventListener('click', () => {
             if (lightboxImg && chatLightbox) {
               lightboxImg.src = msg.mediaData!;
@@ -212,16 +339,34 @@ const t = getTranslations(lang);
 
       if (msg.text) {
         const textSpan = document.createElement('span');
-        textSpan.className = 'px-1 leading-relaxed';
+        textSpan.className = 'leading-relaxed break-words';
         textSpan.textContent = msg.text;
         bubble.appendChild(textSpan);
       }
 
       wrapper.appendChild(bubble);
-      chatMessages.appendChild(wrapper);
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = `text-[10px] text-gray-400 ${isMe ? 'pr-1' : 'pl-1'}`;
+      const now = new Date();
+      timeSpan.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      wrapper.appendChild(timeSpan);
+
+      if (inlineChatEndedCard && inlineChatEndedCard.parentNode === chatMessages) {
+        chatMessages.insertBefore(wrapper, inlineChatEndedCard);
+      } else {
+        chatMessages.appendChild(wrapper);
+      }
     });
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    if (hadNewMsg) {
+      const lastMsg = c.messages[c.messages.length - 1];
+      if (lastMsg) {
+        playSound(lastMsg.sender === 'me' ? 'send' : 'receive');
+      }
+    }
   }
 
   function renderColdGate(c: ChatClient) {
@@ -242,24 +387,29 @@ const t = getTranslations(lang);
     const file = chatFileInput.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size exceeds 5MB.');
+      alert('File size exceeds 5MB limit.');
       chatFileInput.value = '';
       return;
     }
     const isVideo = file.type.startsWith('video/');
     const reader = new FileReader();
     reader.onload = e => {
-      const dataUrl = e.target?.result as string;
-      currentAttachedMedia = { type: isVideo ? 'video' : 'image', data: dataUrl, name: file.name };
+      const data = e.target?.result as string;
+      currentAttachedMedia = {
+        type: isVideo ? 'video' : 'image',
+        data,
+        name: file.name
+      };
+
       if (chatMediaPreviewContainer && chatMediaName) {
         chatMediaName.textContent = file.name;
         chatMediaPreviewContainer.classList.remove('hidden');
         if (isVideo && chatVideoPreview) {
-          chatVideoPreview.src = dataUrl;
+          chatVideoPreview.src = data;
           chatVideoPreview.classList.remove('hidden');
           chatImagePreview?.classList.add('hidden');
         } else if (chatImagePreview) {
-          chatImagePreview.src = dataUrl;
+          chatImagePreview.src = data;
           chatImagePreview.classList.remove('hidden');
           chatVideoPreview?.classList.add('hidden');
         }
@@ -268,72 +418,68 @@ const t = getTranslations(lang);
     reader.readAsDataURL(file);
   });
 
-  function clearAttachedMedia() {
+  chatRemoveMediaBtn?.addEventListener('click', () => {
     currentAttachedMedia = null;
     if (chatFileInput) chatFileInput.value = '';
-    if (chatMediaPreviewContainer) chatMediaPreviewContainer.classList.add('hidden');
-  }
-  chatRemoveMediaBtn?.addEventListener('click', clearAttachedMedia);
+    chatMediaPreviewContainer?.classList.add('hidden');
+    chatImagePreview?.classList.add('hidden');
+    chatVideoPreview?.classList.add('hidden');
+  });
 
   lightboxClose?.addEventListener('click', () => chatLightbox?.classList.add('hidden'));
 
   // Composer Form
   chatComposerForm?.addEventListener('submit', e => {
     e.preventDefault();
-    const text = chatInput?.value || '';
-    const media = currentAttachedMedia;
-    if (!text.trim() && !media) return;
-    const sent = client.sendMessage(text, media?.type, media?.data);
-    if (sent) {
-      if (chatInput) chatInput.value = '';
-      clearAttachedMedia();
+    const text = chatInput?.value?.trim() || '';
+    if (!text && !currentAttachedMedia) return;
+
+    if (currentAttachedMedia) {
+      client.sendMessage(text || undefined, currentAttachedMedia.type, currentAttachedMedia.data);
+      currentAttachedMedia = null;
+      if (chatFileInput) chatFileInput.value = '';
+      chatMediaPreviewContainer?.classList.add('hidden');
+    } else {
+      client.sendMessage(text);
     }
+
+    if (chatInput) {
+      chatInput.value = '';
+      chatInput.focus();
+    }
+    quickEmojiTray?.classList.add('hidden');
+    quickGifTray?.classList.add('hidden');
   });
 
-  chatInput?.addEventListener('input', () => client.notifyTyping());
+  // Typing throttle
+  let typingTimer: number | null = null;
+  chatInput?.addEventListener('input', () => {
+    client.notifyTyping();
+    if (typingTimer) clearTimeout(typingTimer);
+    typingTimer = window.setTimeout(() => {
+      // typing timeout
+    }, 1500);
+  });
 
-  // Menu Dropdown
-  chatMenuBtn?.addEventListener('click', () => chatDropdown?.classList.toggle('hidden'));
+  // Dropdown Menu Toggle
+  chatMenuBtn?.addEventListener('click', e => {
+    e.stopPropagation();
+    chatDropdown?.classList.toggle('hidden');
+  });
+
   document.addEventListener('click', e => {
     if (chatDropdown && !chatDropdown.contains(e.target as Node) && e.target !== chatMenuBtn) {
       chatDropdown.classList.add('hidden');
     }
   });
 
-  // Next / Leave / Report / Block Modals
-  chatNextBtn?.addEventListener('click', () => modalNext?.classList.remove('hidden'));
-  modalNextCancel?.addEventListener('click', () => modalNext?.classList.add('hidden'));
-  modalNextConfirm?.addEventListener('click', () => {
-    modalNext?.classList.add('hidden');
-    if (chatMessages) {
-      chatMessages.classList.add('profile-transition-out');
-      setTimeout(() => {
-        chatMessages.classList.remove('profile-transition-out');
-        chatMessages.classList.add('profile-transition-in');
-        client.nextStranger();
-        setTimeout(() => {
-          chatMessages.classList.remove('profile-transition-in');
-        }, 350);
-      }, 250);
-    } else {
-      client.nextStranger();
-    }
-  });
-
-  menuLeaveBtn?.addEventListener('click', () => {
-    chatDropdown?.classList.add('hidden');
-    modalLeave?.classList.remove('hidden');
-  });
-  modalLeaveCancel?.addEventListener('click', () => modalLeave?.classList.add('hidden'));
-  modalLeaveConfirm?.addEventListener('click', () => {
-    modalLeave?.classList.add('hidden');
-    client.leaveChat();
-  });
-
+  // Report & Block Triggers
+  endedCardReportBtn?.addEventListener('click', () => modalReport?.classList.remove('hidden'));
   menuReportBtn?.addEventListener('click', () => {
     chatDropdown?.classList.add('hidden');
     modalReport?.classList.remove('hidden');
   });
+
   modalReportClose?.addEventListener('click', () => modalReport?.classList.add('hidden'));
   modalReportCancel?.addEventListener('click', () => modalReport?.classList.add('hidden'));
   reportForm?.addEventListener('submit', e => {
@@ -342,7 +488,7 @@ const t = getTranslations(lang);
     const details = reportDetailsInput.value;
     client.submitReport(reason, details);
     modalReport?.classList.add('hidden');
-    alert('Report submitted.');
+    alert('Report submitted. Thank you for keeping the community safe.');
   });
 
   menuBlockBtn?.addEventListener('click', () => {
@@ -353,207 +499,33 @@ const t = getTranslations(lang);
   modalBlockConfirm?.addEventListener('click', () => {
     modalBlock?.classList.add('hidden');
     client.blockStranger();
+    inlineChatEndedCard?.classList.remove('hidden');
   });
 
-  // Disconnect Buttons
-  document.getElementById('disconnect-find-btn')?.addEventListener('click', () => {
-    client.enterQueue(nick, gender, pref, country, language);
+  menuLeaveBtn?.addEventListener('click', () => {
+    chatDropdown?.classList.add('hidden');
+    modalLeave?.classList.remove('hidden');
   });
-  document.getElementById('disconnect-home-btn')?.addEventListener('click', () => {
-    window.location.href = '/';
-  });
-
-  // Voice Call Audio-Reactive Modal
-  const voiceModal = document.getElementById('voice-call-modal');
-  const voiceTimer = document.getElementById('voice-call-timer');
-  const voiceMuteBtn = document.getElementById('voice-mute-btn');
-  const voiceSpeakerBtn = document.getElementById('voice-speaker-btn');
-  const voiceEndBtn = document.getElementById('voice-end-btn');
-  const voiceMutedBadge = document.getElementById('voice-muted-badge');
-  const ring1 = document.getElementById('voice-ring-1');
-  const ring2 = document.getElementById('voice-ring-2');
-  const ring3 = document.getElementById('voice-ring-3');
-  const centerOrb = document.getElementById('voice-center-orb');
-
-  let voiceInterval: number | null = null;
-  let voiceSeconds = 0;
-  let isMuted = false;
-  let isSpeakerOn = true;
-  let audioCtx: AudioContext | null = null;
-  let audioStream: MediaStream | null = null;
-  let animationFrameId: number | null = null;
-
-  async function startAudioVisualizer() {
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(audioStream);
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        source.connect(analyser);
-
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        function renderFrame() {
-          if (!voiceModal || voiceModal.classList.contains('hidden')) return;
-          animationFrameId = requestAnimationFrame(renderFrame);
-
-          if (isMuted) {
-            if (ring1) ring1.style.transform = 'scale(1)';
-            if (ring2) ring2.style.transform = 'scale(1)';
-            if (ring3) ring3.style.transform = 'scale(1)';
-            if (centerOrb) centerOrb.style.transform = 'scale(1)';
-            return;
-          }
-
-          analyser.getByteFrequencyData(dataArray);
-          let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
-          const average = sum / dataArray.length;
-          const boost = Math.min(1 + (average / 128) * 0.35, 1.45);
-
-          if (ring1) ring1.style.transform = `scale(${boost * 1.05})`;
-          if (ring2) ring2.style.transform = `scale(${boost * 1.15})`;
-          if (ring3) ring3.style.transform = `scale(${boost * 1.25})`;
-          if (centerOrb) centerOrb.style.transform = `scale(${1 + (average / 128) * 0.15})`;
-        }
-        renderFrame();
-      }
-    } catch (err) {
-      // Fallback
-    }
-  }
-
-  function stopAudioVisualizer() {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-    }
-    if (audioStream) {
-      audioStream.getTracks().forEach(t => t.stop());
-      audioStream = null;
-    }
-    if (audioCtx) {
-      audioCtx.close();
-      audioCtx = null;
-    }
-    if (ring1) ring1.style.transform = 'scale(1)';
-    if (ring2) ring2.style.transform = 'scale(1)';
-    if (ring3) ring3.style.transform = 'scale(1)';
-    if (centerOrb) centerOrb.style.transform = 'scale(1)';
-  }
-
-  function openVoiceModal() {
-    if (chatDropdown) chatDropdown.classList.add('hidden');
-    voiceModal?.classList.remove('hidden');
-    voiceSeconds = 0;
-    isMuted = false;
-    voiceMutedBadge?.classList.add('hidden');
-    if (voiceTimer) voiceTimer.textContent = '00:00';
-    if (voiceInterval) clearInterval(voiceInterval);
-    voiceInterval = window.setInterval(() => {
-      voiceSeconds++;
-      const mins = String(Math.floor(voiceSeconds / 60)).padStart(2, '0');
-      const secs = String(voiceSeconds % 60).padStart(2, '0');
-      if (voiceTimer) voiceTimer.textContent = `${mins}:${secs}`;
-    }, 1000);
-
-    startAudioVisualizer();
-  }
-
-  function closeVoiceModal() {
-    voiceModal?.classList.add('hidden');
-    if (voiceInterval) {
-      clearInterval(voiceInterval);
-      voiceInterval = null;
-    }
-    stopAudioVisualizer();
-  }
-
-  // WebRTC Ephemeral Live Voice Bar Controls (VOICE-001)
-  document.getElementById('chat-voice-btn')?.addEventListener('click', () => {
-    if (client.isVoiceActive) {
-      client.endVoiceCall();
-    } else {
-      client.startVoiceCall();
-    }
+  modalLeaveCancel?.addEventListener('click', () => modalLeave?.classList.add('hidden'));
+  modalLeaveConfirm?.addEventListener('click', () => {
+    modalLeave?.classList.add('hidden');
+    client.leaveChat();
+    inlineChatEndedCard?.classList.remove('hidden');
   });
 
-  document.getElementById('chat-voice-mute-btn')?.addEventListener('click', () => {
-    client.toggleMicMute();
-  });
-
-  document.getElementById('chat-voice-end-btn')?.addEventListener('click', () => {
-    client.endVoiceCall();
-  });
-
-  document.getElementById('chat-voice-call-btn')?.addEventListener('click', openVoiceModal);
-  document.getElementById('quick-voice-btn')?.addEventListener('click', openVoiceModal);
-  document.getElementById('menu-voice-btn')?.addEventListener('click', openVoiceModal);
-  document.getElementById('chat-mobile-voice-btn')?.addEventListener('click', openVoiceModal);
-  voiceEndBtn?.addEventListener('click', closeVoiceModal);
-
-  voiceMuteBtn?.addEventListener('click', () => {
-    isMuted = !isMuted;
-    voiceMuteBtn.classList.toggle('bg-red-500/20', isMuted);
-    voiceMuteBtn.classList.toggle('text-red-400', isMuted);
-    if (isMuted) {
-      voiceMutedBadge?.classList.remove('hidden');
-    } else {
-      voiceMutedBadge?.classList.add('hidden');
-    }
-  });
-
-  voiceSpeakerBtn?.addEventListener('click', () => {
-    isSpeakerOn = !isSpeakerOn;
-    voiceSpeakerBtn.classList.toggle('opacity-50', !isSpeakerOn);
-  });
-
-  // Emojis
-  const emojiToggleBtn = document.getElementById('chat-emoji-toggle-btn');
-  const emojiPopover = document.getElementById('chat-emoji-popover');
-  emojiToggleBtn?.addEventListener('click', () => emojiPopover?.classList.toggle('hidden'));
-  document.querySelectorAll('.chat-emoji-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const emoji = (e.currentTarget as HTMLElement).textContent?.trim();
-      if (emoji && chatInput) {
-        chatInput.value += emoji;
-        chatInput.focus();
-      }
-    });
-  });
-
-  // Quick Action Buttons
-  document.getElementById('quick-share-interest-btn')?.addEventListener('click', () => {
-    client.sendMessage("Hey! I'm interested in music, gaming, movies & tech. What about you? ✨");
-  });
-  document.getElementById('menu-interests-btn')?.addEventListener('click', () => {
-    if (chatDropdown) chatDropdown.classList.add('hidden');
-    client.sendMessage("Hey! I'm interested in music, gaming, movies & tech. What about you? ✨");
-  });
-  document.getElementById('quick-clear-btn')?.addEventListener('click', () => client.clearMessages());
   document.getElementById('menu-clear-btn')?.addEventListener('click', () => {
-    if (chatDropdown) chatDropdown.classList.add('hidden');
+    chatDropdown?.classList.add('hidden');
     client.clearMessages();
   });
 
-  document.getElementById('bottom-report-btn')?.addEventListener('click', () => modalReport?.classList.remove('hidden'));
-  document.getElementById('bottom-block-btn')?.addEventListener('click', () => modalBlock?.classList.remove('hidden'));
-
-  document.getElementById('matching-enter-direct-btn')?.addEventListener('click', () => {
-    matchingView?.classList.add('hidden');
-    chatView?.classList.remove('hidden');
-  });
-
-  document.getElementById('matching-cancel-btn')?.addEventListener('click', () => {
-    window.location.href = '/';
-  });
-
-  // Start matching queue and set active room
-  client.partner = { nickname: 'Stranger', gender: pref === 'anyone' ? 'anyone' : pref, country: 'anywhere', language: 'any' };
+  // Initialize Session
+  client.partner = {
+    nickname: currentProfile.name,
+    gender: pref === 'anyone' ? 'anyone' : pref,
+    country: 'anywhere',
+    language: 'any'
+  };
   client.enterQueue(nick, gender, pref, country, language);
   client.setState('CONNECTED');
+  updateUI(client);
 </script>

@@ -9,157 +9,159 @@ const { lang = 'en' } = Astro.props;
 const t = getTranslations(lang);
 ---
 
-<header class="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)]/90 backdrop-blur-md sticky top-0 z-40 transition-colors">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
-    <!-- Left: Mobile Menu Trigger + Brand Wordmark -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Mobile Drawer Toggle [ ☰ ] -->
-      <button
-        id="mobile-menu-toggle"
-        type="button"
-        class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-main)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
-        aria-label="Open Navigation Menu"
-        aria-expanded="false"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
-
-      <!-- Brand Logo -->
-      <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
-        <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-          </svg>
-        </div>
-        <div class="flex items-baseline font-bold text-xl tracking-tight">
-          <span class="text-[var(--text-primary)]">Random</span>
-          <span class="text-[var(--primary)]">Chat</span>
-        </div>
-      </a>
-    </div>
-
-    <!-- Center: Desktop Navigation Links -->
-    <nav class="hidden md:flex items-center gap-5 text-sm font-medium text-[var(--text-muted)]">
-      <a href="/start" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-        Start Chat
-      </a>
-      <a href="/how-it-works" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-        How It Works
-      </a>
-      <a href="/chat-rooms" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-        Chat Topics
-      </a>
-      <a href="/safety" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-        {t.nav.safety}
-      </a>
-      <a href="/faq" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
-        {t.nav.faq}
-      </a>
-    </nav>
-
-    <!-- Right: Language Switcher, Theme Toggle & Start Chat Button -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Language Switcher -->
-      <div class="relative" id="lang-switcher-container">
+<header class="w-full sticky top-0 z-50 transition-colors">
+  <div class="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)]/95 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+      <!-- Left: Mobile Menu Trigger + Brand Wordmark -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Mobile Drawer Toggle [ ☰ ] -->
         <button
-          id="lang-toggle-btn"
+          id="mobile-menu-toggle"
           type="button"
-          class="h-9 px-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] text-xs font-semibold flex items-center gap-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
-          aria-label="Change Website Language"
+          class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-main)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
+          aria-label="Open Navigation Menu"
           aria-expanded="false"
-          aria-haspopup="true"
         >
-          <svg class="w-4 h-4 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
-          <span id="current-lang-code" class="uppercase tracking-wider">{lang}</span>
-          <svg class="w-3 h-3 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
 
-        <!-- Dropdown Menu for Languages -->
-        <div
-          id="lang-dropdown-menu"
-          class="hidden absolute right-0 top-11 z-50 w-52 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl py-2 flex flex-col max-h-80 overflow-y-auto"
-          role="menu"
-        >
-          <div class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-[var(--text-subtle)] border-b border-[var(--border-color)] mb-1">
-            Select Language
+        <!-- Brand Logo -->
+        <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
+          <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+            </svg>
           </div>
-          {SUPPORTED_LANGUAGES.map(item => (
-            <button
-              type="button"
-              class={`lang-option-btn w-full px-3.5 py-2 text-left text-xs ${item.code === lang ? 'bg-[#FF808A]/10 text-[#D55882] font-bold' : 'text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'} flex items-center justify-between transition-colors cursor-pointer`}
-              data-lang={item.code}
-              role="menuitem"
-            >
-              <div class="flex items-center gap-2.5">
-                <span class="text-base leading-none">{item.flag}</span>
-                <span class="font-medium">{item.nativeName}</span>
-              </div>
-              <span class="text-[10px] text-[var(--text-subtle)] uppercase font-mono">{item.code}</span>
-            </button>
-          ))}
-        </div>
+          <div class="flex items-baseline font-bold text-xl tracking-tight">
+            <span class="text-[var(--text-primary)]">Random</span>
+            <span class="text-[var(--primary)]">Chat</span>
+          </div>
+        </a>
       </div>
 
-      <!-- Theme Switcher Button -->
-      <button
-        id="theme-toggle"
-        type="button"
-        class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
-        aria-label="Toggle Theme (Light / Dark / System)"
-      >
-        <svg class="w-4.5 h-4.5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2" /><path d="M12 20v2" />
-          <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
-          <path d="M2 12h2" /><path d="M20 12h2" />
-          <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
-        </svg>
-        <svg class="w-4.5 h-4.5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-        </svg>
-      </button>
+      <!-- Center: Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-5 text-sm font-medium text-[var(--text-muted)]">
+        <a href="/start" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          Start Chat
+        </a>
+        <a href="/how-it-works" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          How It Works
+        </a>
+        <a href="/chat-rooms" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          Chat Topics
+        </a>
+        <a href="/safety" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          {t.nav.safety}
+        </a>
+        <a href="/faq" class="hover:text-[var(--text-main)] transition-colors py-1 px-1.5 rounded-md focus-visible:ring-2 focus-visible:ring-[#FF808A]">
+          {t.nav.faq}
+        </a>
+      </nav>
 
-      <!-- Primary Start Chat Header Button -->
-      <a
-        href="/start"
-        class="hidden sm:inline-flex gradient-accent gradient-accent-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm hover:shadow-md transition-all items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#FF808A]"
-      >
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-        </svg>
-        <span>Start Chat</span>
-      </a>
+      <!-- Right: Language Switcher, Theme Toggle & Start Chat Button -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Language Switcher -->
+        <div class="relative" id="lang-switcher-container">
+          <button
+            id="lang-toggle-btn"
+            type="button"
+            class="h-9 px-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] text-xs font-semibold flex items-center gap-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
+            aria-label="Change Website Language"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <svg class="w-4 h-4 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span id="current-lang-code" class="uppercase tracking-wider">{lang}</span>
+            <svg class="w-3 h-3 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <!-- Dropdown Menu for Languages -->
+          <div
+            id="lang-dropdown-menu"
+            class="hidden absolute right-0 top-11 z-[9999] w-52 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl py-2 flex flex-col max-h-80 overflow-y-auto"
+            role="menu"
+          >
+            <div class="px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-[var(--text-subtle)] border-b border-[var(--border-color)] mb-1">
+              Select Language
+            </div>
+            {SUPPORTED_LANGUAGES.map(item => (
+              <button
+                type="button"
+                class={`lang-option-btn w-full px-3.5 py-2 text-left text-xs ${item.code === lang ? 'bg-[#FF808A]/10 text-[#D55882] font-bold' : 'text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)]'} flex items-center justify-between transition-colors cursor-pointer`}
+                data-lang={item.code}
+                role="menuitem"
+              >
+                <div class="flex items-center gap-2.5">
+                  <span class="text-base leading-none">{item.flag}</span>
+                  <span class="font-medium">{item.nativeName}</span>
+                </div>
+                <span class="text-[10px] text-[var(--text-subtle)] uppercase font-mono">{item.code}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Theme Switcher Button -->
+        <button
+          id="theme-toggle"
+          type="button"
+          class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
+          aria-label="Toggle Theme (Light / Dark / System)"
+        >
+          <svg class="w-4.5 h-4.5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" /><path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" /><path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+          <svg class="w-4.5 h-4.5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+
+        <!-- Primary Start Chat Header Button -->
+        <a
+          href="/start"
+          class="hidden sm:inline-flex gradient-accent gradient-accent-hover text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm hover:shadow-md transition-all items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#FF808A]"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Start Chat</span>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Mobile Slide-out Drawer Navigation -->
-  <div id="mobile-nav-drawer" class="hidden md:hidden fixed inset-0 top-16 z-50 bg-[var(--bg-page)]/98 backdrop-blur-xl border-t border-[var(--border-color)] p-6 flex flex-col justify-between overflow-y-auto animate-modal-in">
-    <nav class="flex flex-col gap-4 text-base font-semibold text-[var(--text-main)]">
-      <a href="/start" class="flex items-center justify-between p-3 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-[#FF808A] font-bold">
+  <!-- Mobile Slide-out Drawer Navigation with High Z-Index and Full Coverage -->
+  <div id="mobile-nav-drawer" class="hidden md:hidden fixed inset-0 top-16 z-[9999] bg-[var(--bg-surface)] dark:bg-[#161922] border-t border-[var(--border-color)] p-6 flex flex-col justify-between overflow-y-auto shadow-2xl">
+    <nav class="flex flex-col gap-3 text-base font-semibold text-[var(--text-main)]">
+      <a href="/start" class="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--primary)]/30 text-[var(--primary)] font-bold shadow-xs">
         <span>Start Chat</span>
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
-      <a href="/how-it-works" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+      <a href="/how-it-works" class="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border border-[var(--border-color)] transition-colors">
         <span>How It Works</span>
         <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
-      <a href="/chat-rooms" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+      <a href="/chat-rooms" class="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border border-[var(--border-color)] transition-colors">
         <span>Chat Topics</span>
         <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
-      <a href="/safety" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+      <a href="/safety" class="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border border-[var(--border-color)] transition-colors">
         <span>{t.nav.safety}</span>
         <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
-      <a href="/faq" class="flex items-center justify-between p-3 rounded-2xl hover:bg-[var(--bg-surface)] transition-colors">
+      <a href="/faq" class="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border border-[var(--border-color)] transition-colors">
         <span>{t.nav.faq}</span>
         <svg class="w-4 h-4 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
