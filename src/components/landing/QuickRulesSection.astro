@@ -1,0 +1,51 @@
+---
+import Icon from '../icons/Icon.astro';
+
+const FEATURES = [
+  {
+    icon: 'zap',
+    title: 'Instant 1-on-1 Matching',
+    desc: 'Connect with a random partner in under 1 second. No queues or complicated setup.'
+  },
+  {
+    icon: 'shield-check',
+    title: '100% Anonymous & Ephemeral',
+    desc: 'Zero registration, email, or passwords. Your chat is instantly wiped when you leave.'
+  },
+  {
+    icon: 'shuffle',
+    title: 'Skip & Next Anytime',
+    desc: 'Not vibing with your stranger? Hit Next to instantly pair with someone new.'
+  }
+];
+---
+
+<section class="w-full py-8 sm:py-12 px-4 border-t border-[var(--border)] bg-[var(--bg-surface)]">
+  <div class="max-w-4xl mx-auto flex flex-col gap-6 text-center">
+    <div class="flex flex-col items-center gap-1">
+      <h2 class="text-lg sm:text-xl font-black text-[var(--text-primary)] tracking-tight">
+        Why Chat on RandomChat?
+      </h2>
+      <p class="text-xs text-[var(--text-secondary)]">
+        Simple, private, and built for direct conversation.
+      </p>
+    </div>
+
+    <!-- 3 Simple Solid Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+      {FEATURES.map((item, idx) => (
+        <div class="p-5 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex flex-col gap-2.5 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name={item.icon} class="w-4.5 h-4.5" />
+          </div>
+          <h3 class="font-bold text-sm text-[var(--text-primary)]">
+            {item.title}
+          </h3>
+          <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+            {item.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

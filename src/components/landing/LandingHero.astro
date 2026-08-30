@@ -2,171 +2,332 @@
 import Icon from '../icons/Icon.astro';
 ---
 
-<section class="relative w-full overflow-hidden pt-6 pb-12 sm:pt-16 sm:pb-24 px-4 sm:px-6 flex flex-col items-center justify-center text-center">
-  <!-- Soft Ambient Warm/Rose Glow -->
-  <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[300px] sm:h-[400px] bg-gradient-to-tr from-pink-400/10 via-rose-300/15 to-amber-200/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<section class="w-full pt-4 sm:pt-8 pb-12 sm:pb-16 px-4 flex flex-col items-center justify-center">
+  <div class="w-full max-w-md mx-auto flex flex-col items-center gap-4">
 
-  <div class="w-full max-w-3xl mx-auto flex flex-col items-center gap-4 sm:gap-6">
-    
-    <!-- Main Headline - Responsive & User-Friendly on Mobile -->
-    <div class="flex flex-col gap-2.5 sm:gap-3 px-1">
-      <h1 class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[var(--text-primary)] leading-[1.12] sm:leading-[1.08]">
-        Talk to Strangers Online
-      </h1>
-      <p class="text-sm sm:text-lg md:text-xl text-[var(--text-secondary)] max-w-2xl mx-auto font-normal leading-relaxed px-2 sm:px-0">
-        Free <strong class="font-bold text-[var(--text-primary)]">anonymous chat</strong> with random people worldwide — text or video, your call. No signup, instant matching, moderated.
-      </p>
-    </div>
-
-    <!-- Interactive Mode Segmented Pill Capsule (Video / Text / Voice) -->
-    <div class="w-full max-w-xs sm:max-w-none sm:w-auto inline-flex items-center justify-between sm:justify-center bg-white dark:bg-[#1E2230] p-1 sm:p-1.5 rounded-full border border-pink-100 dark:border-pink-900/30 shadow-xs">
-      <button
-        id="hero-mode-video"
-        type="button"
-        class="hero-mode-btn flex-1 sm:flex-initial px-3.5 sm:px-5 py-2 sm:py-2 rounded-full text-xs sm:text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
-        data-mode="video"
-      >
-        <Icon name="video" class="w-4 h-4 text-pink-500 shrink-0" />
-        <span>Video</span>
-      </button>
-
-      <button
-        id="hero-mode-text"
-        type="button"
-        class="hero-mode-btn flex-1 sm:flex-initial px-3.5 sm:px-5 py-2 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-pink-600 bg-pink-50 dark:bg-pink-950/40 border border-pink-200 dark:border-pink-800/40 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs cursor-pointer active"
-        data-mode="text"
-      >
-        <Icon name="message-square" class="w-4 h-4 text-pink-600 shrink-0" />
-        <span>Text</span>
-      </button>
-
-      <button
-        id="hero-mode-voice"
-        type="button"
-        class="hero-mode-btn flex-1 sm:flex-initial px-3.5 sm:px-5 py-2 sm:py-2 rounded-full text-xs sm:text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
-        data-mode="voice"
-      >
-        <Icon name="mic" class="w-4 h-4 text-pink-500 shrink-0" />
-        <span>Voice</span>
-      </button>
-    </div>
-
-    <!-- Primary Action CTA Button (Large Pink Pill - Thumb-Friendly) -->
-    <div class="w-full sm:w-auto flex flex-col items-center gap-2 pt-1 px-2 sm:px-0">
-      <a
-        id="hero-cta-btn"
-        href="/chat"
-        class="w-full max-w-sm sm:w-auto sm:min-w-[320px] py-3.5 sm:py-4 px-6 sm:px-8 rounded-full bg-[#E12B7B] hover:bg-[#D41C6C] text-white font-bold text-base sm:text-lg shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2.5 sm:gap-3 active:scale-[0.98] cursor-pointer"
-      >
-        <span id="hero-cta-icon">
-          <Icon name="message-square" class="w-5 h-5 text-white" />
-        </span>
-        <span id="hero-cta-text">Start Text Chat</span>
-        <Icon name="arrow-right" class="w-5 h-5 text-white transition-transform group-hover:translate-x-1" />
-      </a>
-
-      <!-- Context Micro-Copy under Button -->
-      <div id="hero-subtext-container" class="flex flex-col items-center gap-0.5 text-xs text-[var(--text-muted)] pt-0.5">
-        <div id="hero-subtext-main" class="flex items-center gap-1.5 text-pink-600 dark:text-pink-400 font-medium text-xs sm:text-sm">
-          <span>✨</span>
-          <span id="hero-subtext-label">Just type — no camera or mic needed</span>
+    <!-- Main Clean Card -->
+    <div class="w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col gap-5 text-left transition-all">
+      
+      <!-- Brand Logo Header & Title -->
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-7 h-7 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="message-square" class="w-4 h-4" />
+          </div>
+          <span class="font-bold text-base tracking-tight text-[var(--text-primary)]">
+            Random<span class="text-[var(--primary)]">Chat</span>
+          </span>
         </div>
-        <div id="hero-subtext-extra" class="hidden text-[11px] sm:text-xs text-[var(--text-subtle)]">
-          No camera? Switch to Text or Voice
-        </div>
+
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)] leading-tight">
+          Let’s set you up
+        </h1>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] font-normal">
+          Takes 10 seconds. No email needed.
+        </p>
       </div>
-    </div>
 
-    <!-- Trust Signals Micro-Row (Free · No sign-up · Moderated · Anonymous · 18+) -->
-    <div class="pt-2 sm:pt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs sm:text-sm text-[var(--text-secondary)] font-medium">
-      <span>Free</span>
-      <span class="text-pink-300">•</span>
-      <span>No sign-up</span>
-      <span class="text-pink-300">•</span>
-      <span>Moderated</span>
-      <span class="text-pink-300">•</span>
-      <span>Anonymous</span>
-      <span class="text-pink-300">•</span>
-      <span>18+</span>
-    </div>
+      <!-- Quick Setup Form -->
+      <form id="hero-quick-join-form" action="/chat" method="GET" class="flex flex-col gap-4.5">
+        <!-- Hidden Inputs for Form State -->
+        <input type="hidden" name="gender" id="input-gender" value="male" />
+        <input type="hidden" name="pref" id="input-pref" value="anyone" />
 
-    <!-- Secondary Account Sign-in Link -->
-    <div class="text-xs sm:text-sm text-[var(--text-muted)] flex items-center justify-center gap-1.5">
-      <span>Already have an account?</span>
-      <a href="/chat" class="font-bold text-pink-600 dark:text-pink-400 hover:text-pink-700 flex items-center gap-1 hover:underline">
-        <span>➔]</span>
-        <span>Sign in</span>
-      </a>
+        <!-- 1. Username Input with Embedded Shuffle / Dice Icon -->
+        <div class="flex flex-col gap-1.5">
+          <label for="input-nickname" class="text-xs font-bold text-[var(--text-secondary)]">
+            Username
+          </label>
+          <div class="relative flex items-center">
+            <input
+              id="input-nickname"
+              type="text"
+              name="nick"
+              maxlength="20"
+              placeholder="Choose a nickname"
+              autocomplete="off"
+              required
+              class="w-full pl-3.5 pr-11 py-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-semibold placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-sm"
+            />
+            <!-- Embedded Inside Shuffle / Dice Button -->
+            <button
+              type="button"
+              id="btn-randomize-nick"
+              class="absolute right-2 w-7 h-7 rounded-xl bg-[var(--bg-surface)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--primary)] flex items-center justify-center transition-all cursor-pointer active:rotate-45"
+              title="Shuffle / Generate Random Nickname"
+              aria-label="Generate Random Nickname"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="4" />
+                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+                <circle cx="16" cy="8" r="1.5" fill="currentColor" />
+                <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                <circle cx="8" cy="16" r="1.5" fill="currentColor" />
+                <circle cx="16" cy="16" r="1.5" fill="currentColor" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Gender Selection (High-Contrast Active State with Checkmarks) -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-[var(--text-secondary)]">
+            Gender
+          </label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <!-- Male Button -->
+            <button
+              type="button"
+              id="gender-btn-male"
+              class="hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--primary)] text-white border-[var(--primary)] ring-2 ring-[var(--primary)]/20 shadow-sm"
+              data-gender="male"
+              aria-pressed="true"
+            >
+              <span class="gender-check inline-flex items-center justify-center w-4 h-4 rounded-full bg-white/20">
+                <svg class="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+              <span>Male</span>
+            </button>
+
+            <!-- Female Button -->
+            <button
+              type="button"
+              id="gender-btn-female"
+              class="hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]"
+              data-gender="female"
+              aria-pressed="false"
+            >
+              <span class="gender-check hidden items-center justify-center w-4 h-4 rounded-full bg-white/20">
+                <svg class="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+              <span>Female</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Country / Location (Smart Auto-Detection Pre-filled) -->
+        <div class="flex flex-col gap-1.5">
+          <div class="flex items-center justify-between">
+            <label for="input-country" class="text-xs font-bold text-[var(--text-secondary)]">
+              Country
+            </label>
+            <span id="country-auto-detected-badge" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Auto-detected</span>
+            </span>
+          </div>
+          <div class="relative">
+            <select
+              id="input-country"
+              name="country"
+              class="w-full pl-3.5 pr-10 py-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-semibold focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-sm appearance-none cursor-pointer"
+            >
+              <option value="anywhere">🌐 Global (Worldwide)</option>
+              <option value="IN">🇮🇳 India</option>
+              <option value="US">🇺🇸 United States</option>
+              <option value="GB">🇬🇧 United Kingdom</option>
+              <option value="CA">🇨🇦 Canada</option>
+              <option value="AU">🇦🇺 Australia</option>
+              <option value="DE">🇩🇪 Germany</option>
+              <option value="FR">🇫🇷 France</option>
+              <option value="ES">🇪🇸 Spain</option>
+              <option value="IT">🇮🇹 Italy</option>
+              <option value="BR">🇧🇷 Brazil</option>
+              <option value="MX">🇲🇽 Mexico</option>
+              <option value="JP">🇯🇵 Japan</option>
+              <option value="KR">🇰🇷 South Korea</option>
+              <option value="PH">🇵🇭 Philippines</option>
+              <option value="ID">🇮🇩 Indonesia</option>
+              <option value="NL">🇳🇱 Netherlands</option>
+              <option value="SG">🇸🇬 Singapore</option>
+              <option value="AE">🇦🇪 United Arab Emirates</option>
+              <option value="ZA">🇿🇦 South Africa</option>
+            </select>
+            <div class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]">
+              <Icon name="chevron-down" class="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Solid Primary Action Button -->
+        <button
+          type="submit"
+          id="hero-find-match-btn"
+          class="w-full mt-1.5 py-3.5 sm:py-4 px-6 rounded-2xl bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+        >
+          <span>Start chatting</span>
+          <Icon name="arrow-right" class="w-4.5 h-4.5" />
+        </button>
+      </form>
+
+      <!-- Micro Info & Legal / TOS Placement Directly Below CTA -->
+      <div class="pt-2 border-t border-[var(--border)] flex flex-col items-center gap-1.5 text-center text-xs text-[var(--text-muted)]">
+        <div class="flex items-center gap-1.5 font-semibold text-[var(--text-secondary)]">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="live-online-num">4,800+</span>
+          <span>online now</span>
+          <span>&bull;</span>
+          <span>18+ only</span>
+        </div>
+        <p class="text-[11px] text-[var(--text-subtle)] leading-relaxed">
+          By continuing, you agree to our
+          <a href="/terms" class="text-[var(--text-secondary)] hover:underline font-medium">Terms</a>
+          &
+          <a href="/privacy" class="text-[var(--text-secondary)] hover:underline font-medium">Privacy Policy</a>.
+        </p>
+      </div>
+
     </div>
   </div>
 </section>
 
 <script>
-  // Mode switcher interactivity
-  const modeButtons = document.querySelectorAll('.hero-mode-btn');
-  const heroCtaBtn = document.getElementById('hero-cta-btn') as HTMLAnchorElement;
-  const heroCtaText = document.getElementById('hero-cta-text');
-  const heroCtaIcon = document.getElementById('hero-cta-icon');
-  const heroSubtextLabel = document.getElementById('hero-subtext-label');
-  const heroSubtextExtra = document.getElementById('hero-subtext-extra');
+  // Nickname randomizer words
+  const ADJECTIVES = ['Cosmic', 'Neon', 'Silent', 'Lucky', 'Pixel', 'Shadow', 'Mystic', 'Sunny', 'Brave', 'Wild', 'Chill', 'Urban', 'Velvet', 'Frost', 'Amber', 'Nova'];
+  const NOUNS = ['Falcon', 'Tiger', 'Panda', 'Rider', 'Voyager', 'Nomad', 'Star', 'Wolf', 'Echo', 'Drifter', 'Wave', 'Phoenix', 'Knight', 'Fox', 'Hawk', 'Otter'];
 
-  const modes: Record<string, {
-    url: string;
-    label: string;
-    iconSvg: string;
-    subtext: string;
-    extra?: string;
-  }> = {
-    text: {
-      url: '/chat',
-      label: 'Start Text Chat',
-      iconSvg: '<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-      subtext: 'Just type — no camera or mic needed'
-    },
-    video: {
-      url: '/random-chat',
-      label: 'Start Video Chat',
-      iconSvg: '<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>',
-      subtext: 'Face-to-face with someone new',
-      extra: 'No camera? Switch to Text or Voice'
-    },
-    voice: {
-      url: '/random-voice-chat',
-      label: 'Start Voice Chat',
-      iconSvg: '<svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>',
-      subtext: 'Crystal-clear live audio — instant match'
+  function getRandomNickname() {
+    const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+    const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+    const num = Math.floor(100 + Math.random() * 900);
+    return `${adj}_${noun}${num}`;
+  }
+
+  // Country Auto-Detection via Timezone & Browser Locale
+  function detectCountry(): string {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      if (tz.includes('Calcutta') || tz.includes('Kolkata') || tz.includes('India')) return 'IN';
+      if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Los_Angeles') || tz.includes('Denver')) return 'US';
+      if (tz.includes('London')) return 'GB';
+      if (tz.includes('Toronto') || tz.includes('Vancouver')) return 'CA';
+      if (tz.includes('Sydney') || tz.includes('Melbourne')) return 'AU';
+      if (tz.includes('Berlin') || tz.includes('Frankfurt')) return 'DE';
+      if (tz.includes('Paris')) return 'FR';
+      if (tz.includes('Madrid')) return 'ES';
+      if (tz.includes('Rome')) return 'IT';
+      if (tz.includes('Tokyo')) return 'JP';
+      if (tz.includes('Seoul')) return 'KR';
+      if (tz.includes('Manila')) return 'PH';
+      if (tz.includes('Jakarta')) return 'ID';
+      if (tz.includes('Amsterdam')) return 'NL';
+      if (tz.includes('Singapore')) return 'SG';
+      if (tz.includes('Dubai')) return 'AE';
+      if (tz.includes('Sao_Paulo')) return 'BR';
+      if (tz.includes('Mexico')) return 'MX';
+    } catch (e) {}
+
+    // Fallback to navigator.language
+    try {
+      const lang = navigator.language || '';
+      const parts = lang.split('-');
+      if (parts.length > 1) {
+        return parts[1].toUpperCase();
+      }
+    } catch (e) {}
+
+    return 'anywhere';
+  }
+
+  // DOM Elements
+  const nickInput = document.getElementById('input-nickname') as HTMLInputElement;
+  const randomizeBtn = document.getElementById('btn-randomize-nick');
+  const genderInput = document.getElementById('input-gender') as HTMLInputElement;
+  const prefInput = document.getElementById('input-pref') as HTMLInputElement;
+  const countrySelect = document.getElementById('input-country') as HTMLSelectElement;
+  const form = document.getElementById('hero-quick-join-form') as HTMLFormElement;
+  const genderBtns = document.querySelectorAll('.hero-gender-btn');
+
+  // 1. Nickname Prepopulation
+  const storedNick = localStorage.getItem('rc_nickname');
+  if (nickInput) {
+    nickInput.value = storedNick || getRandomNickname();
+  }
+
+  // 2. Country Smart Default / Detection
+  const storedCountry = localStorage.getItem('rc_country');
+  const detected = detectCountry();
+  const initialCountry = storedCountry || (detected !== 'anywhere' ? detected : 'IN');
+
+  if (countrySelect) {
+    if (initialCountry && countrySelect.querySelector(`option[value="${initialCountry}"]`)) {
+      countrySelect.value = initialCountry;
+    } else {
+      countrySelect.value = 'anywhere';
     }
-  };
+  }
 
-  modeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modeKey = btn.getAttribute('data-mode') || 'text';
-      const config = modes[modeKey];
-      if (!config) return;
+  // 3. High-Contrast Gender Selection State with Checkmark
+  function updateGenderSelection(val: string) {
+    if (genderInput) genderInput.value = val;
+    genderBtns.forEach(btn => {
+      const b = btn as HTMLButtonElement;
+      const isSelected = b.getAttribute('data-gender') === val;
+      const checkEl = b.querySelector('.gender-check');
 
-      // Update button styling
-      modeButtons.forEach(b => {
-        b.classList.remove('active', 'font-bold', 'text-pink-600', 'bg-pink-50', 'dark:bg-pink-950/40', 'border', 'border-pink-200', 'dark:border-pink-800/40', 'shadow-xs');
-        b.classList.add('font-semibold', 'text-[var(--text-secondary)]');
-      });
-
-      btn.classList.add('active', 'font-bold', 'text-pink-600', 'bg-pink-50', 'dark:bg-pink-950/40', 'border', 'border-pink-200', 'dark:border-pink-800/40', 'shadow-xs');
-      btn.classList.remove('text-[var(--text-secondary)]');
-
-      // Update CTA Link & Texts
-      if (heroCtaBtn) heroCtaBtn.href = config.url;
-      if (heroCtaText) heroCtaText.textContent = config.label;
-      if (heroCtaIcon) heroCtaIcon.innerHTML = config.iconSvg;
-      if (heroSubtextLabel) heroSubtextLabel.textContent = config.subtext;
-
-      if (heroSubtextExtra) {
-        if (config.extra) {
-          heroSubtextExtra.textContent = config.extra;
-          heroSubtextExtra.classList.remove('hidden');
-        } else {
-          heroSubtextExtra.classList.add('hidden');
+      if (isSelected) {
+        b.className = 'hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--primary)] text-white border-[var(--primary)] ring-2 ring-[var(--primary)]/20 shadow-sm';
+        b.setAttribute('aria-pressed', 'true');
+        if (checkEl) {
+          checkEl.classList.remove('hidden');
+          checkEl.classList.add('inline-flex');
+        }
+      } else {
+        b.className = 'hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]';
+        b.setAttribute('aria-pressed', 'false');
+        if (checkEl) {
+          checkEl.classList.add('hidden');
+          checkEl.classList.remove('inline-flex');
         }
       }
     });
+  }
+
+  const storedGender = localStorage.getItem('rc_gender') || 'male';
+  updateGenderSelection(storedGender);
+
+  // 4. Randomize Button Interaction with slight dice spin
+  randomizeBtn?.addEventListener('click', () => {
+    if (nickInput) {
+      nickInput.value = getRandomNickname();
+      nickInput.focus();
+    }
   });
+
+  // 5. Gender button clicks
+  genderBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.getAttribute('data-gender') || 'male';
+      updateGenderSelection(g);
+    });
+  });
+
+  // 6. Form Submission
+  form?.addEventListener('submit', () => {
+    const finalNick = nickInput?.value.trim() || getRandomNickname();
+    const finalGender = genderInput?.value || 'male';
+    const finalPref = prefInput?.value || 'anyone';
+    const finalCountry = countrySelect?.value || 'anywhere';
+
+    localStorage.setItem('rc_nickname', finalNick);
+    localStorage.setItem('rc_gender', finalGender);
+    localStorage.setItem('rc_pref', finalPref);
+    localStorage.setItem('rc_country', finalCountry);
+    localStorage.setItem('rc_age_verified_18', 'true');
+  });
+
+  // 7. Subtle live user count fluctuation
+  const liveCountEl = document.getElementById('live-online-num');
+  if (liveCountEl) {
+    let count = 4820;
+    setInterval(() => {
+      const delta = Math.floor(Math.random() * 5) - 2;
+      count = Math.max(4200, count + delta);
+      liveCountEl.textContent = count.toLocaleString() + '+';
+    }, 4500);
+  }
 </script>

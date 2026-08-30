@@ -2,12 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LandingNavbar from '../components/landing/LandingNavbar.astro';
 import LandingHero from '../components/landing/LandingHero.astro';
-import ProductPreviewSection from '../components/landing/ProductPreviewSection.astro';
-import HowItWorksSection from '../components/landing/HowItWorksSection.astro';
-import ValuePropsSection from '../components/landing/ValuePropsSection.astro';
-import TrustSafetySection from '../components/landing/TrustSafetySection.astro';
+import PopularRoomsSection from '../components/landing/PopularRoomsSection.astro';
+import QuickRulesSection from '../components/landing/QuickRulesSection.astro';
 import FAQSection from '../components/landing/FAQSection.astro';
-import LandingCTA from '../components/landing/LandingCTA.astro';
 import LandingFooter from '../components/landing/LandingFooter.astro';
 import { siteConfig } from '../config/site';
 
@@ -15,37 +12,28 @@ export const prerender = true;
 ---
 
 <BaseLayout
-  title={`${siteConfig.name} — ${siteConfig.tagline}`}
-  description={siteConfig.description}
+  title={`${siteConfig.name} — Free Anonymous Random Chat`}
+  description="Instant 1-on-1 random chat with people worldwide. No registration or downloads required. Free, anonymous, and moderated."
   canonical={siteConfig.url}
 >
-  <!-- Sticky Minimal Navigation Bar -->
+  <!-- Sticky Solid Navigation Bar -->
   <LandingNavbar />
 
-  <!-- Main Content Structure -->
+  <!-- Clean, Short & Focused Landing Content -->
   <main class="flex-1 w-full flex flex-col items-center">
-    <!-- Hero Section -->
+    <!-- 1. Hero with Quick-Join Setup Card (Username, Gender, Country, Preference) -->
     <LandingHero />
 
-    <!-- Pure Human-First Product Architecture Preview -->
-    <ProductPreviewSection />
+    <!-- 2. Popular Active Topic Rooms -->
+    <PopularRoomsSection />
 
-    <!-- How It Works (3 Steps) -->
-    <HowItWorksSection />
+    <!-- 3. Simple Why RandomChat (3 Highlights) -->
+    <QuickRulesSection />
 
-    <!-- Value Propositions & Comparison -->
-    <ValuePropsSection />
-
-    <!-- Privacy, Trust & Safety Architecture -->
-    <TrustSafetySection />
-
-    <!-- Frequently Asked Questions -->
+    <!-- 4. Concise FAQ -->
     <FAQSection />
-
-    <!-- Final Call to Action -->
-    <LandingCTA />
   </main>
 
-  <!-- High-Trust Footer -->
+  <!-- Clean Footer -->
   <LandingFooter />
 </BaseLayout>

@@ -39,6 +39,7 @@ const t = getTranslations(lang);
   const urlNick = params.get('nick');
   const urlGender = params.get('gender') as Gender;
   const urlPref = params.get('pref') as MatchPreference;
+  const urlCountry = params.get('country') as Country;
 
   const strangerProfiles = [
     { name: 'Arnob29', bio: 'Male, 29 Yrs, West Bengal, India' },
@@ -56,12 +57,13 @@ const t = getTranslations(lang);
   const nick = urlNick || localStorage.getItem('rc_nickname') || ('Stranger' + Math.floor(1000 + Math.random() * 9000));
   const gender = urlGender || ((localStorage.getItem('rc_gender') || 'male') as Gender);
   let pref = urlPref || ((localStorage.getItem('rc_pref') || 'anyone') as MatchPreference);
-  const country = (localStorage.getItem('rc_country') || 'anywhere') as Country;
+  const country = urlCountry || ((localStorage.getItem('rc_country') || 'anywhere') as Country);
   const language = (localStorage.getItem('rc_language') || 'any') as Language;
 
   localStorage.setItem('rc_nickname', nick);
   localStorage.setItem('rc_gender', gender);
   localStorage.setItem('rc_pref', pref);
+  localStorage.setItem('rc_country', country);
   localStorage.setItem('rc_age_verified_18', 'true');
 
   const client = new ChatClient();

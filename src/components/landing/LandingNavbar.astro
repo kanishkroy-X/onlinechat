@@ -44,10 +44,9 @@ const { lang = 'en' } = Astro.props;
 
       <!-- Desktop Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--text-secondary)]" aria-label="Desktop Navigation">
-        <a href="#how-it-works" class="hover:text-[var(--text-primary)] transition-colors">How It Works</a>
-        <a href="#demo" class="hover:text-[var(--text-primary)] transition-colors">Live Demo</a>
-        <a href="#trust-safety" class="hover:text-[var(--text-primary)] transition-colors">Safety & Privacy</a>
         <a href="/chat-rooms" class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
+        <a href="/random-voice-chat" class="hover:text-[var(--text-primary)] transition-colors">Voice Chat</a>
+        <a href="/safety" class="hover:text-[var(--text-primary)] transition-colors">Safety Guidelines</a>
         <a href="#faq" class="hover:text-[var(--text-primary)] transition-colors">FAQ</a>
       </nav>
 
@@ -89,20 +88,20 @@ const { lang = 'en' } = Astro.props;
     aria-label="Mobile Navigation"
   >
     <nav class="flex flex-col gap-1 text-sm font-semibold text-[var(--text-primary)]">
-      <a href="#how-it-works" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
-        <span>How It Works</span>
-        <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
-      </a>
-      <a href="#preview" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
-        <span>Product Preview</span>
-        <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
-      </a>
-      <a href="#trust-safety" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
-        <span>Safety & Privacy</span>
-        <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
+      <a href="/chat" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] text-[var(--primary)] font-bold transition-colors">
+        <span>1-on-1 Text Chat</span>
+        <Icon name="chevron-right" class="w-4 h-4 text-[var(--primary)]" />
       </a>
       <a href="/chat-rooms" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
         <span>Topic Rooms</span>
+        <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
+      </a>
+      <a href="/random-voice-chat" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
+        <span>Voice Chat</span>
+        <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
+      </a>
+      <a href="/safety" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
+        <span>Safety & Privacy</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
       </a>
       <a href="#faq" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
