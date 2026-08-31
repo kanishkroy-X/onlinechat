@@ -3,6 +3,8 @@ import '../styles/global.css';
 import AgeGateModal from '../components/AgeGateModal.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import { siteConfig } from '../config/site';
+import { getLangFromUrl, getHreflangLinks } from '../i18n/utils';
+import { languageOgLocales, type SupportedLang } from '../i18n/ui';
 
 interface Props {
   title?: string;
@@ -17,27 +19,19 @@ const {
   title = `${siteConfig.name} — ${siteConfig.tagline}`,
   description = siteConfig.description,
   canonical = siteConfig.url,
-  lang = 'en',
+  lang,
   ogImage = `${siteConfig.url}/og-image.png`,
   noindex = false
 } = Astro.props;
 
-let cookieLang: string | undefined;
-try {
-  cookieLang = Astro.cookies?.get('rc_language')?.value;
-} catch {
-  // Prerender build context fallback
-}
-
-let urlLang: string | null = null;
-try {
-  urlLang = Astro.url?.searchParams?.get('lang');
-} catch {
-  // Prerender build context fallback
-}
-
-const currentLang = cookieLang || urlLang || lang || 'en';
+// Determine language from prop, Astro.currentLocale, or URL path (e.g. /es, /ja)
+const currentLang = (lang || Astro.currentLocale || getLangFromUrl(Astro.url) || 'en') as SupportedLang;
 const isRtl = currentLang === 'ar';
+const hreflangLinks = getHreflangLinks(Astro.url);
+const currentOgLocale = languageOgLocales[currentLang] || 'en_US';
+const alternateOgLocales = Object.entries(languageOgLocales)
+  .filter(([l]) => l !== currentLang)
+  .map(([, og]) => og);
 ---
 
 <!doctype html>
@@ -48,6 +42,11 @@ const isRtl = currentLang === 'ar';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Hreflang Markup for International SEO -->
+    {hreflangLinks.map(item => (
+      <link rel="alternate" hreflang={item.lang} href={item.url} />
+    ))}
 
     <!-- Google Fonts: Inter (Optimized Non-Blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -75,6 +74,10 @@ const isRtl = currentLang === 'ar';
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={siteConfig.name} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={currentOgLocale} />
+    {alternateOgLocales.map(loc => (
+      <meta property="og:locale:alternate" content={loc} />
+    ))}
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />

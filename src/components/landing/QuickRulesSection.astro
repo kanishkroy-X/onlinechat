@@ -1,21 +1,30 @@
 ---
 import Icon from '../icons/Icon.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
 
 const FEATURES = [
   {
     icon: 'zap',
-    title: 'Instant 1-on-1 Matching',
-    desc: 'Connect with a random partner in under 1 second. No queues or complicated setup.'
+    title: t.howItWorks.step2Title,
+    desc: t.howItWorks.step2Desc
   },
   {
     icon: 'shield-check',
-    title: '100% Anonymous & Ephemeral',
-    desc: 'Zero registration, email, or passwords. Your chat is instantly wiped when you leave.'
+    title: t.safetyBanner.title,
+    desc: t.safetyBanner.tip3
   },
   {
     icon: 'shuffle',
-    title: 'Skip & Next Anytime',
-    desc: 'Not vibing with your stranger? Hit Next to instantly pair with someone new.'
+    title: t.howItWorks.step3Title,
+    desc: t.howItWorks.step3Desc
   }
 ];
 ---

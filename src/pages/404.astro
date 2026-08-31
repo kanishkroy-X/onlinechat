@@ -5,7 +5,9 @@ import LandingFooter from '../components/landing/LandingFooter.astro';
 import Icon from '../components/icons/Icon.astro';
 import { siteConfig } from '../config/site';
 
-const currentLang = Astro.cookies?.get('rc_language')?.value || Astro.url?.searchParams?.get('lang') || 'en';
+import { getLangFromUrl } from '../i18n/utils';
+
+const currentLang = Astro.currentLocale || getLangFromUrl(Astro.url) || 'en';
 ---
 
 <BaseLayout

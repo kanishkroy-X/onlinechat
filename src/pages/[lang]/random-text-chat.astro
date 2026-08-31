@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import Icon from '../../components/icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations, useTranslatedPath } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`Random Text Chat — ${siteConfig.name} (${t.brand.tagline})`}
+  description={t.brand.description}
+  canonical={`${siteConfig.url}/${currentLang}/random-text-chat`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 w-full flex flex-col items-center">
+    <!-- Hero Section -->
+    <section class="w-full py-16 sm:py-24 px-4 max-w-5xl mx-auto flex flex-col items-center text-center gap-8">
+      <!-- Eyebrow Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-xs font-bold tracking-wide">
+        <Icon name="message-square" class="w-3.5 h-3.5" />
+        <span>{t.brand.noAccount} &bull; {t.brand.freeInstant}</span>
+      </div>
+
+      <!-- Main Headline -->
+      <div class="flex flex-col gap-4 max-w-3xl">
+        <h1 class="text-4xl sm:text-6xl font-black text-[var(--text-primary)] tracking-tight leading-[1.1]">
+          {t.hero.headline}
+        </h1>
+        <p class="text-base sm:text-xl text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
+          {t.hero.subheadline}
+        </p>
+      </div>
+
+      <!-- Primary Action Island Button -->
+      <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
+        <a
+          href={translatePath('/chat')}
+          class="btn-primary text-base sm:text-lg py-3.5 px-8 shadow-md"
+        >
+          <span>{t.nav.startChat}</span>
+          <Icon name="arrow-right" class="w-5 h-5" />
+        </a>
+      </div>
+    </section>
+
+    <!-- Value Props 3-Grid -->
+    <section class="w-full py-12 px-4 max-w-5xl mx-auto border-t border-[var(--border)]">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card-tactile p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-bold">
+            <Icon name="zap" class="w-5 h-5" />
+          </div>
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">{t.howItWorks.step2Title}</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.howItWorks.step2Desc}
+          </p>
+        </div>
+
+        <div class="card-tactile p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-bold">
+            <Icon name="shield-check" class="w-5 h-5" />
+          </div>
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">{t.safetyBanner.title}</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.safetyBanner.tip3}
+          </p>
+        </div>
+
+        <div class="card-tactile p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-bold">
+            <Icon name="shuffle" class="w-5 h-5" />
+          </div>
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">{t.howItWorks.step3Title}</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.howItWorks.step3Desc}
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <LandingFooter lang={currentLang} />
+</BaseLayout>

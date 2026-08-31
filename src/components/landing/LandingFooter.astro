@@ -1,13 +1,24 @@
 ---
 import Icon from '../icons/Icon.astro';
+import LanguagePicker from '../LanguagePicker.astro';
 import { siteConfig } from '../../config/site';
+import { getLangFromUrl, useTranslatedPath, useTranslations } from '../../i18n/utils';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(currentLang);
+const t = useTranslations(currentLang);
 ---
 
 <footer class="w-full border-t border-[var(--border)] bg-[var(--bg-surface)] py-12 px-4 mt-auto">
   <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-secondary)]">
     <!-- Brand Info & 18+ Notice -->
     <div class="flex flex-col gap-3">
-      <a href="/" class="flex items-center gap-2">
+      <a href={translatePath('/')} class="flex items-center gap-2">
         <div class="w-7 h-7 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white font-bold text-xs shadow-xs">
           <Icon name="message-square" class="w-4 h-4" />
         </div>
@@ -16,41 +27,44 @@ import { siteConfig } from '../../config/site';
         </span>
       </a>
       <p class="text-xs text-[var(--text-muted)] leading-relaxed">
-        Free, anonymous-by-default random text chat for adults. Meet compatible strangers without accounts or passwords.
+        {t.brand.description}
       </p>
       <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold w-fit text-[11px]">
         <Icon name="shield-check" class="w-3.5 h-3.5" />
         <span>18+ Adults Only</span>
+      </div>
+      <div class="pt-2">
+        <LanguagePicker variant="footer" />
       </div>
     </div>
 
     <!-- Product Links -->
     <div class="flex flex-col gap-2.5">
       <span class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-wider text-[11px]">Product</span>
-      <a href="/start" class="hover:text-[var(--text-primary)] transition-colors">Start Chatting</a>
-      <a href="/random-chat" class="hover:text-[var(--text-primary)] transition-colors">Random Chat</a>
-      <a href="/random-text-chat" class="hover:text-[var(--text-primary)] transition-colors">Random Text Chat</a>
-      <a href="/random-voice-chat" class="hover:text-[var(--text-primary)] transition-colors">Random Voice Chat</a>
-      <a href="/chat-rooms" class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
-      <a href="/how-it-works" class="hover:text-[var(--text-primary)] transition-colors">How It Works</a>
-      <a href="/faq" class="hover:text-[var(--text-primary)] transition-colors">FAQ</a>
+      <a href={translatePath('/start')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.startChat}</a>
+      <a href={translatePath('/random-chat')} class="hover:text-[var(--text-primary)] transition-colors">Random Chat</a>
+      <a href={translatePath('/random-text-chat')} class="hover:text-[var(--text-primary)] transition-colors">Random Text Chat</a>
+      <a href={translatePath('/random-voice-chat')} class="hover:text-[var(--text-primary)] transition-colors">Random Voice Chat</a>
+      <a href={translatePath('/chat-rooms')} class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
+      <a href={translatePath('/how-it-works')} class="hover:text-[var(--text-primary)] transition-colors">{t.howItWorks.title}</a>
+      <a href={translatePath('/faq')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.faq}</a>
     </div>
 
     <!-- Safety & Trust -->
     <div class="flex flex-col gap-2.5">
       <span class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-wider text-[11px]">Safety & Privacy</span>
-      <a href="/safety" class="hover:text-[var(--text-primary)] transition-colors">Safety Guidelines</a>
-      <a href="/privacy" class="hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a>
-      <a href="/cookie-policy" class="hover:text-[var(--text-primary)] transition-colors">Cookie Policy</a>
-      <a href="/safety#report" class="hover:text-[var(--text-primary)] transition-colors">Report Abuse</a>
+      <a href={translatePath('/safety')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.safety}</a>
+      <a href={translatePath('/privacy')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.privacy}</a>
+      <a href={translatePath('/cookie-policy')} class="hover:text-[var(--text-primary)] transition-colors">Cookie Policy</a>
+      <a href={translatePath('/safety#report')} class="hover:text-[var(--text-primary)] transition-colors">Report Abuse</a>
     </div>
 
     <!-- Legal & Contact -->
     <div class="flex flex-col gap-2.5">
       <span class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-wider text-[11px]">Company & Support</span>
-      <a href="/about" class="hover:text-[var(--text-primary)] transition-colors">About Us</a>
-      <a href="/contact" class="hover:text-[var(--text-primary)] transition-colors">Contact Support</a>
-      <a href="/terms" class="hover:text-[var(--text-primary)] transition-colors">Terms of Service</a>
+      <a href={translatePath('/about')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.about}</a>
+      <a href={translatePath('/contact')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.contact}</a>
+      <a href={translatePath('/terms')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.terms}</a>
       <div class="pt-1 text-[11px] text-[var(--text-muted)]">
         Support: <a href={`mailto:${siteConfig.supportEmail}`} class="text-[var(--primary)] underline">{siteConfig.supportEmail}</a>
       </div>
@@ -59,7 +73,7 @@ import { siteConfig } from '../../config/site';
 
   <!-- Bottom Bar -->
   <div class="max-w-6xl mx-auto pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[var(--text-muted)] text-center sm:text-left">
-    <span>&copy; {new Date().getFullYear()} {siteConfig.name} &bull; All rights reserved.</span>
-    <span>Strictly for adults 18+. Conversations are ephemeral and not permanently stored.</span>
+    <span>&copy; {new Date().getFullYear()} {siteConfig.name} &bull; {t.footer.allRightsReserved}</span>
+    <span>{t.footer.disclaimer}</span>
   </div>
 </footer>

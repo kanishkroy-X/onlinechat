@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import Icon from '../../components/icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations, useTranslatedPath } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`${t.howItWorks.title} — ${siteConfig.name}`}
+  description={`${t.brand.description}`}
+  canonical={`${siteConfig.url}/${currentLang}/how-it-works`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-12 flex flex-col gap-12">
+    <!-- Hero Intro -->
+    <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="sliders" class="w-3.5 h-3.5" />
+        <span>{t.brand.freeInstant}</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-primary)] tracking-tight">
+        {t.howItWorks.title}
+      </h1>
+      <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+        {t.hero.subheadline}
+      </p>
+    </div>
+
+    <!-- 3 Step Progression Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <!-- Step 01 -->
+      <div class="card-tactile p-6 flex flex-col gap-4 text-left">
+        <div class="flex items-center justify-between">
+          <div class="w-11 h-11 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="users" class="w-5 h-5" />
+          </div>
+          <span class="text-3xl font-black text-[var(--border-strong)]">01</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">{t.howItWorks.step1Title}</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.howItWorks.step1Desc}
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 02 -->
+      <div class="card-tactile p-6 flex flex-col gap-4 text-left">
+        <div class="flex items-center justify-between">
+          <div class="w-11 h-11 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="zap" class="w-5 h-5" />
+          </div>
+          <span class="text-3xl font-black text-[var(--border-strong)]">02</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">{t.howItWorks.step2Title}</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.howItWorks.step2Desc}
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 03 -->
+      <div class="card-tactile p-6 flex flex-col gap-4 text-left">
+        <div class="flex items-center justify-between">
+          <div class="w-11 h-11 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
+            <Icon name="message-square" class="w-5 h-5" />
+          </div>
+          <span class="text-3xl font-black text-[var(--border-strong)]">03</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">{t.howItWorks.step3Title}</h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            {t.howItWorks.step3Desc}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="pt-6 border-t border-[var(--border)] flex items-center justify-between">
+      <a href={translatePath('/')} class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline">&larr; {siteConfig.name}</a>
+      <a href={translatePath('/chat')} class="btn-primary text-xs py-2.5 px-5">
+        <span>{t.nav.startChat}</span>
+        <Icon name="arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  </main>
+
+  <LandingFooter lang={currentLang} />
+</BaseLayout>

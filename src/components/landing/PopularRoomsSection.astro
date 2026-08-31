@@ -1,5 +1,14 @@
 ---
 import Icon from '../icons/Icon.astro';
+import { getLangFromUrl, useTranslatedPath } from '../../i18n/utils';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(currentLang);
 
 const FEATURED_ROOMS = [
   {
@@ -46,7 +55,7 @@ const FEATURED_ROOMS = [
         </p>
       </div>
       <a
-        href="/chat-rooms"
+        href={translatePath('/chat-rooms')}
         class="text-xs font-bold text-[var(--primary)] hover:underline flex items-center gap-1 shrink-0"
       >
         <span>View All</span>
@@ -58,7 +67,7 @@ const FEATURED_ROOMS = [
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
       {FEATURED_ROOMS.map(room => (
         <a
-          href={`/chat-rooms/${room.slug}`}
+          href={translatePath(`/chat-rooms/${room.slug}`)}
           class="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] hover:border-[var(--primary)]/40 hover:shadow-md transition-all flex items-center justify-between gap-3 group text-left cursor-pointer"
         >
           <div class="flex items-center gap-3.5 min-w-0">

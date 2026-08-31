@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import LandingHero from '../../components/landing/LandingHero.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`${t.nav.startChat} — ${siteConfig.name}`}
+  description={`${t.brand.description}`}
+  canonical={`${siteConfig.url}/${currentLang}/start`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 w-full flex flex-col items-center justify-center py-6 sm:py-10">
+    <LandingHero lang={currentLang} />
+  </main>
+
+  <LandingFooter lang={currentLang} />
+</BaseLayout>

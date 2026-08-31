@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import Icon from '../../components/icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations, useTranslatedPath } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+
+const LOCALIZED_FAQS: Record<string, { q: string; a: string }[]> = {
+  en: [
+    { q: 'Is RandomChat completely free?', a: 'Yes, RandomChat is 100% free with no subscriptions, paid tiers, or hidden fees.' },
+    { q: 'Do I need to sign up or enter my email?', a: 'No. You can start chatting instantly without email, phone numbers, or passwords.' },
+    { q: 'Are chat conversations saved?', a: 'No. Chats are completely ephemeral. When you disconnect, the chat history is immediately wiped.' },
+    { q: 'Who can use RandomChat?', a: 'RandomChat is strictly restricted to adults aged 18 and older. Abuse and harassment are prohibited.' },
+    { q: 'Can I use this on mobile devices?', a: 'Yes. The entire platform is built with a responsive mobile-first interface optimized for touch interactions.' }
+  ],
+  es: [
+    { q: '¿RandomChat es completamente gratis?', a: 'Sí, RandomChat es 100% gratuito, sin suscripciones ni cargos ocultos.' },
+    { q: '¿Necesito registrarme o ingresar mi correo?', a: 'No. Puedes comenzar a chatear al instante sin correo, teléfono ni contraseñas.' },
+    { q: '¿Se guardan las conversaciones?', a: 'No. Las conversaciones son efímeras. Al desconectarte, el historial se borra al instante.' },
+    { q: '¿Quién puede usar RandomChat?', a: 'RandomChat es exclusivo para adultos mayores de 18 años. El acoso está estrictamente prohibido.' },
+    { q: '¿Puedo usarlo en dispositivos móviles?', a: 'Sí, la plataforma está 100% optimizada para teléfonos y tabletas.' }
+  ],
+  ja: [
+    { q: 'RandomChatは完全無料ですか？', a: 'はい、登録料・月額料金・追加料金などは一切なく、100%無料でご利用いただけます。' },
+    { q: 'メールアドレスやアカウント登録は必要ですか？', a: 'いいえ。メールアドレス、電話番号、パスワードなどの登録は一切不要で、すぐにチャットを始められます。' },
+    { q: 'チャットの履歴は保存されますか？', a: 'いいえ。チャットは一時的（エフェメラル）であり、退出時に会話履歴は即座に完全消去されます。' },
+    { q: '誰が利用できますか？', a: 'RandomChatは18歳以上の成人限定のサービスです。嫌がらせや迷惑行為は禁止されています。' },
+    { q: 'スマートフォンでも利用できますか？', a: 'はい、スマートフォンやタブレットのブラウザから快適にご利用いただけます。' }
+  ],
+  fr: [
+    { q: 'RandomChat est-il totalement gratuit ?', a: 'Oui, RandomChat est 100% gratuit sans abonnement ni frais cachés.' },
+    { q: 'Dois-je créer un compte ou entrer mon e-mail ?', a: 'Non. Vous pouvez commencer à discuter instantanément sans e-mail, numéro ni mot de passe.' },
+    { q: 'Les conversations sont-elles enregistrées ?', a: 'Non. Les conversations sont éphémères et immédiatement effacées dès la déconnexion.' },
+    { q: 'Qui peut utiliser RandomChat ?', a: 'RandomChat est strictement réservé aux adultes de 18 ans et plus. Tout harcèlement est interdit.' },
+    { q: 'Puis-je l’utiliser sur mobile ?', a: 'Oui, le site est entièrement optimisé pour smartphones et tablettes.' }
+  ],
+  de: [
+    { q: 'Ist RandomChat komplett kostenlos?', a: 'Ja, RandomChat ist zu 100% kostenlos ohne Abonnements oder versteckte Gebühren.' },
+    { q: 'Muss ich mich registrieren oder eine E-Mail angeben?', a: 'Nein. Du kannst sofort ohne E-Mail, Telefonnummer oder Passwort chatten.' },
+    { q: 'Werden Chats gespeichert?', a: 'Nein. Alle Chats sind flüchtig und werden beim Verlassen sofort gelöscht.' },
+    { q: 'Wer darf RandomChat nutzen?', a: 'RandomChat ist ausschließlich für Erwachsene ab 18 Jahren gestattet.' },
+    { q: 'Funktioniert es auf Smartphones?', a: 'Ja, die Benutzeroberfläche ist für mobile Geräte optimiert.' }
+  ],
+  pt: [
+    { q: 'O RandomChat é totalmente gratuito?', a: 'Sim, o RandomChat é 100% gratuito sem assinaturas ou taxas ocultas.' },
+    { q: 'Preciso me cadastrar ou fornecer e-mail?', a: 'Não. Você pode começar a conversar instantaneamente sem cadastro ou senhas.' },
+    { q: 'As conversas ficam salvas?', a: 'Não. As conversas são efêmeras e apagadas imediatamente ao desconectar.' },
+    { q: 'Quem pode usar o RandomChat?', a: 'O RandomChat é exclusivo para adultos com 18 anos ou mais.' },
+    { q: 'Posso usar no celular?', a: 'Sim, totalmente compatível com smartphones e tablets.' }
+  ],
+  ko: [
+    { q: 'RandomChat은 완전 무료인가요?', a: '네, RandomChat은 구독료나 숨겨진 비용 없이 100% 무료로 제공됩니다.' },
+    { q: '이메일이나 회원가입이 필요한가요?', a: '아니요. 이메일, 전화번호, 비밀번호 없이 즉시 대화를 시작할 수 있습니다.' },
+    { q: '채팅 내용이 저장되나요?', a: '아니요. 채팅은 휘발성이며 연결을 종료하는 즉시 모든 대화 기록이 완전히 삭제됩니다.' },
+    { q: '누가 RandomChat을 이용할 수 있나요?', a: 'RandomChat은 만 18세 이상 성인 전용 플랫폼입니다. 괴롭힘과 악성 행위는 엄격히 금지됩니다.' },
+    { q: '모바일 기기에서도 사용할 수 있나요?', a: '네, 모바일 환경에 최적화되어 있어 스마트폰에서도 원활하게 이용 가능합니다.' }
+  ],
+  it: [
+    { q: 'RandomChat è completamente gratuito?', a: 'Sì, RandomChat è gratuito al 100% senza abbonamenti né costi nascosti.' },
+    { q: 'Devo registrarmi o inserire la mia email?', a: 'No. Puoi iniziare a chattare immediatamente senza email, numero di telefono o password.' },
+    { q: 'Le conversazioni vengono salvate?', a: 'No. Le chat sono del tutto effimere e vengono cancellate all’istante alla disconnessione.' },
+    { q: 'Chi può utilizzare RandomChat?', a: 'RandomChat è riservato esclusivamente a persone maggiorenni (18+).' },
+    { q: 'Posso usarlo da smartphone?', a: 'Sì, la piattaforma è perfettamente ottimizzata per dispositivi mobili.' }
+  ]
+};
+
+const faqs = LOCALIZED_FAQS[currentLang] || LOCALIZED_FAQS.en;
+
+const schemaJson = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.a
+    }
+  }))
+};
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`${t.nav.faq} — ${siteConfig.name}`}
+  description={`${t.brand.description}`}
+  canonical={`${siteConfig.url}/${currentLang}/faq`}
+  lang={currentLang}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-10">
+    <div class="text-center max-w-xl mx-auto flex flex-col items-center gap-2">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
+        <Icon name="help-circle" class="w-3.5 h-3.5" />
+        <span>{t.nav.faq}</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-[var(--text-primary)] tracking-tight">
+        {t.nav.faq}
+      </h1>
+      <p class="text-sm text-[var(--text-secondary)]">
+        {t.brand.name} &bull; {t.brand.tagline}
+      </p>
+    </div>
+
+    <!-- Accordion List -->
+    <div class="flex flex-col gap-4 text-left">
+      {faqs.map(faq => (
+        <details class="card-tactile group p-5 open:pb-6 transition-all duration-200 cursor-pointer">
+          <summary class="flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[var(--text-primary)] list-none select-none">
+            <span>{faq.q}</span>
+            <span class="w-6 h-6 rounded-lg bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)] group-open:rotate-90 transition-transform shrink-0">
+              <Icon name="chevron-right" class="w-3.5 h-3.5" />
+            </span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed pr-6 border-t border-[var(--border-subtle)] pt-3">
+            {faq.a}
+          </p>
+        </details>
+      ))}
+    </div>
+
+    <div class="pt-4 border-t border-[var(--border)] flex items-center justify-between">
+      <a href={translatePath('/')} class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline">&larr; {siteConfig.name}</a>
+      <a href={translatePath('/chat')} class="btn-primary text-xs py-2.5 px-5">
+        <span>{t.nav.startChat}</span>
+        <Icon name="arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  </main>
+
+  <LandingFooter lang={currentLang} />
+</BaseLayout>

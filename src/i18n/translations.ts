@@ -128,14 +128,16 @@ export interface LanguageInfo {
 export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸', dir: 'ltr' },
   { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', dir: 'ltr' },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵', dir: 'ltr' },
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr' },
   { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', dir: 'ltr' },
   { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇧🇷', dir: 'ltr' },
+  { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷', dir: 'ltr' },
+  { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹', dir: 'ltr' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳', dir: 'ltr' },
   { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', dir: 'rtl' },
   { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺', dir: 'ltr' },
-  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳', dir: 'ltr' },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵', dir: 'ltr' }
+  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳', dir: 'ltr' }
 ];
 
 export const translations: Record<string, TranslationDict> = {
@@ -1326,6 +1328,244 @@ export const translations: Record<string, TranslationDict> = {
       agePolicy: '18歳以上限定。利用規約およびプライバシーポリシーに同意の上ご利用ください。',
       allRightsReserved: '無断転載を禁じます。',
       disclaimer: 'RandomChat は匿名チャットです。個人情報を開示しないでください。'
+    }
+  },
+
+  ko: {
+    brand: {
+      name: 'RandomChat',
+      tagline: '무료 익명 랜덤 텍스트 채팅',
+      description: '마음이 맞는 낯선 사람과 즉시 연결하세요. 휘발성 데이터, 안전함, 회원가입 불필요.',
+      noAccount: '회원가입 필요 없음',
+      freeInstant: '무료 • 익명 • 즉시 연결'
+    },
+    nav: {
+      startChat: '채팅 시작',
+      safety: '안전 가이드',
+      faq: '자주 묻는 질문',
+      privacy: '개인정보처리방침',
+      terms: '이용약관',
+      about: '소개',
+      contact: '문의하기',
+      theme: '테마',
+      language: '언어'
+    },
+    hero: {
+      headline: '새로운 사람과 대화해보세요.',
+      subheadline: '취향이 맞는 낯선 사람과의 자연스러운 대화. 계정도, 복잡한 절차도 없이 1초 만에 즉시 연결됩니다.',
+      cta: '채팅 시작하기',
+      badge: '무료 • 익명 • 즉시 연결'
+    },
+    howItWorks: {
+      title: '이용 방법',
+      step1Title: '1. 설정 선택',
+      step1Desc: '임시 닉네임을 정하고 대화하고 싶은 상대 조건을 선택하세요.',
+      step2Title: '2. 즉시 매칭',
+      step2Desc: '서버가 활성화된 최적의 대화 상대를 자동으로 찾아줍니다.',
+      step3Title: '3. 실시간 채팅',
+      step3Desc: '안전하게 메시지를 주고받고, 언제든 다음 상대로 넘어갈 수 있습니다.'
+    },
+    safetyBanner: {
+      title: '기본적으로 안전하고 익명 보장',
+      tip1: '비밀번호, 전화번호, 주소, 금융 정보를 절대로 공유하지 마세요.',
+      tip2: '부적절한 행동을 발견하면 즉시 신고 및 차단 기능을 이용하세요.',
+      tip3: '대화 내용은 일시적이며 서버에 영구 저장되지 않습니다.',
+      ageNotice: '본 서비스는 만 18세 이상 성인만 이용할 수 있습니다.'
+    },
+    setup: {
+      title: '빠른 게스트 설정',
+      nicknameLabel: '임시 닉네임',
+      nicknamePlaceholder: '예: 여행자99',
+      genderLabel: '내 성별',
+      male: '남성',
+      female: '여성',
+      preferenceLabel: '대화 상대',
+      anyone: '누구나',
+      countryLabel: '국가',
+      languageLabel: '언어',
+      cta: '상대 찾기',
+      errors: {
+        nicknameRequired: '닉네임을 입력해주세요',
+        nicknameLength: '닉네임은 2자 이상 20자 이하이어야 합니다',
+        nicknameChars: '문자, 숫자, 띄어쓰기, 하이픈만 사용할 수 있습니다',
+        nicknameReserved: '이 닉네임은 시스템 예약어입니다'
+      }
+    },
+    matching: {
+      title: '상대를 찾는 중...',
+      subtitle: '대화 가능한 낯선 사람을 검색하고 있습니다',
+      lookingFor: '희망 조건',
+      cancel: '검색 취소',
+      foundTitle: '상대를 찾았습니다!',
+      connecting: '보안 실시간 연결을 설정하는 중입니다...'
+    },
+    chat: {
+      connectedWith: '대화 중인 상대:',
+      connectedStatus: '온라인',
+      placeholder: '메시지를 입력하세요...',
+      send: '전송',
+      attach: '갤러리에서 사진 공유',
+      typing: '상대방이 입력 중입니다...',
+      nextStranger: '다음 상대',
+      leave: '채팅 나가기',
+      report: '신고',
+      block: '차단',
+      coldGateLimit: '메시지를 2건 보냈습니다. 상대방의 답장을 기다려주세요.',
+      disconnected: '상대방이 대화를 종료했습니다.',
+      findAnother: '다른 상대 찾기',
+      you: '나',
+      stranger: '상대방'
+    },
+    modals: {
+      nextTitle: '다음 상대를 찾으시겠습니까?',
+      nextDesc: '현재 대화가 종료되고 새로운 상대를 검색합니다.',
+      leaveTitle: '채팅을 종료하시겠습니까?',
+      leaveDesc: '정말 대화를 나가고 홈으로 돌아가시겠습니까?',
+      stay: '머무르기',
+      confirmNext: '다음 상대',
+      confirmLeave: '나가기',
+      reportTitle: '사용자 신고',
+      reportReasonLabel: '신고 사유',
+      reportDetailsLabel: '추가 상세 설명 (선택 사항)',
+      reportDetailsPlaceholder: '문제를 간략히 설명해주세요...',
+      submitReport: '신고 제출',
+      cancel: '취소',
+      blockTitle: '사용자 차단',
+      blockDesc: '즉시 연결이 해제되며 향후 다시 매칭되지 않습니다.',
+      confirmBlock: '차단 및 연결 종료',
+      reasons: {
+        harassment: '괴롭힘 또는 따돌림',
+        spam: '스팸 또는 봇 활동',
+        sexual_inappropriate: '부적절하거나 음란한 콘텐츠',
+        threats: '협박 또는 폭력',
+        hate_abuse: '혐오 발언 또는 욕설',
+        scam_fraud: '사기 또는 의심스러운 링크',
+        other: '기타 커뮤니티 가이드라인 위반'
+      }
+    },
+    footer: {
+      agePolicy: '만 18세 이상 전용. RandomChat 이용 시 이용약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다.',
+      allRightsReserved: 'All rights reserved.',
+      disclaimer: 'RandomChat은 익명 채팅 플랫폼입니다. 개인 정보를 절대로 공개하지 마세요.'
+    }
+  },
+
+  it: {
+    brand: {
+      name: 'RandomChat',
+      tagline: 'Chat Testuale Casuale e Anonima Gratuita',
+      description: 'Connettiti all’istante con sconosciuti compatibili. Effimero, sicuro, senza registrazione.',
+      noAccount: 'Nessun Account Richiesto',
+      freeInstant: 'Gratis • Anonimo • Istantaneo'
+    },
+    nav: {
+      startChat: 'Inizia Chat',
+      safety: 'Sicurezza',
+      faq: 'Domande Frequenti',
+      privacy: 'Privacy',
+      terms: 'Termini',
+      about: 'Chi Siamo',
+      contact: 'Contatti',
+      theme: 'Tema',
+      language: 'Lingua'
+    },
+    hero: {
+      headline: 'Parla con qualcuno di nuovo.',
+      subheadline: 'Conversazioni spontanee con sconosciuti compatibili. Zero account, zero complicazioni, connessione istantanea.',
+      cta: 'Inizia Chat',
+      badge: 'Gratis • Anonimo • Istantaneo'
+    },
+    howItWorks: {
+      title: 'Come Funziona',
+      step1Title: '1. Scegli le Preferenze',
+      step1Desc: 'Scegli un nickname temporaneo e seleziona con chi desideri chattare.',
+      step2Title: '2. Abbinamento Istantaneo',
+      step2Desc: 'Il nostro server ti collega con uno sconosciuto attivo e compatibile.',
+      step3Title: '3. Chat in Tempo Reale',
+      step3Desc: 'Scambia messaggi in modo sicuro. Passa al prossimo sconosciuto quando vuoi.'
+    },
+    safetyBanner: {
+      title: 'Sicuro e Anonimo per Default',
+      tip1: 'Non condividere mai password, numeri di telefono o dati bancari.',
+      tip2: 'Usa Segnala e Blocca immediatamente in caso di comportamenti molesti.',
+      tip3: 'Le conversazioni sono effimere e non vengono mai salvate.',
+      ageNotice: 'Devi avere almeno 18 anni per utilizzare questo servizio.'
+    },
+    setup: {
+      title: 'Configurazione Rapida',
+      nicknameLabel: 'Nickname Temporaneo',
+      nicknamePlaceholder: 'es. Sognatore99',
+      genderLabel: 'Il tuo Genere',
+      male: 'Uomo',
+      female: 'Donna',
+      preferenceLabel: 'Chatta Con',
+      anyone: 'Chiunque',
+      countryLabel: 'Paese',
+      languageLabel: 'Lingua',
+      cta: 'Trova Sconosciuto',
+      errors: {
+        nicknameRequired: 'Inserisci un nickname',
+        nicknameLength: 'Il nickname deve contenere tra 2 e 20 caratteri',
+        nicknameChars: 'Sono ammessi solo lettere, numeri, spazi e trattini',
+        nicknameReserved: 'Questo nickname è riservato dal sistema'
+      }
+    },
+    matching: {
+      title: 'Ricerca in corso...',
+      subtitle: 'Cerco uno sconosciuto compatibile con cui chattare',
+      lookingFor: 'Cerco',
+      cancel: 'Annulla Ricerca',
+      foundTitle: 'Sconosciuto Trovato!',
+      connecting: 'Stabilisco la connessione in tempo reale...'
+    },
+    chat: {
+      connectedWith: 'In chat con:',
+      connectedStatus: 'Online',
+      placeholder: 'Scrivi un messaggio...',
+      send: 'Invia',
+      attach: 'Condividi foto dalla galleria',
+      typing: 'Lo sconosciuto sta scrivendo...',
+      nextStranger: 'Prossimo Sconosciuto',
+      leave: 'Esci dalla Chat',
+      report: 'Segnala',
+      block: 'Blocca',
+      coldGateLimit: 'Hai inviato 2 messaggi. Attendi una risposta.',
+      disconnected: 'Lo sconosciuto si è disconnesso.',
+      findAnother: 'Trova un Altro Sconosciuto',
+      you: 'Tu',
+      stranger: 'Sconosciuto'
+    },
+    modals: {
+      nextTitle: 'Cercare il prossimo sconosciuto?',
+      nextDesc: 'Questo terminerà la conversazione attuale e cercherà un nuovo interlocutore.',
+      leaveTitle: 'Uscire dalla conversazione?',
+      leaveDesc: 'Sei sicuro di voler uscire e tornare alla pagina principale?',
+      stay: 'Rimani',
+      confirmNext: 'Trova Prossimo',
+      confirmLeave: 'Esci',
+      reportTitle: 'Segnala Utente',
+      reportReasonLabel: 'Motivo della segnalazione',
+      reportDetailsLabel: 'Dettagli aggiuntivi (facoltativo)',
+      reportDetailsPlaceholder: 'Descrivi brevemente il problema...',
+      submitReport: 'Invia Segnalazione',
+      cancel: 'Annulla',
+      blockTitle: 'Blocca Utente',
+      blockDesc: 'Disconnetterà immediatamente e impedirà futuri abbinamenti.',
+      confirmBlock: 'Blocca e Disconnetti',
+      reasons: {
+        harassment: 'Molestie o bullismo',
+        spam: 'Spam o attività di bot',
+        sexual_inappropriate: 'Contenuto inappropriato o esplicito',
+        threats: 'Minacce o violenza',
+        hate_abuse: 'Incitamento all’odio o insulti',
+        scam_fraud: 'Truffe o link sospetti',
+        other: 'Altra violazione delle linee guida'
+      }
+    },
+    footer: {
+      agePolicy: 'Solo per maggiorenni 18+. Utilizzando RandomChat accetti i nostri Termini e la Privacy Policy.',
+      allRightsReserved: 'Tutti i diritti riservati.',
+      disclaimer: 'RandomChat è una piattaforma anonima. Non rivelare mai informazioni personali.'
     }
   }
 };

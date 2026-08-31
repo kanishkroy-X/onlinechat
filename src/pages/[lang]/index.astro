@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingHero from '../../components/landing/LandingHero.astro';
+import PopularRoomsSection from '../../components/landing/PopularRoomsSection.astro';
+import QuickRulesSection from '../../components/landing/QuickRulesSection.astro';
+import FAQSection from '../../components/landing/FAQSection.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`${siteConfig.name} — ${t.brand.tagline}`}
+  description={t.brand.description}
+  canonical={`${siteConfig.url}/${currentLang}`}
+  lang={currentLang}
+>
+  <!-- Sticky Solid Navigation Bar -->
+  <LandingNavbar lang={currentLang} />
+
+  <!-- Clean, Short & Focused Landing Content -->
+  <main class="flex-1 w-full flex flex-col items-center">
+    <!-- 1. Hero with Quick-Join Setup Card -->
+    <LandingHero lang={currentLang} />
+
+    <!-- 2. Popular Active Topic Rooms -->
+    <PopularRoomsSection lang={currentLang} />
+
+    <!-- 3. Simple Why RandomChat (3 Highlights) -->
+    <QuickRulesSection lang={currentLang} />
+
+    <!-- 4. Concise FAQ -->
+    <FAQSection lang={currentLang} />
+  </main>
+
+  <!-- Clean Footer -->
+  <LandingFooter lang={currentLang} />
+</BaseLayout>

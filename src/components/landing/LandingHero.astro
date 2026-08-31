@@ -1,5 +1,15 @@
 ---
 import Icon from '../icons/Icon.astro';
+import { getLangFromUrl, useTranslatedPath, useTranslations } from '../../i18n/utils';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(currentLang);
+const t = useTranslations(currentLang);
 ---
 
 <section class="w-full pt-4 sm:pt-8 pb-12 sm:pb-16 px-4 flex flex-col items-center justify-center">
@@ -20,15 +30,15 @@ import Icon from '../icons/Icon.astro';
         </div>
 
         <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)] leading-tight">
-          Let’s set you up
+          {t.setup.title}
         </h1>
         <p class="text-xs sm:text-sm text-[var(--text-secondary)] font-normal">
-          Takes 10 seconds. No email needed.
+          {t.hero.subheadline}
         </p>
       </div>
 
       <!-- Quick Setup Form -->
-      <form id="hero-quick-join-form" action="/chat" method="GET" class="flex flex-col gap-4.5">
+      <form id="hero-quick-join-form" action={translatePath('/chat')} method="GET" class="flex flex-col gap-4.5">
         <!-- Hidden Inputs for Form State -->
         <input type="hidden" name="gender" id="input-gender" value="male" />
         <input type="hidden" name="pref" id="input-pref" value="anyone" />
@@ -36,7 +46,7 @@ import Icon from '../icons/Icon.astro';
         <!-- 1. Username Input with Embedded Shuffle / Dice Icon -->
         <div class="flex flex-col gap-1.5">
           <label for="input-nickname" class="text-xs font-bold text-[var(--text-secondary)]">
-            Username
+            {t.setup.nicknameLabel}
           </label>
           <div class="relative flex items-center">
             <input
@@ -44,7 +54,7 @@ import Icon from '../icons/Icon.astro';
               type="text"
               name="nick"
               maxlength="20"
-              placeholder="Choose a nickname"
+              placeholder={t.setup.nicknamePlaceholder}
               autocomplete="off"
               required
               class="w-full pl-3.5 pr-11 py-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-semibold placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-sm"
@@ -72,7 +82,7 @@ import Icon from '../icons/Icon.astro';
         <!-- 2. Gender Selection (High-Contrast Active State with Checkmarks) -->
         <div class="flex flex-col gap-1.5">
           <label class="text-xs font-bold text-[var(--text-secondary)]">
-            Gender
+            {t.setup.genderLabel}
           </label>
           <div class="grid grid-cols-2 gap-2.5">
             <!-- Male Button -->
@@ -88,7 +98,7 @@ import Icon from '../icons/Icon.astro';
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </span>
-              <span>Male</span>
+              <span>{t.setup.male}</span>
             </button>
 
             <!-- Female Button -->
@@ -104,7 +114,7 @@ import Icon from '../icons/Icon.astro';
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </span>
-              <span>Female</span>
+              <span>{t.setup.female}</span>
             </button>
           </div>
         </div>
@@ -113,7 +123,7 @@ import Icon from '../icons/Icon.astro';
         <div class="flex flex-col gap-1.5">
           <div class="flex items-center justify-between">
             <label for="input-country" class="text-xs font-bold text-[var(--text-secondary)]">
-              Country
+              {t.setup.countryLabel}
             </label>
             <span id="country-auto-detected-badge" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -159,7 +169,7 @@ import Icon from '../icons/Icon.astro';
           id="hero-find-match-btn"
           class="w-full mt-1.5 py-3.5 sm:py-4 px-6 rounded-2xl bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
         >
-          <span>Start chatting</span>
+          <span>{t.setup.cta}</span>
           <Icon name="arrow-right" class="w-4.5 h-4.5" />
         </button>
       </form>
@@ -175,9 +185,9 @@ import Icon from '../icons/Icon.astro';
         </div>
         <p class="text-[11px] text-[var(--text-subtle)] leading-relaxed">
           By continuing, you agree to our
-          <a href="/terms" class="text-[var(--text-secondary)] hover:underline font-medium">Terms</a>
+          <a href={translatePath('/terms')} class="text-[var(--text-secondary)] hover:underline font-medium">{t.nav.terms}</a>
           &
-          <a href="/privacy" class="text-[var(--text-secondary)] hover:underline font-medium">Privacy Policy</a>.
+          <a href={translatePath('/privacy')} class="text-[var(--text-secondary)] hover:underline font-medium">{t.nav.privacy}</a>.
         </p>
       </div>
 

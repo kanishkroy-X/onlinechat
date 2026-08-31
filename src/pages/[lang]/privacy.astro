@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations, useTranslatedPath } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`${t.nav.privacy} — ${siteConfig.name}`}
+  description={`${t.nav.privacy} - ${siteConfig.name}`}
+  canonical={`${siteConfig.url}/${currentLang}/privacy`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-12">
+    <div class="flex flex-col gap-6 text-[var(--text-secondary)] text-sm leading-relaxed text-left">
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] mb-2 tracking-tight">
+          {t.nav.privacy}
+        </h1>
+        <p class="text-xs text-[var(--text-muted)]">
+          {siteConfig.name} &bull; {t.footer.disclaimer}
+        </p>
+      </div>
+
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">1. {t.safetyBanner.title}</h2>
+        <p>
+          {t.brand.description}
+        </p>
+      </section>
+
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">2. {t.brand.freeInstant}</h2>
+        <p>
+          {t.safetyBanner.tip3}
+        </p>
+      </section>
+
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">3. {t.nav.safety}</h2>
+        <p>
+          {t.safetyBanner.tip1}
+        </p>
+        <p>
+          {t.safetyBanner.tip2}
+        </p>
+      </section>
+
+      <section class="card-tactile p-6 flex flex-col gap-2">
+        <h2 class="text-base font-bold text-[var(--text-primary)]">4. {t.safetyBanner.ageNotice}</h2>
+        <p>
+          {t.footer.agePolicy}
+        </p>
+      </section>
+
+      <div class="pt-4 border-t border-[var(--border)] flex items-center justify-between">
+        <a href={translatePath('/')} class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline">&larr; {siteConfig.name}</a>
+        <a href={translatePath('/chat')} class="btn-primary text-xs py-2.5 px-5">
+          <span>{t.nav.startChat}</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <LandingFooter lang={currentLang} />
+</BaseLayout>

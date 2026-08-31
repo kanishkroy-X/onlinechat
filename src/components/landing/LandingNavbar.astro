@@ -1,12 +1,17 @@
 ---
 import Icon from '../icons/Icon.astro';
+import LanguagePicker from '../LanguagePicker.astro';
 import { siteConfig } from '../../config/site';
+import { getLangFromUrl, useTranslatedPath, useTranslations } from '../../i18n/utils';
 
 interface Props {
   lang?: string;
 }
 
-const { lang = 'en' } = Astro.props;
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(currentLang);
+const t = useTranslations(currentLang);
 ---
 
 <header class="w-full sticky top-0 z-50 transition-colors">
@@ -31,7 +36,7 @@ const { lang = 'en' } = Astro.props;
         </button>
 
         <!-- Brand Logo -->
-        <a href="/" class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg p-1" aria-label="RandomChat Home">
+        <a href={translatePath('/')} class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg p-1" aria-label="RandomChat Home">
           <div class="w-8 h-8 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
             <Icon name="message-square" class="w-4.5 h-4.5" />
           </div>
@@ -44,14 +49,17 @@ const { lang = 'en' } = Astro.props;
 
       <!-- Desktop Navigation Links -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--text-secondary)]" aria-label="Desktop Navigation">
-        <a href="/chat-rooms" class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
-        <a href="/random-voice-chat" class="hover:text-[var(--text-primary)] transition-colors">Voice Chat</a>
-        <a href="/safety" class="hover:text-[var(--text-primary)] transition-colors">Safety Guidelines</a>
-        <a href="#faq" class="hover:text-[var(--text-primary)] transition-colors">FAQ</a>
+        <a href={translatePath('/chat-rooms')} class="hover:text-[var(--text-primary)] transition-colors">Topic Rooms</a>
+        <a href={translatePath('/random-voice-chat')} class="hover:text-[var(--text-primary)] transition-colors">Voice Chat</a>
+        <a href={translatePath('/safety')} class="hover:text-[var(--text-primary)] transition-colors">{t.nav.safety}</a>
+        <a href="#faq" class="hover:text-[var(--text-primary)] transition-colors">{t.nav.faq}</a>
       </nav>
 
-      <!-- Right Controls: Theme Toggle & Primary CTA -->
-      <div class="flex items-center gap-2.5">
+      <!-- Right Controls: Language Picker, Theme Toggle & Primary CTA -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- Language Selector -->
+        <LanguagePicker variant="header" />
+
         <!-- Theme Switcher -->
         <button
           type="button"
@@ -70,10 +78,10 @@ const { lang = 'en' } = Astro.props;
 
         <!-- Primary CTA -->
         <a
-          href="/chat"
+          href={translatePath('/chat')}
           class="btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 shadow-xs"
         >
-          <span class="hidden sm:inline">Start Chatting</span>
+          <span class="hidden sm:inline">{t.nav.startChat}</span>
           <span class="sm:hidden">Chat</span>
           <Icon name="arrow-right" class="w-3.5 h-3.5" />
         </a>
@@ -88,31 +96,31 @@ const { lang = 'en' } = Astro.props;
     aria-label="Mobile Navigation"
   >
     <nav class="flex flex-col gap-1 text-sm font-semibold text-[var(--text-primary)]">
-      <a href="/chat" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] text-[var(--primary)] font-bold transition-colors">
+      <a href={translatePath('/chat')} class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] text-[var(--primary)] font-bold transition-colors">
         <span>1-on-1 Text Chat</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--primary)]" />
       </a>
-      <a href="/chat-rooms" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
+      <a href={translatePath('/chat-rooms')} class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
         <span>Topic Rooms</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
       </a>
-      <a href="/random-voice-chat" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
+      <a href={translatePath('/random-voice-chat')} class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
         <span>Voice Chat</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
       </a>
-      <a href="/safety" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
-        <span>Safety & Privacy</span>
+      <a href={translatePath('/safety')} class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
+        <span>{t.nav.safety}</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
       </a>
       <a href="#faq" class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] transition-colors">
-        <span>FAQ</span>
+        <span>{t.nav.faq}</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--text-muted)]" />
       </a>
     </nav>
 
     <div class="pt-3 border-t border-[var(--border)] flex flex-col gap-2.5">
-      <a href="/chat" class="btn-primary text-sm py-3 text-center w-full">
-        <span>Start Chatting Free</span>
+      <a href={translatePath('/chat')} class="btn-primary text-sm py-3 text-center w-full">
+        <span>{t.hero.cta}</span>
         <Icon name="arrow-right" class="w-4 h-4" />
       </a>
       <div class="text-[11px] text-[var(--text-muted)] text-center">

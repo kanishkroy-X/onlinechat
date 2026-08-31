@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LandingNavbar from '../../components/landing/LandingNavbar.astro';
+import LandingFooter from '../../components/landing/LandingFooter.astro';
+import Icon from '../../components/icons/Icon.astro';
+import { siteConfig } from '../../config/site';
+import { useTranslations, useTranslatedPath } from '../../i18n/utils';
+import type { SupportedLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const currentLang = (lang || 'en') as SupportedLang;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title={`${t.nav.safety} — ${siteConfig.name}`}
+  description={`${t.safetyBanner.title} - ${t.safetyBanner.tip1}`}
+  canonical={`${siteConfig.url}/${currentLang}/safety`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <main class="flex-1 max-w-4xl mx-auto px-4 py-12 flex flex-col gap-10">
+    <!-- Header with Shield Visual -->
+    <div class="card-tactile p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-8 text-center sm:text-left">
+      <div class="w-20 h-20 rounded-2xl bg-[var(--primary-soft)] border border-[var(--primary)]/30 flex items-center justify-center relative shrink-0 text-[var(--primary)]">
+        <Icon name="shield-check" class="w-10 h-10" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold w-fit mx-auto sm:mx-0">
+          <Icon name="shield-check" class="w-3.5 h-3.5" />
+          <span>{t.safetyBanner.ageNotice}</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
+          {t.safetyBanner.title}
+        </h1>
+        <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-xl">
+          {t.brand.description}
+        </p>
+
+        <!-- Quick CTAs -->
+        <div class="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+          <a href={translatePath('/chat')} class="btn-primary text-xs py-2.5 px-5">
+            <span>{t.nav.startChat}</span>
+            <Icon name="arrow-right" class="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Safety Guidelines Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--primary)] font-bold text-sm">
+          <span>01</span>
+          <h2 class="text-base text-[var(--text-primary)]">{t.nav.privacy}</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          {t.safetyBanner.tip1}
+        </p>
+      </div>
+
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--primary)] font-bold text-sm">
+          <span>02</span>
+          <h2 class="text-base text-[var(--text-primary)]">{t.chat.report} & {t.chat.block}</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          {t.safetyBanner.tip2}
+        </p>
+      </div>
+
+      <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
+        <div class="flex items-center gap-2 text-[var(--primary)] font-bold text-sm">
+          <span>03</span>
+          <h2 class="text-base text-[var(--text-primary)]">{t.brand.freeInstant}</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+          {t.safetyBanner.tip3}
+        </p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="pt-6 border-t border-[var(--border)] flex items-center justify-between">
+      <a href={translatePath('/')} class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline">&larr; {siteConfig.name}</a>
+      <a href={translatePath('/chat')} class="btn-primary text-xs py-2.5 px-5">
+        <span>{t.nav.startChat}</span>
+        <Icon name="arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  </main>
+
+  <LandingFooter lang={currentLang} />
+</BaseLayout>
