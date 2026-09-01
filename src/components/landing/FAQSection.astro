@@ -62,7 +62,23 @@ const LOCALIZED_FAQS: Record<string, { q: string; a: string }[]> = {
 };
 
 const FAQS = LOCALIZED_FAQS[currentLang] || LOCALIZED_FAQS.en;
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": FAQS.map(faq => ({
+    "@type": "Question",
+    "name": faq.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.a
+    }
+  }))
+};
 ---
+
+<!-- FAQPage Structured Data (JSON-LD) for Search Engine Rich Snippets -->
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
 <section id="faq" class="w-full py-8 sm:py-12 px-4 bg-[var(--bg-surface-elevated)]/30 border-t border-[var(--border)]">
   <div class="max-w-3xl mx-auto flex flex-col items-center gap-6">

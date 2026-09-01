@@ -8,6 +8,25 @@ import { siteConfig } from '../config/site';
 import { getLangFromUrl } from '../i18n/utils';
 
 const currentLang = Astro.currentLocale || getLangFromUrl(Astro.url) || 'en';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": siteConfig.url
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Safety Guidelines",
+      "item": `${siteConfig.url}/safety`
+    }
+  ]
+};
 ---
 
 <BaseLayout
@@ -16,9 +35,12 @@ const currentLang = Astro.currentLocale || getLangFromUrl(Astro.url) || 'en';
   canonical={`${siteConfig.url}/safety`}
   lang={currentLang}
 >
+  <!-- Breadcrumb Schema for Search Rich Results -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
   <LandingNavbar lang={currentLang} />
 
-  <main class="flex-1 max-w-4xl mx-auto px-4 py-12 flex flex-col gap-10">
+  <main id="main-content" tabindex="-1" class="flex-1 max-w-4xl mx-auto px-4 py-12 flex flex-col gap-10 outline-none">
     <!-- Header with Shield Visual -->
     <div class="card-tactile p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-8 text-center sm:text-left">
       <div class="w-20 h-20 rounded-2xl bg-[var(--primary-soft)] border border-[var(--primary)]/30 flex items-center justify-center relative shrink-0 text-[var(--primary)]">

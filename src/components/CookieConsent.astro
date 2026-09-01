@@ -12,11 +12,11 @@ const { lang = 'en' } = Astro.props;
   id="cookie-consent-banner"
   class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-modal-in"
   role="region"
-  aria-label="Cookie consent banner"
+  aria-label="Cookie and privacy preferences banner"
 >
-  <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)]/95 backdrop-blur-xl p-5 shadow-2xl flex flex-col gap-3.5">
+  <div class="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)]/95 backdrop-blur-xl p-5 shadow-2xl flex flex-col gap-3.5">
     <div class="flex items-start gap-3">
-      <div class="w-9 h-9 rounded-xl bg-[#FF808A]/15 text-[#FF808A] flex items-center justify-center shrink-0">
+      <div class="w-9 h-9 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] flex items-center justify-center shrink-0">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 2a10 10 0 0 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
@@ -27,10 +27,10 @@ const { lang = 'en' } = Astro.props;
         </svg>
       </div>
       <div class="flex flex-col gap-1">
-        <h3 class="text-sm font-bold text-[var(--text-main)]">Cookie & Privacy Preferences</h3>
-        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+        <h3 class="text-sm font-bold text-[var(--text-primary)]">Cookie & Privacy Preferences</h3>
+        <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
           We use essential session cookies to enable matchmaking and anonymous chat. Optional analytics help us improve platform performance. Read our
-          <a href="/cookie-policy" class="text-[#FF808A] underline hover:opacity-80 transition-opacity">Cookie Policy</a>.
+          <a href="/cookie-policy" class="text-[var(--primary)] underline hover:opacity-80 transition-opacity">Cookie Policy</a>.
         </p>
       </div>
     </div>
@@ -39,14 +39,16 @@ const { lang = 'en' } = Astro.props;
       <button
         id="cookie-essential-btn"
         type="button"
-        class="px-3 py-1.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-page)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-muted)] text-xs font-semibold transition-colors cursor-pointer"
+        class="px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-semibold transition-colors cursor-pointer"
+        aria-label="Accept essential cookies only"
       >
         Essential Only
       </button>
       <button
         id="cookie-accept-all-btn"
         type="button"
-        class="gradient-accent gradient-accent-hover text-white px-4 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+        class="btn-primary text-white px-4 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+        aria-label="Accept all cookies"
       >
         Accept All
       </button>

@@ -123,6 +123,24 @@ const languageList = Object.entries(languages) as [SupportedLang, string][];
       });
     });
 
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        containers.forEach(container => {
+          const dropdown = container.querySelector('.lang-picker-dropdown');
+          const toggle = container.querySelector('.lang-picker-toggle') as HTMLElement | null;
+          const chevron = container.querySelector('.lang-chevron');
+          if (dropdown && !dropdown.classList.contains('hidden')) {
+            dropdown.classList.add('hidden');
+            toggle?.setAttribute('aria-expanded', 'false');
+            chevron?.classList.remove('-rotate-90');
+            chevron?.classList.add('rotate-90');
+            toggle?.focus();
+          }
+        });
+      }
+    });
+
     // Close when clicking outside
     document.addEventListener('click', (e) => {
       containers.forEach(container => {

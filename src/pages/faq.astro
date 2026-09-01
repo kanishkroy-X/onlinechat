@@ -23,15 +23,36 @@ const FAQS = [
 
 const schemaJson = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": FAQS.map(faq => ({
-    "@type": "Question",
-    "name": faq.q,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": faq.a
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": siteConfig.url
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "FAQ",
+          "item": `${siteConfig.url}/faq`
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": FAQS.map(faq => ({
+        "@type": "Question",
+        "name": faq.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.a
+        }
+      }))
     }
-  }))
+  ]
 };
 ---
 
@@ -44,7 +65,7 @@ const schemaJson = {
   <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
   <LandingNavbar lang={currentLang} />
 
-  <main class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-10">
+  <main id="main-content" tabindex="-1" class="flex-1 max-w-3xl mx-auto px-4 py-12 flex flex-col gap-10 outline-none">
     <div class="text-center max-w-xl mx-auto flex flex-col items-center gap-2">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">
         <Icon name="help-circle" class="w-3.5 h-3.5" />

@@ -6,6 +6,25 @@ import Icon from '../components/icons/Icon.astro';
 import { siteConfig } from '../config/site';
 
 const lang = 'en';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": siteConfig.url
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "How It Works",
+      "item": `${siteConfig.url}/how-it-works`
+    }
+  ]
+};
 ---
 
 <BaseLayout
@@ -14,9 +33,12 @@ const lang = 'en';
   canonical={`${siteConfig.url}/how-it-works`}
   lang={lang}
 >
+  <!-- Breadcrumb Schema for Search Rich Results -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
   <LandingNavbar lang={lang} />
 
-  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-12 flex flex-col gap-12">
+  <main id="main-content" tabindex="-1" class="flex-1 w-full max-w-4xl mx-auto px-4 py-12 flex flex-col gap-12 outline-none">
     <!-- Hero Intro -->
     <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-3">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold">

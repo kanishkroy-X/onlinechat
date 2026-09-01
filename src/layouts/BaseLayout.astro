@@ -48,13 +48,15 @@ const alternateOgLocales = Object.entries(languageOgLocales)
       <link rel="alternate" hreflang={item.lang} href={item.url} />
     ))}
 
-    <!-- Google Fonts: Inter (Optimized Non-Blocking) -->
+    <!-- Preconnect & DNS-Prefetch for Font Delivery Performance -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" />
     </noscript>
 
     <!-- SEO & Metadata -->
@@ -63,9 +65,9 @@ const alternateOgLocales = Object.entries(languageOgLocales)
     {noindex ? (
       <meta name="robots" content="noindex, nofollow" />
     ) : (
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     )}
-    <meta name="theme-color" content="#0B111A" />
+    <meta name="theme-color" content="#0E1015" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -88,17 +90,40 @@ const alternateOgLocales = Object.entries(languageOgLocales)
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": siteConfig.name,
-      "url": siteConfig.url,
-      "description": siteConfig.description,
-      "applicationCategory": "CommunicationApplication",
-      "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": `${siteConfig.url}/#website`,
+          "url": siteConfig.url,
+          "name": siteConfig.name,
+          "description": siteConfig.description,
+          "inLanguage": currentLang,
+          "potentialAction": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${siteConfig.url}/chat`,
+            "actionPlatform": [
+              "http://schema.org/DesktopWebPlatform",
+              "http://schema.org/MobileWebPlatform"
+            ]
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": `${siteConfig.url}/#webapp`,
+          "name": siteConfig.name,
+          "url": siteConfig.url,
+          "description": siteConfig.description,
+          "applicationCategory": "CommunicationApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "inLanguage": currentLang,
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      ]
     })} />
 
     <!-- Zero-FOUC Theme & Language Script -->
@@ -120,6 +145,9 @@ const alternateOgLocales = Object.entries(languageOgLocales)
     </script>
   </head>
   <body class="min-h-screen flex flex-col antialiased bg-[var(--bg-page)] text-[var(--text-primary)] font-sans selection:bg-[var(--primary)] selection:text-white">
+    <!-- Accessible Skip to Main Content Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Accessible Screen Reader Announcer -->
     <div id="sr-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 

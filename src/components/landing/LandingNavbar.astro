@@ -26,6 +26,7 @@ const t = useTranslations(currentLang);
           class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
+          aria-controls="landing-mobile-drawer"
         >
           <span id="menu-icon-open">
             <Icon name="menu" class="w-5 h-5" />
@@ -153,12 +154,29 @@ const t = useTranslations(currentLang);
     iconClose?.classList.toggle('hidden', !!isHidden);
   });
 
+  const closeMobileMenu = () => {
+    mobileDrawer?.classList.add('hidden');
+    mobileToggle?.setAttribute('aria-expanded', 'false');
+    iconOpen?.classList.remove('hidden');
+    iconClose?.classList.add('hidden');
+  };
+
   navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      mobileDrawer?.classList.add('hidden');
-      mobileToggle?.setAttribute('aria-expanded', 'false');
-      iconOpen?.classList.remove('hidden');
-      iconClose?.classList.add('hidden');
-    });
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
+      closeMobileMenu();
+      (mobileToggle as HTMLElement | null)?.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
+      if (!mobileDrawer.contains(e.target as Node) && !mobileToggle?.contains(e.target as Node)) {
+        closeMobileMenu();
+      }
+    }
   });
 </script>
