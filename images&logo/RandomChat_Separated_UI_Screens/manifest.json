@@ -55,28 +55,6 @@
     ]
   },
   {
-    "file": "06_mobile_random_voice_matching.png",
-    "description": "Mobile Random Voice matching",
-    "source": "01_core_flows",
-    "crop": [
-      1298,
-      10,
-      1524,
-      486
-    ]
-  },
-  {
-    "file": "07_mobile_active_chat.png",
-    "description": "Mobile active chat",
-    "source": "01_core_flows",
-    "crop": [
-      1065,
-      496,
-      1286,
-      1008
-    ]
-  },
-  {
     "file": "08_mobile_disconnected.png",
     "description": "Mobile disconnected",
     "source": "01_core_flows",

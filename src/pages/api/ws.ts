@@ -23,11 +23,9 @@ export const GET: APIRoute = async ({ request }) => {
   const blockedSessionIds = blockedRaw ? blockedRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   // Cloudflare WebSocket Pair
-  // @ts-expect-error WebSocketPair is standard in Cloudflare Workers
   const pair = new WebSocketPair();
   const [clientSocket, serverSocket] = Object.values(pair) as [WebSocket, WebSocket];
 
-  // @ts-expect-error accept() method on server WebSocket in Cloudflare Workers
   serverSocket.accept();
 
   const coordinator = ChatCoordinator.getInstance();
@@ -118,7 +116,6 @@ export const GET: APIRoute = async ({ request }) => {
 
   return new Response(null, {
     status: 101,
-    // @ts-expect-error webSocket property in Cloudflare Response
     webSocket: clientSocket
   });
 };

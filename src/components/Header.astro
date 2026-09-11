@@ -1,5 +1,6 @@
 ---
 import { getTranslations, SUPPORTED_LANGUAGES } from '../i18n/translations';
+import Logo from './Logo.astro';
 
 interface Props {
   lang?: string;
@@ -30,16 +31,8 @@ const t = getTranslations(lang);
         </button>
 
         <!-- Brand Logo -->
-        <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF808A] rounded-lg p-1">
-          <div class="w-9 h-9 rounded-xl gradient-accent flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-            </svg>
-          </div>
-          <div class="flex items-baseline font-bold text-xl tracking-tight">
-            <span class="text-[var(--text-primary)]">Random</span>
-            <span class="text-[var(--primary)]">Chat</span>
-          </div>
+        <a href="/" class="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E11D48] rounded-lg p-1" aria-label="RandomChat Home">
+          <Logo class="w-9 h-9" withText={true} />
         </a>
       </div>
 

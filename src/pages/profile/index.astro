@@ -79,6 +79,27 @@ const t = getTranslations(lang);
         </div>
       </div>
 
+      <!-- Skills & Talents Section -->
+      <div class="flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[var(--text-subtle)] flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-[#6C4DFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            Skills & Talents
+          </span>
+          <span class="text-[10px] font-semibold text-[#6C4DFF] bg-[#6C4DFF]/10 px-2 py-0.5 rounded-full">Top Competencies</span>
+        </div>
+        <div id="profile-skills-list" class="flex flex-wrap gap-2">
+          {['TypeScript', 'UI/UX Design', 'Astro', 'Tailwind CSS', 'Sound Design'].map(skill => (
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#6C4DFF]/10 border border-[#6C4DFF]/25 text-xs font-bold text-[#6C4DFF] dark:text-[#A78BFA] shadow-2xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#6C4DFF]"></span>
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
+
       <!-- Interests Tags -->
       <div class="flex flex-col gap-2">
         <span class="text-[11px] font-bold uppercase tracking-wider text-[var(--text-subtle)]">Interests</span>
@@ -108,3 +129,36 @@ const t = getTranslations(lang);
 
   <Footer lang={lang} />
 </BaseLayout>
+
+<script>
+  // Hydrate profile data from localStorage if available
+  try {
+    const savedSkills = localStorage.getItem('randomchat_profile_skills');
+    if (savedSkills) {
+      const skills = JSON.parse(savedSkills);
+      const container = document.getElementById('profile-skills-list');
+      if (container && Array.isArray(skills) && skills.length > 0) {
+        container.innerHTML = skills.map((s: string) => `
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#6C4DFF]/10 border border-[#6C4DFF]/25 text-xs font-bold text-[#6C4DFF] dark:text-[#A78BFA] shadow-2xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#6C4DFF]"></span>
+            ${s}
+          </span>
+        `).join('');
+      }
+    }
+
+    const savedUsername = localStorage.getItem('randomchat_profile_username');
+    if (savedUsername) {
+      const h1 = document.querySelector('h1');
+      if (h1) h1.textContent = savedUsername;
+    }
+
+    const savedBio = localStorage.getItem('randomchat_profile_bio');
+    if (savedBio) {
+      const bioEl = document.querySelector('main p');
+      if (bioEl) bioEl.textContent = savedBio;
+    }
+  } catch (err) {
+    console.error('Failed to load profile from localStorage:', err);
+  }
+</script>

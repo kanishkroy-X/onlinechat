@@ -1,25 +1,28 @@
 ---
-import { getTranslations } from '../i18n/translations';
+import CountrySelector from './CountrySelector.astro';
 
 interface Props {
   lang?: string;
 }
 
 const { lang = 'en' } = Astro.props;
-const t = getTranslations(lang);
+const ages = Array.from({ length: 73 }, (_, i) => i + 18);
 ---
 
-<div id="setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col gap-6 relative animate-in fade-in zoom-in-95 duration-200">
+<div id="setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm transition-opacity" role="dialog" aria-modal="true">
+  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5 relative animate-in fade-in zoom-in-95 duration-200">
     <!-- Modal Header -->
-    <div class="flex items-center justify-between">
-      <h2 class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
-        {t.setup.title}
-      </h2>
+    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3.5">
+      <div class="flex flex-col">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-[#FF808A]">Temporary Guest Setup</span>
+        <h2 class="text-xl font-black text-[var(--text-primary)] tracking-tight">
+          Enter RandomChat
+        </h2>
+      </div>
       <button
         id="setup-close-btn"
         type="button"
-        class="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-elevated)] transition-colors focus-visible:ring-2 focus-visible:ring-[#FF808A] cursor-pointer"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors cursor-pointer"
         aria-label="Close setup"
       >
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -29,87 +32,132 @@ const t = getTranslations(lang);
       </button>
     </div>
 
-    <!-- Form -->
-    <form id="setup-form" class="flex flex-col gap-5">
-      <!-- Nickname Input -->
+    <!-- Mandatory Notice -->
+    <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+      Please provide your temporary details to enter the chat. <span class="text-rose-500 font-bold">*All fields are mandatory.</span> Zero accounts or emails required.
+    </p>
+
+    <!-- Setup Form -->
+    <form id="setup-form" class="flex flex-col gap-4">
+      <!-- 1. Mandatory Username Input with Dice Randomizer -->
       <div class="flex flex-col gap-1.5">
-        <label for="setup-nickname" class="text-sm font-semibold text-[var(--text-main)]">
-          {t.setup.nicknameLabel}
+        <div class="flex items-center justify-between">
+          <label for="setup-nickname" class="text-xs font-bold text-[var(--text-primary)]">
+            Username <span class="text-rose-500">*</span>
+          </label>
+          <span class="text-[10px] text-[var(--text-muted)] font-mono">3–20 characters</span>
+        </div>
+        <div class="relative flex items-center">
+          <input
+            id="setup-nickname"
+            type="text"
+            name="nick"
+            minlength="3"
+            maxlength="20"
+            placeholder="e.g. EchoRider72"
+            autocomplete="off"
+            required
+            class="w-full pl-3.5 pr-11 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-semibold placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[#FF808A] text-sm transition-all"
+          />
+          <button
+            type="button"
+            id="modal-dice-btn"
+            class="absolute right-2 w-7 h-7 rounded-lg bg-[var(--bg-surface)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[#FF808A] flex items-center justify-center transition-all cursor-pointer"
+            title="Randomize Nickname"
+            aria-label="Generate Random Nickname"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="4" />
+              <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+              <circle cx="16" cy="8" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="8" cy="16" r="1.5" fill="currentColor" />
+              <circle cx="16" cy="16" r="1.5" fill="currentColor" />
+            </svg>
+          </button>
+        </div>
+        <span id="setup-nickname-error" class="hidden text-xs text-rose-500 font-medium"></span>
+      </div>
+
+      <!-- 2. Mandatory Age & Gender Grid -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Age -->
+        <div class="flex flex-col gap-1.5">
+          <label for="setup-age" class="text-xs font-bold text-[var(--text-primary)]">
+            Age (18+) <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <select
+              id="setup-age"
+              name="age"
+              required
+              class="w-full px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF808A] transition-all cursor-pointer appearance-none"
+            >
+              <option value="" disabled selected>Select age</option>
+              {ages.map((a) => (
+                <option value={a}>{a} yrs</option>
+              ))}
+            </select>
+            <svg class="w-4 h-4 text-[var(--text-secondary)] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <span id="setup-age-error" class="hidden text-xs text-rose-500 font-medium">Please select your age</span>
+        </div>
+
+        <!-- Gender -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-[var(--text-primary)]">
+            Gender <span class="text-rose-500">*</span>
+          </label>
+          <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)]">
+            <button
+              type="button"
+              id="modal-gender-male"
+              class="modal-gender-btn py-2 rounded-lg text-xs font-bold transition-all bg-[var(--bg-surface)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs cursor-pointer"
+              data-gender="male"
+            >
+              Male
+            </button>
+            <button
+              type="button"
+              id="modal-gender-female"
+              class="modal-gender-btn py-2 rounded-lg text-xs font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+              data-gender="female"
+            >
+              Female
+            </button>
+          </div>
+          <input type="hidden" id="modal-gender-input" name="gender" value="male" />
+        </div>
+      </div>
+
+      <!-- 3. Mandatory Country Selector -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-bold text-[var(--text-primary)]">
+          Country <span class="text-rose-500">*</span>
         </label>
-        <input
-          id="setup-nickname"
-          type="text"
-          name="nickname"
-          maxlength="20"
-          placeholder={t.setup.nicknamePlaceholder}
-          autocomplete="off"
-          required
-          class="w-full px-4 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-page)] text-[var(--text-main)] placeholder:text-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#D55882] focus:border-transparent transition-all text-sm"
+        <CountrySelector
+          id="modal-country"
+          name="country"
+          value=""
+          label=""
+          allowAll={false}
         />
-        <span id="setup-nickname-error" class="hidden text-xs text-red-500 font-medium"></span>
+        <span id="setup-country-error" class="hidden text-xs text-rose-500 font-medium">Please select your country (mandatory)</span>
       </div>
 
-      <!-- Gender Selection -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-[var(--text-main)]">
-          {t.setup.genderLabel}
-        </label>
-        <div class="grid grid-cols-2 gap-3 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
-          <button
-            type="button"
-            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
-            data-gender="male"
-          >
-            {t.setup.male}
-          </button>
-          <button
-            type="button"
-            class="gender-btn py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
-            data-gender="female"
-          >
-            {t.setup.female}
-          </button>
-        </div>
-      </div>
+      <!-- 4. Mandatory Error Banner -->
+      <div id="setup-form-error" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-xs font-semibold"></div>
 
-      <!-- Match Preference -->
-      <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-[var(--text-main)]">
-          {t.setup.preferenceLabel}
-        </label>
-        <div class="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
-          <button
-            type="button"
-            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-white gradient-accent shadow-sm cursor-pointer"
-            data-pref="anyone"
-          >
-            {t.setup.anyone}
-          </button>
-          <button
-            type="button"
-            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
-            data-pref="male"
-          >
-            {t.setup.male}
-          </button>
-          <button
-            type="button"
-            class="pref-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
-            data-pref="female"
-          >
-            {t.setup.female}
-          </button>
-        </div>
-      </div>
-
-      <!-- Submit CTA -->
+      <!-- Submit Button -->
       <button
         id="setup-submit-btn"
         type="submit"
-        class="mt-2 w-full gradient-accent gradient-accent-hover text-white font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-[#D55882]/25 hover:shadow-xl hover:shadow-[#D55882]/40 transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-4 focus-visible:ring-[#FF808A]/40"
+        class="mt-2 w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
       >
-        <span>{t.setup.cta}</span>
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <span id="setup-submit-label">Enter People Lobby</span>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"></line>
           <polyline points="12 5 19 12 12 19"></polyline>
         </svg>
@@ -117,3 +165,260 @@ const t = getTranslations(lang);
     </form>
   </div>
 </div>
+
+<script>
+  let modalSelectedGender = 'male';
+  let targetDestination = '/people';
+
+  const modal = document.getElementById('setup-modal');
+  const closeBtn = document.getElementById('setup-close-btn');
+  const modalForm = document.getElementById('setup-form') as HTMLFormElement | null;
+  const modalNickInput = document.getElementById('setup-nickname') as HTMLInputElement | null;
+  const modalAgeSelect = document.getElementById('setup-age') as HTMLSelectElement | null;
+  const modalGenderInput = document.getElementById('modal-gender-input') as HTMLInputElement | null;
+  const modalCountryInput = document.getElementById('modal-country-input') as HTMLInputElement | null;
+  const modalGenderBtns = document.querySelectorAll('.modal-gender-btn');
+  const diceBtn = document.getElementById('modal-dice-btn');
+  const submitLabel = document.getElementById('setup-submit-label');
+  const formErrorBanner = document.getElementById('setup-form-error');
+
+  const nickError = document.getElementById('setup-nickname-error');
+  const ageError = document.getElementById('setup-age-error');
+  const countryError = document.getElementById('setup-country-error');
+  const countryTrigger = document.getElementById('modal-country-trigger');
+
+  function generateRandomNick() {
+    const prefixes = ['Star', 'Echo', 'Neon', 'Sky', 'Drift', 'Nova', 'Pulse', 'Wave', 'Frost', 'Amber', 'Brave', 'Cosmic'];
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const num = Math.floor(100 + Math.random() * 900);
+    return `${prefix}${num}`;
+  }
+
+  // Pre-fill only if user previously saved a session, otherwise leave empty so user enters it
+  const saved = sessionStorage.getItem('rc_guest_session');
+  if (saved) {
+    try {
+      const p = JSON.parse(saved);
+      if (p.nickname && modalNickInput) modalNickInput.value = p.nickname;
+      if (p.age && modalAgeSelect) modalAgeSelect.value = String(p.age);
+      if (p.gender) {
+        modalSelectedGender = p.gender;
+        if (modalGenderInput) modalGenderInput.value = p.gender;
+      }
+    } catch {}
+  }
+
+  // Dice button to generate a random nickname on demand
+  diceBtn?.addEventListener('click', () => {
+    if (modalNickInput) {
+      modalNickInput.value = generateRandomNick();
+      nickError?.classList.add('hidden');
+      modalNickInput.classList.remove('border-rose-500');
+      modalNickInput.focus();
+    }
+  });
+
+  // Clear errors dynamically on user input
+  modalNickInput?.addEventListener('input', () => {
+    if ((modalNickInput.value || '').trim().length >= 3) {
+      nickError?.classList.add('hidden');
+      modalNickInput.classList.remove('border-rose-500');
+    }
+  });
+
+  modalAgeSelect?.addEventListener('change', () => {
+    if (modalAgeSelect.value && parseInt(modalAgeSelect.value, 10) >= 18) {
+      ageError?.classList.add('hidden');
+      modalAgeSelect.classList.remove('border-rose-500');
+    }
+  });
+
+  modalCountryInput?.addEventListener('change', () => {
+    if (modalCountryInput.value && modalCountryInput.value !== 'all') {
+      countryError?.classList.add('hidden');
+      countryTrigger?.classList.remove('border-rose-500');
+    }
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    modal?.classList.add('hidden');
+  });
+
+  // Close on backdrop click
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+
+  modalGenderBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      modalSelectedGender = target.dataset.gender || 'male';
+      if (modalGenderInput) modalGenderInput.value = modalSelectedGender;
+
+      modalGenderBtns.forEach(b => {
+        b.className = 'modal-gender-btn py-2 rounded-lg text-xs font-semibold transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer';
+      });
+      target.className = 'modal-gender-btn py-2 rounded-lg text-xs font-bold transition-all bg-[var(--bg-surface)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs cursor-pointer';
+    });
+  });
+
+  // Global helper to open setup modal with destination defaulting to People Lobby
+  (window as any).openSetupModal = function(destination = '/people') {
+    targetDestination = destination;
+    if (submitLabel) {
+      submitLabel.textContent = 'Enter People Lobby';
+    }
+    // Clear previous error states
+    formErrorBanner?.classList.add('hidden');
+    nickError?.classList.add('hidden');
+    ageError?.classList.add('hidden');
+    countryError?.classList.add('hidden');
+    modalNickInput?.classList.remove('border-rose-500');
+    modalAgeSelect?.classList.remove('border-rose-500');
+    countryTrigger?.classList.remove('border-rose-500');
+
+    modal?.classList.remove('hidden');
+    modalNickInput?.focus();
+  };
+
+  // Check URL params for auto-open (e.g. /?openSetup=true&target=/people)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('openSetup') === 'true') {
+    const target = urlParams.get('target') || '/people';
+    (window as any).openSetupModal(target);
+  }
+
+  // Intercept CTA button clicks on landing page
+  function wireLandingButtons() {
+    const startRandomBtn = document.getElementById('hero-start-random-btn');
+    const browsePeopleBtn = document.getElementById('hero-browse-people-btn');
+    const navStartBtn = document.getElementById('nav-start-chat-btn');
+    const mobileNavStartBtn = document.getElementById('mobile-nav-start-chat-btn');
+    const mobileNavStartLink = document.getElementById('mobile-nav-start-link');
+
+    function handleClick(e: Event, dest: string) {
+      const session = sessionStorage.getItem('rc_guest_session');
+      if (session) {
+        try {
+          const parsed = JSON.parse(session);
+          if (parsed.nickname && parsed.nickname.trim().length >= 3 && parsed.age && Number(parsed.age) >= 18 && parsed.country && parsed.country !== 'all') {
+            // Valid session exists, allow entry
+            window.location.href = dest;
+            return;
+          }
+        } catch {}
+      }
+      // Mandatory setup required: block entry and open setup modal
+      e.preventDefault();
+      (window as any).openSetupModal(dest);
+    }
+
+    startRandomBtn?.addEventListener('click', (e) => handleClick(e, '/people'));
+    browsePeopleBtn?.addEventListener('click', (e) => handleClick(e, '/people'));
+    navStartBtn?.addEventListener('click', (e) => handleClick(e, '/people'));
+    mobileNavStartBtn?.addEventListener('click', (e) => handleClick(e, '/people'));
+    mobileNavStartLink?.addEventListener('click', (e) => handleClick(e, '/people'));
+
+    // Also guard topic room cards on landing page
+    document.querySelectorAll<HTMLAnchorElement>('a[href*="/chat-rooms/"]').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const dest = card.pathname || '/chat-rooms';
+        handleClick(e, dest);
+      });
+    });
+  }
+
+  wireLandingButtons();
+  document.addEventListener('astro:page-load', wireLandingButtons);
+
+  // Form Submission Validation
+  modalForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const nick = (modalNickInput?.value || '').trim();
+    const ageVal = modalAgeSelect?.value || '';
+    const age = parseInt(ageVal, 10);
+    const gender = modalSelectedGender;
+    const country = (modalCountryInput?.value || '').trim();
+
+    let hasError = false;
+
+    // 1. Mandatory Username
+    if (!nick) {
+      if (nickError) {
+        nickError.textContent = 'Username is mandatory.';
+        nickError.classList.remove('hidden');
+      }
+      modalNickInput?.classList.add('border-rose-500');
+      hasError = true;
+    } else if (nick.length < 3) {
+      if (nickError) {
+        nickError.textContent = 'Username must be at least 3 characters long.';
+        nickError.classList.remove('hidden');
+      }
+      modalNickInput?.classList.add('border-rose-500');
+      hasError = true;
+    } else {
+      nickError?.classList.add('hidden');
+      modalNickInput?.classList.remove('border-rose-500');
+    }
+
+    // 2. Mandatory Age (18+)
+    if (!ageVal || isNaN(age) || age < 18) {
+      if (ageError) {
+        ageError.textContent = 'Age is mandatory (must be 18+).';
+        ageError.classList.remove('hidden');
+      }
+      modalAgeSelect?.classList.add('border-rose-500');
+      hasError = true;
+    } else {
+      ageError?.classList.add('hidden');
+      modalAgeSelect?.classList.remove('border-rose-500');
+    }
+
+    // 3. Mandatory Country
+    if (!country || country.toLowerCase() === 'all') {
+      if (countryError) {
+        countryError.textContent = 'Country selection is mandatory.';
+        countryError.classList.remove('hidden');
+      }
+      countryTrigger?.classList.add('border-rose-500');
+      hasError = true;
+    } else {
+      countryError?.classList.add('hidden');
+      countryTrigger?.classList.remove('border-rose-500');
+    }
+
+    if (hasError) {
+      if (formErrorBanner) {
+        formErrorBanner.textContent = 'Please fill in all mandatory fields (Username, Age 18+, and Country) to enter.';
+        formErrorBanner.classList.remove('hidden');
+      }
+      return;
+    }
+
+    formErrorBanner?.classList.add('hidden');
+
+    const sessionId = sessionStorage.getItem('rc_session_id') || `sess_${crypto.randomUUID()}`;
+    const session = {
+      sessionId,
+      nickname: nick,
+      age,
+      gender,
+      country,
+      status: 'ONLINE',
+      createdAt: Date.now()
+    };
+
+    sessionStorage.setItem('rc_guest_session', JSON.stringify(session));
+    sessionStorage.setItem('rc_session_id', sessionId);
+    sessionStorage.setItem('rc_nickname', nick);
+    sessionStorage.setItem('rc_age_verified_18', 'true');
+    localStorage.setItem('rc_safety_agreed', 'true');
+
+    modal?.classList.add('hidden');
+    window.location.href = targetDestination;
+  });
+</script>

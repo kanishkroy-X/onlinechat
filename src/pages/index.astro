@@ -6,6 +6,7 @@ import PopularRoomsSection from '../components/landing/PopularRoomsSection.astro
 import QuickRulesSection from '../components/landing/QuickRulesSection.astro';
 import FAQSection from '../components/landing/FAQSection.astro';
 import LandingFooter from '../components/landing/LandingFooter.astro';
+import SetupModal from '../components/SetupModal.astro';
 import { siteConfig } from '../config/site';
 
 export const prerender = true;
@@ -36,4 +37,7 @@ export const prerender = true;
 
   <!-- Clean Footer -->
   <LandingFooter />
+
+  <!-- Mandatory Guest Setup Modal -->
+  <SetupModal />
 </BaseLayout>

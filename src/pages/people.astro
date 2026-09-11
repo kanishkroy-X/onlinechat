@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LandingNavbar from '../components/landing/LandingNavbar.astro';
+import PeopleList from '../components/PeopleList.astro';
+import FilterPanel from '../components/FilterPanel.astro';
+import ActiveChat from '../components/ActiveChat.astro';
+import CallModals from '../components/CallModals.astro';
+import { siteConfig } from '../config/site';
+
+const currentLang = 'en';
+---
+
+<BaseLayout
+  title={`People Lobby — Live Online Directory | ${siteConfig.name}`}
+  description="Browse and search online people worldwide. Filter by gender, age, and country to start an instant 1-on-1 chat."
+  canonical={`${siteConfig.url}/people`}
+  lang={currentLang}
+>
+  <LandingNavbar lang={currentLang} />
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6 flex flex-col min-h-0">
+    <!-- Top Navigation Sub-Bar (People vs. Random Chat) -->
+    <div class="w-full flex items-center justify-between pb-3 px-1 border-b border-[var(--border)] mb-3">
+      <!-- Mode Tabs -->
+      <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs">
+        <a
+          href="/people"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[var(--bg-surface-elevated)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs"
+        >
+          <svg class="w-4 h-4 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>People</span>
+        </a>
+
+        <a
+          href="/random-chat"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
+        >
+          <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <circle cx="15.5" cy="15.5" r="1.5"></circle>
+          </svg>
+          <span>Random Chat</span>
+        </a>
+
+        <a
+          href="/chat-rooms"
+          class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
+        >
+          <span>Topics</span>
+        </a>
+      </div>
+
+      <!-- Quick Status -->
+      <div class="hidden sm:flex items-center gap-2 text-xs text-[var(--text-muted)] font-mono">
+        <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+        <span>Zero Logs Saved</span>
+      </div>
+    </div>
+
+    <!-- RESPONSIVE 2/3 COLUMN LAYOUT -->
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 h-[calc(100dvh-180px)] min-h-[560px]">
+      <!-- Column 1: Filters Sidebar (Desktop) -->
+      <div class="hidden lg:block lg:col-span-3 h-full overflow-y-auto pr-1">
+        <FilterPanel />
+      </div>
+
+      <!-- Column 2: Compact People List (Always visible on desktop, toggles on mobile) -->
+      <div id="people-pane" class="w-full h-full lg:col-span-4 flex flex-col min-h-0">
+        <PeopleList />
+      </div>
+
+      <!-- Column 3: Active 1-on-1 Chat Area -->
+      <div id="chat-pane" class="hidden lg:flex lg:col-span-5 h-full flex-col min-h-0">
+        <ActiveChat />
+      </div>
+    </div>
+  </main>
+
+  <!-- MOBILE FILTER BOTTOM SHEET DRAWER -->
+  <div id="mobile-filter-backdrop" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center transition-opacity">
+    <div class="w-full max-w-lg bg-[var(--bg-surface)] border-t border-[var(--border)] rounded-t-3xl p-5 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom duration-200 max-h-[85dvh] overflow-y-auto">
+      <div class="w-12 h-1.5 rounded-full bg-[var(--border)] mx-auto mb-1"></div>
+      <div class="flex items-center justify-between border-b border-[var(--border)] pb-2">
+        <h3 class="text-base font-bold text-[var(--text-primary)]">Filter Online People</h3>
+        <button type="button" id="close-mobile-filter-btn" class="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <FilterPanel isMobileDrawer={true} />
+    </div>
+  </div>
+
+  <CallModals />
+</BaseLayout>
+
+<script>
+  function initPeoplePage() {
+    // Route guard: mandatory username, age 18+, and country required
+    const session = sessionStorage.getItem('rc_guest_session');
+    let hasValidSession = false;
+    if (session) {
+      try {
+        const p = JSON.parse(session);
+        if (p.nickname && p.nickname.trim().length >= 3 && p.age && Number(p.age) >= 18 && p.country && p.country !== 'all') {
+          hasValidSession = true;
+        }
+      } catch {}
+    }
+
+    if (!hasValidSession) {
+      window.location.replace('/?openSetup=true&target=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
+    const peoplePane = document.getElementById('people-pane');
+    const chatPane = document.getElementById('chat-pane');
+    const mobileFilterToggle = document.getElementById('mobile-filter-drawer-toggle');
+    const mobileFilterBackdrop = document.getElementById('mobile-filter-backdrop');
+    const closeMobileFilterBtn = document.getElementById('close-mobile-filter-btn');
+    const chatBackBtn = document.getElementById('chat-back-btn');
+
+    // On mobile, clicking a person hides the list and shows the active chat
+    window.addEventListener('rc:person-selected', () => {
+      if (window.innerWidth < 1024) {
+        peoplePane?.classList.add('hidden');
+        chatPane?.classList.remove('hidden');
+        chatPane?.classList.add('flex');
+      }
+    });
+
+    chatBackBtn?.addEventListener('click', () => {
+      if (window.innerWidth < 1024) {
+        chatPane?.classList.add('hidden');
+        chatPane?.classList.remove('flex');
+        peoplePane?.classList.remove('hidden');
+      }
+    });
+
+    // Mobile filter bottom-sheet
+    mobileFilterToggle?.addEventListener('click', () => {
+      mobileFilterBackdrop?.classList.remove('hidden');
+      mobileFilterBackdrop?.classList.add('flex');
+    });
+
+    closeMobileFilterBtn?.addEventListener('click', () => {
+      mobileFilterBackdrop?.classList.add('hidden');
+      mobileFilterBackdrop?.classList.remove('flex');
+    });
+
+    mobileFilterBackdrop?.addEventListener('click', (e) => {
+      if (e.target === mobileFilterBackdrop) {
+        mobileFilterBackdrop.classList.add('hidden');
+        mobileFilterBackdrop.classList.remove('flex');
+      }
+    });
+  }
+
+  initPeoplePage();
+  document.addEventListener('astro:page-load', initPeoplePage);
+</script>

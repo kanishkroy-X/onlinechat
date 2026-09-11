@@ -1,5 +1,6 @@
 ---
 import Icon from '../icons/Icon.astro';
+import Logo from '../Logo.astro';
 import LanguagePicker from '../LanguagePicker.astro';
 import { siteConfig } from '../../config/site';
 import { getLangFromUrl, useTranslatedPath, useTranslations } from '../../i18n/utils';
@@ -18,13 +19,8 @@ const t = useTranslations(currentLang);
   <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-secondary)]">
     <!-- Brand Info & 18+ Notice -->
     <div class="flex flex-col gap-3">
-      <a href={translatePath('/')} class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white font-bold text-xs shadow-xs">
-          <Icon name="message-square" class="w-4 h-4" />
-        </div>
-        <span class="font-bold text-base text-[var(--text-primary)]">
-          Random<span class="text-[var(--primary)]">Chat</span>
-        </span>
+      <a href={translatePath('/')} class="flex items-center gap-2 group">
+        <Logo class="w-7 h-7" withText={true} />
       </a>
       <p class="text-xs text-[var(--text-muted)] leading-relaxed">
         {t.brand.description}

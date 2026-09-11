@@ -1,21 +1,34 @@
 ---
-import { MOCK_USERS, COUNTRY_FLAG_MAP } from '../data/mockData';
+import { MOCK_USERS } from '../data/mockData';
+import PersonRow from './PersonRow.astro';
+
+// Transform mock users to PersonItem format
+const onlinePeople = MOCK_USERS.map((u) => ({
+  id: u.id,
+  username: u.username,
+  age: u.age,
+  gender: u.gender as 'male' | 'female',
+  countryCode: u.countryCode,
+  countryName: u.countryName,
+  online: true
+}));
 ---
 
-<section id="people-section" class="w-full flex flex-col gap-4">
+<section id="people-section" class="w-full flex flex-col gap-3">
   <!-- Header: Online Counter Banner & Filter Trigger for Mobile -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-xs transition-colors">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center relative shadow-xs">
-        <span class="w-2.5 h-2.5 rounded-full bg-[#18D889] animate-online-dot"></span>
-        <span class="absolute inset-0 rounded-xl bg-[#18D889]/10 animate-ping opacity-75"></span>
+  <div class="flex items-center justify-between gap-3 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl px-4 py-3 shadow-xs transition-colors">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center relative shadow-2xs">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse"></span>
+        <span class="absolute inset-0 rounded-xl bg-[#10B981]/15 animate-ping opacity-60"></span>
       </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <h2 id="people-online-count" class="text-base sm:text-lg font-bold text-[var(--text-primary)]">2,482 people online</h2>
-          <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#18D889]/15 text-[#18D889] border border-[#18D889]/30">Live</span>
-        </div>
-        <p class="text-xs text-[var(--text-secondary)]">Ready to chat now • Select anyone to start messaging</p>
+      <div class="flex items-baseline gap-2">
+        <h2 id="people-online-count" class="text-sm sm:text-base font-black text-[var(--text-primary)]">
+          {onlinePeople.length} online
+        </h2>
+        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+          Live
+        </span>
       </div>
     </div>
 
@@ -23,12 +36,13 @@ import { MOCK_USERS, COUNTRY_FLAG_MAP } from '../data/mockData';
     <button
       type="button"
       id="mobile-filter-drawer-toggle"
-      class="lg:hidden flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] transition-colors cursor-pointer shadow-xs"
+      class="lg:hidden flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] transition-colors cursor-pointer shadow-2xs"
+      aria-label="Open Filters"
     >
-      <svg class="w-3.5 h-3.5 text-[#6C4DFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-3.5 h-3.5 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
       </svg>
-      <span>Filter People</span>
+      <span>Filters</span>
     </button>
   </div>
 
@@ -39,10 +53,10 @@ import { MOCK_USERS, COUNTRY_FLAG_MAP } from '../data/mockData';
       type="text"
       placeholder="Search people by username..."
       autocomplete="off"
-      class="w-full px-4 py-3 pl-11 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:border-[#6C4DFF] transition-colors shadow-xs"
+      class="w-full px-4 py-2.5 pl-10 pr-9 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FF808A] focus:border-transparent transition-all shadow-xs"
     />
-    <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
-      <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
@@ -50,95 +64,210 @@ import { MOCK_USERS, COUNTRY_FLAG_MAP } from '../data/mockData';
     <button
       type="button"
       id="people-search-clear"
-      class="hidden absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+      class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
       aria-label="Clear Search"
     >
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
   </div>
 
-  <!-- User Cards Grid / List -->
-  <div id="people-cards-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-3">
-    {MOCK_USERS.map((user) => {
-      const flag = COUNTRY_FLAG_MAP[user.countryCode]?.flag || '🌍';
-      return (
-        <div
-          class="person-card group bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border border-[var(--border)] hover:border-[var(--border-strong)] rounded-2xl p-4 transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 shadow-xs relative overflow-hidden"
-          data-id={user.id}
-          data-username={user.username}
-          data-age={user.age}
-          data-gender={user.gender}
-          data-country={user.countryCode}
-          data-city={user.city}
-          role="button"
-          tabindex="0"
-          aria-label={`Chat with ${user.username}, ${user.age} years old from ${user.city}, ${user.countryName}`}
-        >
-          <!-- Left: Avatar & Info -->
-          <div class="flex items-center gap-3.5 min-w-0">
-            <div class="relative w-12 h-12 rounded-full overflow-hidden bg-[var(--bg-surface-elevated)] shrink-0 border border-[var(--border)] shadow-xs">
-              <img
-                src={user.avatarUrl}
-                alt={user.username}
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                loading="lazy"
-              />
-              <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#18D889] border-2 border-[var(--bg-surface)] animate-online-dot"></span>
-            </div>
+  <!-- Compact People Rows Container -->
+  <div id="people-cards-container" class="flex flex-col gap-2 max-h-[calc(100dvh-240px)] overflow-y-auto pr-1">
+    {onlinePeople.map((person) => (
+      <PersonRow person={person} />
+    ))}
 
-            <div class="flex flex-col min-w-0">
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-sm text-[var(--text-primary)] truncate group-hover:text-[#6C4DFF] transition-colors">
-                  {user.username}
-                </span>
-                <span class="text-xs" title={user.countryName}>{flag}</span>
-              </div>
-              
-              <div class="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] mt-0.5 truncate">
-                <span>{user.age} y/o</span>
-                <span>•</span>
-                <span class="truncate">{user.city}, {user.countryName}</span>
-              </div>
-
-              {user.statusMessage && (
-                <p class="text-[11px] text-[var(--text-muted)] truncate mt-1">
-                  {user.statusMessage}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <!-- Right: Chat Action Icon -->
-          <div class="shrink-0">
-            <div class="w-8 h-8 rounded-xl bg-[var(--bg-surface-elevated)] group-hover:bg-[#6C4DFF] border border-[var(--border)] group-hover:border-[#6C4DFF] text-[var(--text-secondary)] group-hover:text-white flex items-center justify-center transition-all shadow-xs">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-
-  <!-- Empty Search / Filter State -->
-  <div id="people-empty-state" class="hidden flex-col items-center justify-center p-12 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl text-center gap-3 shadow-xs">
-    <div class="w-12 h-12 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)]">
-      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
+    <!-- Empty Filter State -->
+    <div id="people-empty-state" class="hidden p-8 flex flex-col items-center justify-center text-center gap-2 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-surface)]">
+      <span class="text-2xl">🔍</span>
+      <h4 class="text-sm font-bold text-[var(--text-primary)]">No people found</h4>
+      <p class="text-xs text-[var(--text-secondary)] max-w-xs">
+        Try broadening your search or clearing filters to see more people online.
+      </p>
+      <button
+        type="button"
+        id="people-reset-search-btn"
+        class="mt-2 px-3 py-1.5 rounded-lg bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-xs font-semibold text-[#FF808A] hover:bg-[#FF808A]/10 transition-colors cursor-pointer"
+      >
+        Reset Filters
+      </button>
     </div>
-    <div class="flex flex-col gap-1">
-      <h3 class="text-sm font-bold text-[var(--text-primary)]">No people match your search</h3>
-      <p class="text-xs text-[var(--text-secondary)]">Try clearing filters or searching with a different term.</p>
-    </div>
-    <button
-      type="button"
-      id="empty-clear-filters-btn"
-      class="mt-2 px-4 py-2 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[#6C4DFF] transition-colors cursor-pointer shadow-xs"
-    >
-      Reset all filters
-    </button>
   </div>
 </section>
+
+<script>
+  function initPeopleList() {
+    const searchInput = document.getElementById('people-search-input') as HTMLInputElement | null;
+    const clearBtn = document.getElementById('people-search-clear');
+    const resetBtn = document.getElementById('people-reset-search-btn');
+    const container = document.getElementById('people-cards-container');
+    const rows = document.querySelectorAll('.person-row') as NodeListOf<HTMLElement>;
+    const emptyState = document.getElementById('people-empty-state');
+    const countryFilterInput = document.getElementById('people-filter-country-input') as HTMLInputElement | null;
+    const ageFilterInput = document.getElementById('filter-age-range') as HTMLInputElement | null;
+    const ageLabel = document.getElementById('filter-age-label');
+    const genderBtns = document.querySelectorAll('.filter-gender-btn') as NodeListOf<HTMLButtonElement>;
+    const clearAllFiltersBtn = document.getElementById('filter-clear-all-btn');
+
+    let currentQuery = '';
+    let currentGender = 'all';
+    let currentMaxAge = 65;
+    let currentCountry = 'all';
+
+    function applyFilters() {
+      let visibleCount = 0;
+
+      rows.forEach((row) => {
+        const username = (row.dataset.username || '').toLowerCase();
+        const gender = row.dataset.gender || '';
+        const age = parseInt(row.dataset.age || '0', 10);
+        const country = (row.dataset.country || '').toLowerCase();
+
+        const matchQuery = !currentQuery || username.includes(currentQuery);
+        const matchGender = currentGender === 'all' || gender === currentGender;
+        const matchAge = age <= currentMaxAge;
+        const matchCountry = currentCountry === 'all' || currentCountry === 'anywhere' || country === currentCountry;
+
+        if (matchQuery && matchGender && matchAge && matchCountry) {
+          row.style.display = 'flex';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+        } else {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+      }
+    }
+
+    // Search query
+    searchInput?.addEventListener('input', () => {
+      currentQuery = (searchInput.value || '').trim().toLowerCase();
+      if (clearBtn) {
+        if (currentQuery) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+      applyFilters();
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      currentQuery = '';
+      clearBtn.classList.add('hidden');
+      applyFilters();
+      searchInput?.focus();
+    });
+
+    // Gender filter buttons
+    genderBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentGender = btn.dataset.gender || 'all';
+        genderBtns.forEach((b) => {
+          b.className = 'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer';
+        });
+        btn.className = 'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all bg-[var(--bg-surface)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs cursor-pointer';
+        applyFilters();
+      });
+    });
+
+    // Age filter slider
+    ageFilterInput?.addEventListener('input', () => {
+      currentMaxAge = parseInt(ageFilterInput.value, 10);
+      if (ageLabel) {
+        ageLabel.textContent = currentMaxAge >= 65 ? '18–65+ yrs' : `18–${currentMaxAge} yrs`;
+      }
+      applyFilters();
+    });
+
+    // Country filter
+    countryFilterInput?.addEventListener('change', () => {
+      currentCountry = (countryFilterInput.value || 'all').toLowerCase();
+      applyFilters();
+    });
+
+    // Reset filters
+    function resetAll() {
+      if (searchInput) searchInput.value = '';
+      currentQuery = '';
+      if (clearBtn) clearBtn.classList.add('hidden');
+
+      currentGender = 'all';
+      genderBtns.forEach((b, idx) => {
+        if (idx === 0) {
+          b.className = 'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all bg-[var(--bg-surface)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs cursor-pointer';
+        } else {
+          b.className = 'filter-gender-btn py-1.5 px-2 rounded-lg text-xs font-semibold text-center transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer';
+        }
+      });
+
+      if (ageFilterInput) {
+        ageFilterInput.value = '65';
+        currentMaxAge = 65;
+        if (ageLabel) ageLabel.textContent = '18–65+ yrs';
+      }
+
+      if (countryFilterInput) {
+        countryFilterInput.value = 'all';
+        currentCountry = 'all';
+        const triggerText = document.querySelector('#people-filter-country-wrapper .country-trigger-text');
+        if (triggerText) triggerText.textContent = 'All Countries';
+      }
+
+      applyFilters();
+    }
+
+    clearAllFiltersBtn?.addEventListener('click', resetAll);
+    resetBtn?.addEventListener('click', resetAll);
+
+    // Row selection event dispatch
+    rows.forEach((row) => {
+      row.addEventListener('click', () => {
+        rows.forEach((r) => {
+          r.classList.remove('bg-[#FF808A]/10', 'border-[#FF808A]/40', 'ring-1', 'ring-[#FF808A]/20');
+          r.classList.add('bg-[var(--bg-surface)]', 'border-[var(--border)]');
+        });
+        row.classList.remove('bg-[var(--bg-surface)]', 'border-[var(--border)]');
+        row.classList.add('bg-[#FF808A]/10', 'border-[#FF808A]/40', 'ring-1', 'ring-[#FF808A]/20');
+
+        const person = {
+          id: row.dataset.id,
+          username: row.dataset.username,
+          age: row.dataset.age,
+          gender: row.dataset.gender,
+          countryCode: row.dataset.country,
+          countryName: row.dataset.countryName
+        };
+
+        window.dispatchEvent(new CustomEvent('rc:person-selected', { detail: person }));
+      });
+    });
+
+    // Live presence updates
+    async function fetchLivePresence() {
+      try {
+        const res = await fetch('/api/presence');
+        if (res.ok) {
+          const data = (await res.json()) as { onlineCount?: number };
+          const countEl = document.getElementById('people-online-count');
+          if (countEl && typeof data.onlineCount === 'number') {
+            countEl.textContent = `${data.onlineCount.toLocaleString()} online`;
+          }
+        }
+      } catch (e) {}
+    }
+    fetchLivePresence();
+  }
+
+  initPeopleList();
+  document.addEventListener('astro:page-load', initPeopleList);
+</script>

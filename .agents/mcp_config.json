@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "uxpilot": {
+      "url": "https://mcp.uxpilot.net/mcp",
+      "serverUrl": "https://mcp.uxpilot.net/mcp",
+      "headers": {
+        "Authorization": "Bearer ep_your_api_key"
+      }
+    }
+  }
+}

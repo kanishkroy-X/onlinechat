@@ -6,6 +6,7 @@ import PopularRoomsSection from '../../components/landing/PopularRoomsSection.as
 import QuickRulesSection from '../../components/landing/QuickRulesSection.astro';
 import FAQSection from '../../components/landing/FAQSection.astro';
 import LandingFooter from '../../components/landing/LandingFooter.astro';
+import SetupModal from '../../components/SetupModal.astro';
 import { siteConfig } from '../../config/site';
 import { useTranslations } from '../../i18n/utils';
 import type { SupportedLang } from '../../i18n/ui';
@@ -55,4 +56,7 @@ export const prerender = true;
 
   <!-- Clean Footer -->
   <LandingFooter lang={currentLang} />
+
+  <!-- Mandatory Guest Setup Modal -->
+  <SetupModal lang={currentLang} />
 </BaseLayout>

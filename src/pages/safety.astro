@@ -4,7 +4,6 @@ import LandingNavbar from '../components/landing/LandingNavbar.astro';
 import LandingFooter from '../components/landing/LandingFooter.astro';
 import Icon from '../components/icons/Icon.astro';
 import { siteConfig } from '../config/site';
-
 import { getLangFromUrl } from '../i18n/utils';
 
 const currentLang = Astro.currentLocale || getLangFromUrl(Astro.url) || 'en';
@@ -30,8 +29,8 @@ const breadcrumbSchema = {
 ---
 
 <BaseLayout
-  title={`Safety Guidelines & Best Practices — ${siteConfig.name}`}
-  description={`Comprehensive safety guidelines, minimum age policy (18+), and privacy protection practices for ${siteConfig.name}.`}
+  title={`Safety, Zero-Tolerance & Child Protection Policy — ${siteConfig.name}`}
+  description={`Comprehensive safety policies, CSAM zero-tolerance enforcement, minimum age (18+) verification, and privacy protection on ${siteConfig.name}.`}
   canonical={`${siteConfig.url}/safety`}
   lang={currentLang}
 >
@@ -48,15 +47,15 @@ const breadcrumbSchema = {
       </div>
 
       <div class="flex flex-col gap-2">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold w-fit mx-auto sm:mx-0">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold w-fit mx-auto sm:mx-0 border border-rose-500/20">
           <Icon name="shield-check" class="w-3.5 h-3.5" />
-          <span>Safety First &bull; 18+ Adults</span>
+          <span>Safety & Compliance &bull; 18+ Adults Only</span>
         </div>
         <h1 class="text-3xl sm:text-4xl font-black text-[var(--text-primary)] tracking-tight">
-          Stay Safe While Chatting
+          Trust, Safety & Zero-Tolerance Policy
         </h1>
         <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-xl">
-          {siteConfig.name} is designed for open, spontaneous, and respectful adult conversations. Follow these essential principles to protect yourself online.
+          {siteConfig.name} operates with a strict zero-tolerance enforcement model against illegal activity, underage use, harassment, and abuse.
         </p>
 
         <!-- Quick CTAs -->
@@ -65,12 +64,38 @@ const breadcrumbSchema = {
             <span>Start Chatting</span>
             <Icon name="arrow-right" class="w-4 h-4" />
           </a>
-          <a href="#report" class="btn-secondary text-xs py-2.5 px-5">
-            <span>Report a User</span>
+          <a href="#csam-policy" class="btn-secondary text-xs py-2.5 px-5">
+            <span>Child Safety (CSAM) Policy</span>
           </a>
         </div>
       </div>
     </div>
+
+    <!-- Dedicated CSAM / Child Sexual Abuse Material Policy Banner -->
+    <section id="csam-policy" class="p-6 sm:p-8 rounded-3xl bg-rose-500/10 border-2 border-rose-500/30 flex flex-col gap-4 text-left">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center font-bold text-lg">
+          !
+        </div>
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-rose-800 dark:text-rose-200 tracking-tight">
+            Zero Tolerance: Child Sexual Abuse Material (CSAM) & Exploitation
+          </h2>
+          <span class="text-xs text-rose-700 dark:text-rose-300 font-medium">Mandatory Reporting to NCMEC and Law Enforcement</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 text-xs sm:text-sm text-rose-900 dark:text-rose-100 leading-relaxed">
+        <p>
+          {siteConfig.name} strictly prohibits the transmission, solicitation, possession, or distribution of Child Sexual Abuse Material (CSAM) or Child Sexual Exploitation and Abuse (CSAE), as well as any form of child grooming or underage participation.
+        </p>
+        <ul class="list-disc pl-5 space-y-1.5">
+          <li><strong>Immediate Reporting:</strong> Any identified or reported incident involving CSAM or suspected underage exploitation is immediately reported to the <strong>National Center for Missing & Exploited Children (NCMEC)</strong> and relevant international law enforcement agencies.</li>
+          <li><strong>Permanent Ban & Hash Blacklisting:</strong> Violating IP ranges, user sessions, and hardware fingerprints are permanently blacklisted across our global edge infrastructure.</li>
+          <li><strong>Zero Anonymity for Criminal Abuse:</strong> While legitimate adult conversations remain ephemeral, malicious actors attempting to exploit this platform for illegal purposes will be held legally accountable to the fullest extent of the law.</li>
+        </ul>
+      </div>
+    </section>
 
     <!-- Core Safety Guidelines Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -81,7 +106,7 @@ const breadcrumbSchema = {
           <h2 class="text-base text-[var(--text-primary)]">Protect Personal Information</h2>
         </div>
         <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-          Never share your full legal name, physical address, workplace, phone number, financial details, or external social media profiles.
+          Never share your full legal name, physical address, workplace, phone number, financial details, or external social media handles with strangers.
         </p>
       </div>
 
@@ -89,21 +114,21 @@ const breadcrumbSchema = {
       <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
         <div class="flex items-center gap-2 text-[var(--primary)] font-bold text-sm">
           <span>02</span>
-          <h2 class="text-base text-[var(--text-primary)]">Avoid Suspicious Links</h2>
+          <h2 class="text-base text-[var(--text-primary)]">Avoid Suspicious Links & Solicitations</h2>
         </div>
         <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-          Do not click on unsolicited URLs, third-party payment requests, cryptocurrency promotions, or suspicious external download links.
+          Do not click on unsolicited URLs, third-party payment requests, cryptocurrency promotions, or external app download links.
         </p>
       </div>
 
-      <!-- 3. Zero Tolerance for Exploitation -->
+      <!-- 3. Zero Tolerance for Harassment & Non-consensual Content -->
       <div class="card-tactile p-6 flex flex-col gap-2.5 text-left">
         <div class="flex items-center gap-2 text-[var(--danger)] font-bold text-sm">
           <span>03</span>
-          <h2 class="text-base text-[var(--text-primary)]">Zero Tolerance Policy</h2>
+          <h2 class="text-base text-[var(--text-primary)]">Harassment & Non-Consensual Media</h2>
         </div>
         <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-          Any illegal activity, threats of violence, non-consensual sexual content, hate speech, or harassment results in immediate bans.
+          Sharing non-consensual explicit material, hate speech, threats of violence, or persistent harassment leads to instant disconnection and permanent hardware exclusion.
         </p>
       </div>
 
@@ -114,7 +139,7 @@ const breadcrumbSchema = {
           <h2 class="text-base text-[var(--text-primary)]">Strictly 18+ Platform</h2>
         </div>
         <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-          {siteConfig.name} is strictly intended for adults 18 and older. Minors are strictly prohibited from using the website.
+          {siteConfig.name} is strictly intended for consenting adults 18 and older. Minors are strictly prohibited from using the website.
         </p>
       </div>
     </div>
@@ -130,7 +155,7 @@ const breadcrumbSchema = {
         </h2>
       </div>
       <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-        If you encounter a user who violates these rules or engages in abusive behavior, click the Safety / Flag icon in the chat interface. You can also email our safety moderation team directly at <a href={`mailto:${siteConfig.supportEmail}`} class="text-[var(--primary)] font-medium underline">{siteConfig.supportEmail}</a> with relevant session context.
+        If you encounter a user who violates these rules or engages in abusive behavior, click the <strong>Flag / Report</strong> icon in the chat interface. You can also reach our safety and legal compliance team directly at <a href={`mailto:${siteConfig.supportEmail}`} class="text-[var(--primary)] font-medium underline">{siteConfig.supportEmail}</a>.
       </p>
     </div>
   </main>

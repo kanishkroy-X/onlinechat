@@ -1,283 +1,199 @@
 ---
-// CallModals.astro - Voice Chat, Voice Call, Video Call, and Random Voice Flow
+// CallModals.astro - Voice Chat Request & Atmospheric WebRTC Overlay
+// Adheres strictly to RandomChat UI/UX Specification v3.1 and Sunset/Plum visual system
 ---
 
-<!-- 1. VOICE CHAT MODAL -->
+<!-- 1. EXPLICIT VOICE REQUEST PROMPT MODAL (Opt-In Acceptance) -->
 <div
-  id="voice-chat-modal"
-  class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4"
+  id="voice-request-dialog"
+  class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-150"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="voice-chat-title"
+  aria-labelledby="voice-request-title"
 >
-  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 flex flex-col items-center gap-6 shadow-2xl text-center animate-modal-in transition-colors">
-    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#6C4DFF]/15 text-[#6C4DFF] text-xs font-bold border border-[#6C4DFF]/30">
-      <span class="w-2 h-2 rounded-full bg-[#6C4DFF] animate-ping"></span>
-      <span>Live Voice Chat</span>
+  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-7 flex flex-col items-center gap-5 shadow-2xl text-center">
+    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF808A]/20 to-[#D55882]/20 text-[#FF808A] flex items-center justify-center border border-[#FF808A]/30">
+      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+        <line x1="12" y1="19" x2="12" y2="23"></line>
+        <line x1="8" y1="23" x2="16" y2="23"></line>
+      </svg>
     </div>
 
-    <!-- Participant Avatar with Audio Glow -->
-    <div class="relative">
-      <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-[#6C4DFF] bg-[var(--bg-surface-elevated)] relative z-10 shadow-lg">
-        <img id="vc-user-avatar" src="" alt="" class="w-full h-full object-cover" />
-      </div>
-      <div class="absolute inset-0 rounded-full bg-[#6C4DFF]/20 animate-ping"></div>
-    </div>
-
-    <div>
-      <h3 id="voice-chat-title" class="text-xl font-bold text-[var(--text-primary)]">Ava Martinez</h3>
-      <p id="vc-connection-status" class="text-xs text-[#16A34A] dark:text-[#18D889] font-semibold mt-1">● Connected (Audio Live)</p>
-    </div>
-
-    <!-- Live Animated Waveform -->
-    <div class="flex items-center justify-center gap-1.5 h-10 w-full px-8">
-      <span class="w-1.5 bg-[#6C4DFF] rounded-full wave-bar" style="animation-delay: 0.1s; height: 10px;"></span>
-      <span class="w-1.5 bg-[#6C4DFF] rounded-full wave-bar" style="animation-delay: 0.3s; height: 26px;"></span>
-      <span class="w-1.5 bg-[#6C4DFF] rounded-full wave-bar" style="animation-delay: 0.2s; height: 36px;"></span>
-      <span class="w-1.5 bg-[#6C4DFF] rounded-full wave-bar" style="animation-delay: 0.4s; height: 18px;"></span>
-      <span class="w-1.5 bg-[#6C4DFF] rounded-full wave-bar" style="animation-delay: 0.15s; height: 30px;"></span>
-      <span class="w-1.5 bg-[#6C4DFF] rounded-full wave-bar" style="animation-delay: 0.35s; height: 14px;"></span>
-    </div>
-
-    <!-- Call Controls -->
-    <div class="flex items-center justify-center gap-4 w-full mt-2">
-      <button
-        type="button"
-        id="vc-mute-btn"
-        class="w-12 h-12 rounded-2xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
-        title="Mute/Unmute"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      </button>
-
-      <button
-        type="button"
-        id="vc-speaker-btn"
-        class="w-12 h-12 rounded-2xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
-        title="Speaker"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-      </button>
-
-      <!-- End Call Control (Clearly destructive / Red) -->
-      <button
-        type="button"
-        id="vc-end-btn"
-        class="w-14 h-14 rounded-2xl bg-[#FF4D5F] hover:bg-[#FF6675] text-white flex items-center justify-center transition-all shadow-lg cursor-pointer"
-        title="End Voice Chat"
-      >
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 2. VOICE CALL MODAL -->
-<div
-  id="voice-call-modal"
-  class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="voice-call-title"
->
-  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 flex flex-col items-center gap-6 shadow-2xl text-center animate-modal-in transition-colors">
-    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#18D889]/15 text-[#16A34A] dark:text-[#18D889] text-xs font-bold border border-[#18D889]/30">
-      <span class="w-2 h-2 rounded-full bg-[#18D889] animate-ping"></span>
-      <span>Voice Call</span>
-    </div>
-
-    <!-- Participant Avatar -->
-    <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-[#18D889] bg-[var(--bg-surface-elevated)] shadow-lg">
-      <img id="vcall-user-avatar" src="" alt="" class="w-full h-full object-cover" />
-    </div>
-
-    <div>
-      <h3 id="voice-call-title" class="text-xl font-bold text-[var(--text-primary)]">Ava Martinez</h3>
-      <p id="vcall-duration" class="text-xs font-mono font-semibold text-[var(--text-secondary)] mt-1">00:14</p>
-    </div>
-
-    <!-- Call Controls -->
-    <div class="flex items-center justify-center gap-4 w-full mt-4">
-      <button
-        type="button"
-        id="vcall-mute-btn"
-        class="w-12 h-12 rounded-2xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
-        title="Mute"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      </button>
-
-      <button
-        type="button"
-        id="vcall-speaker-btn"
-        class="w-12 h-12 rounded-2xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
-        title="Speaker"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-      </button>
-
-      <!-- End Call Control (Red) -->
-      <button
-        type="button"
-        id="vcall-end-btn"
-        class="w-14 h-14 rounded-2xl bg-[#FF4D5F] hover:bg-[#FF6675] text-white flex items-center justify-center transition-all shadow-lg cursor-pointer"
-        title="End Voice Call"
-      >
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 3. VIDEO CALL MODAL -->
-<div
-  id="video-call-modal"
-  class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="video-call-title"
->
-  <div class="w-full max-w-4xl h-[85vh] bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-2xl flex flex-col relative animate-modal-in">
-    <!-- Top Overlay Bar -->
-    <div class="absolute top-0 inset-x-0 p-4 z-20 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between text-white">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full overflow-hidden border border-white/20 bg-black/40">
-          <img id="vid-call-avatar" src="" alt="" class="w-full h-full object-cover" />
-        </div>
-        <div class="flex flex-col">
-          <span id="video-call-title" class="text-sm font-bold text-white">Ava Martinez</span>
-          <span id="vid-call-duration" class="text-xs text-[#18D889] font-mono">00:32 • Video Call</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        id="vid-flip-camera-btn"
-        class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-semibold text-white transition-colors cursor-pointer flex items-center gap-1.5"
-      >
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-        <span>Flip</span>
-      </button>
-    </div>
-
-    <!-- Main Remote Video View -->
-    <div class="relative flex-1 bg-black flex items-center justify-center overflow-hidden">
-      <!-- Simulated High-Fidelity Video Feed -->
-      <img
-        id="vid-remote-stream"
-        src=""
-        alt="Remote Video"
-        class="w-full h-full object-cover filter contrast-105"
-      />
-      
-      <!-- Local Picture-in-Picture Preview -->
-      <div class="absolute bottom-20 sm:bottom-24 right-4 w-28 sm:w-36 aspect-3/4 rounded-2xl overflow-hidden border-2 border-white/30 bg-black/60 shadow-2xl z-20">
-        <img
-          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80"
-          alt="My camera preview"
-          class="w-full h-full object-cover"
-        />
-        <div class="absolute bottom-1 left-2 text-[9px] font-bold text-white/90">You</div>
-      </div>
-    </div>
-
-    <!-- Bottom Controls Bar -->
-    <div class="p-4 sm:p-5 bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-center justify-center gap-4 z-20 shrink-0 transition-colors">
-      <button
-        type="button"
-        id="vid-mute-btn"
-        class="w-12 h-12 rounded-2xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
-        title="Mute"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      </button>
-
-      <button
-        type="button"
-        id="vid-camera-toggle-btn"
-        class="w-12 h-12 rounded-2xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
-        title="Camera On/Off"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-      </button>
-
-      <!-- Red End Call Button -->
-      <button
-        type="button"
-        id="vid-end-btn"
-        class="w-14 h-14 rounded-2xl bg-[#FF4D5F] hover:bg-[#FF6675] text-white flex items-center justify-center transition-all shadow-lg cursor-pointer"
-        title="End Video Call"
-      >
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 4. RANDOM VOICE FLOW MODAL (Completely separate from normal chat) -->
-<div
-  id="random-voice-modal"
-  class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="rv-title"
->
-  <div class="w-full max-w-md bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-8 flex flex-col items-center gap-8 shadow-2xl text-center animate-modal-in relative overflow-hidden transition-colors">
-    <!-- Close / Cancel Button -->
-    <button
-      type="button"
-      id="rv-close-btn"
-      class="absolute top-4 right-4 p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-      aria-label="Cancel Random Voice"
-    >
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-
-    <div class="flex flex-col items-center gap-2">
-      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-[#6C4DFF]/15 text-[#6C4DFF] text-xs font-bold border border-[#6C4DFF]/30">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-        <span>Random Voice</span>
-      </div>
-      <h3 id="rv-title" class="text-2xl font-bold text-[var(--text-primary)]">Instant Voice Matching</h3>
-      <p id="rv-subtitle" class="text-xs text-[var(--text-secondary)] max-w-xs">
-        Connect anonymously with a random person around the world for a live voice call.
+    <div class="flex flex-col gap-1">
+      <h3 id="voice-request-title" class="text-lg font-bold text-[var(--text-primary)]">Voice Chat Request</h3>
+      <p id="voice-request-msg" class="text-xs text-[var(--text-secondary)] leading-relaxed">
+        <strong id="voice-request-caller">Stranger</strong> wants to start a live voice chat.
       </p>
     </div>
 
-    <!-- RADAR SEARCH STATE -->
-    <div id="rv-radar-state" class="relative w-40 h-40 flex items-center justify-center my-2">
-      <div class="absolute inset-0 rounded-full border border-[#6C4DFF]/40 animate-radar-ring"></div>
-      <div class="absolute inset-4 rounded-full border border-[#6C4DFF]/60 animate-radar-ring" style="animation-delay: 0.6s;"></div>
-      <div class="w-20 h-20 rounded-full bg-[#6C4DFF]/20 border-2 border-[#6C4DFF] flex items-center justify-center relative z-10 shadow-lg">
-        <svg class="w-8 h-8 text-[#6C4DFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <p class="text-[11px] text-[var(--text-muted)]">
+      Microphone is never shared without your explicit consent.
+    </p>
+
+    <!-- Accept / Decline Actions -->
+    <div class="grid grid-cols-2 gap-3 w-full pt-1">
+      <button
+        type="button"
+        id="voice-decline-btn"
+        class="py-2.5 px-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
+      >
+        Decline
+      </button>
+      <button
+        type="button"
+        id="voice-accept-btn"
+        class="py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#FF808A] to-[#D55882] hover:opacity-95 text-xs font-bold text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
+      >
+        <span>Accept</span>
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. ATMOSPHERIC WEBRTC VOICE CHAT OVERLAY -->
+<div
+  id="voice-call-overlay"
+  class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 flex flex-col items-center gap-6 shadow-2xl text-center relative overflow-hidden">
+    <!-- Header status -->
+    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/15 text-[#10B981] text-xs font-bold border border-[#10B981]/30">
+      <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+      <span>Live WebRTC Audio</span>
+    </div>
+
+    <!-- Audio-Reactive Pulsing Rings (Section 16 Specification) -->
+    <div class="relative w-28 h-28 flex items-center justify-center my-2">
+      <!-- Reactive Ring 1 -->
+      <span class="absolute inset-0 rounded-full border-2 border-[#FF808A]/30 animate-ping opacity-50"></span>
+      <!-- Reactive Ring 2 -->
+      <span class="absolute w-22 h-22 rounded-full border border-[#D55882]/40 animate-pulse"></span>
+      <!-- Central Mic/Avatar Orb -->
+      <div class="w-18 h-18 rounded-full bg-gradient-to-br from-[#FF808A] via-[#D55882] to-[#7F376D] text-white flex items-center justify-center shadow-lg shadow-[#FF808A]/25 z-10">
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
           <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-          <line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+          <line x1="8" y1="23" x2="16" y2="23"></line>
         </svg>
       </div>
     </div>
 
-    <!-- Status text: Finding someone... / Connecting -->
-    <div class="flex flex-col items-center gap-1">
-      <span id="rv-status-heading" class="text-base font-bold text-[var(--text-primary)]">Finding someone...</span>
-      <span id="rv-status-detail" class="text-xs text-[var(--text-secondary)]">Scanning active online voice participants</span>
+    <div>
+      <h3 id="active-voice-user" class="text-xl font-black text-[var(--text-primary)]">Sarah</h3>
+      <p id="voice-timer" class="text-xs font-mono font-bold text-[#FF808A] mt-1">00:00</p>
     </div>
 
-    <button
-      type="button"
-      id="rv-cancel-btn"
-      class="w-full py-3 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[#FF4D5F] font-semibold text-sm transition-all border border-[var(--border)] cursor-pointer"
-    >
-      Cancel Matching
-    </button>
+    <!-- Simulated live audio wave -->
+    <div class="flex items-center justify-center gap-1.5 h-8 w-full px-8">
+      <span class="w-1 bg-[#FF808A] rounded-full wave-bar" style="animation-delay: 0.1s; height: 10px;"></span>
+      <span class="w-1 bg-[#FF808A] rounded-full wave-bar" style="animation-delay: 0.3s; height: 24px;"></span>
+      <span class="w-1 bg-[#FF808A] rounded-full wave-bar" style="animation-delay: 0.2s; height: 32px;"></span>
+      <span class="w-1 bg-[#FF808A] rounded-full wave-bar" style="animation-delay: 0.4s; height: 16px;"></span>
+      <span class="w-1 bg-[#FF808A] rounded-full wave-bar" style="animation-delay: 0.15s; height: 28px;"></span>
+      <span class="w-1 bg-[#FF808A] rounded-full wave-bar" style="animation-delay: 0.35s; height: 12px;"></span>
+    </div>
+
+    <!-- Controls (Mute / Unmute & End Call) -->
+    <div class="flex items-center justify-center gap-4 w-full mt-1">
+      <button
+        type="button"
+        id="voice-mute-toggle"
+        class="px-4 py-2.5 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-primary)] flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+        title="Mute / Unmute Mic"
+      >
+        <span id="voice-mute-icon">🎙</span>
+        <span id="voice-mute-label">Mute</span>
+      </button>
+
+      <button
+        type="button"
+        id="voice-end-call-btn"
+        class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-md cursor-pointer flex items-center gap-2"
+        title="End Voice Call"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>End Call</span>
+      </button>
+    </div>
   </div>
 </div>
+
+<script>
+  function initCallModals() {
+    const requestDialog = document.getElementById('voice-request-dialog');
+    const requestCaller = document.getElementById('voice-request-caller');
+    const declineBtn = document.getElementById('voice-decline-btn');
+    const acceptBtn = document.getElementById('voice-accept-btn');
+
+    const overlay = document.getElementById('voice-call-overlay');
+    const voiceUser = document.getElementById('active-voice-user');
+    const voiceTimer = document.getElementById('voice-timer');
+    const muteToggle = document.getElementById('voice-mute-toggle');
+    const muteIcon = document.getElementById('voice-mute-icon');
+    const muteLabel = document.getElementById('voice-mute-label');
+    const endCallBtn = document.getElementById('voice-end-call-btn');
+
+    let isMuted = false;
+    let timerInterval: any = null;
+    let secondsElapsed = 0;
+
+    // Listen for voice request trigger
+    window.addEventListener('rc:voice-request-triggered', (e: any) => {
+      const partner = e.detail;
+      if (requestCaller) requestCaller.textContent = partner?.username || 'Stranger';
+      requestDialog?.classList.remove('hidden');
+    });
+
+    declineBtn?.addEventListener('click', () => {
+      requestDialog?.classList.add('hidden');
+    });
+
+    acceptBtn?.addEventListener('click', () => {
+      requestDialog?.classList.add('hidden');
+      startVoiceSession(requestCaller?.textContent || 'Stranger');
+    });
+
+    function startVoiceSession(username: string) {
+      if (voiceUser) voiceUser.textContent = username;
+      overlay?.classList.remove('hidden');
+
+      secondsElapsed = 0;
+      updateTimer();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        updateTimer();
+      }, 1000);
+    }
+
+    function updateTimer() {
+      if (!voiceTimer) return;
+      const mins = Math.floor(secondsElapsed / 60);
+      const secs = secondsElapsed % 60;
+      voiceTimer.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    muteToggle?.addEventListener('click', () => {
+      isMuted = !isMuted;
+      if (muteLabel) muteLabel.textContent = isMuted ? 'Unmute' : 'Mute';
+      if (muteIcon) muteIcon.textContent = isMuted ? '🔇' : '🎙';
+    });
+
+    endCallBtn?.addEventListener('click', () => {
+      if (timerInterval) clearInterval(timerInterval);
+      overlay?.classList.add('hidden');
+    });
+  }
+
+  initCallModals();
+  document.addEventListener('astro:page-load', initCallModals);
+</script>

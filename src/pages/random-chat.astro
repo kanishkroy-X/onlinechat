@@ -3,30 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import LandingNavbar from '../components/landing/LandingNavbar.astro';
 import LandingFooter from '../components/landing/LandingFooter.astro';
 import Icon from '../components/icons/Icon.astro';
+import CountryFlag from '../components/CountryFlag.astro';
+import CallModals from '../components/CallModals.astro';
 import { siteConfig } from '../config/site';
 
-import { getLangFromUrl } from '../i18n/utils';
-
-const currentLang = Astro.currentLocale || getLangFromUrl(Astro.url) || 'en';
-
-const faqItems = [
-  {
-    q: "How does RandomChat match me with strangers?",
-    a: "RandomChat uses an automated, zero-retention matching engine. You can select your conversational preference (anyone, male, female) and language. Our server matches compatible users in under 2 seconds without storing your IP address or session history."
-  },
-  {
-    q: "Do I need to sign up or create an account?",
-    a: "No. RandomChat is 100% account-free and registration-free. You do not need an email, phone number, or password. You receive an ephemeral session token that completely wipes when you disconnect."
-  },
-  {
-    q: "Is RandomChat safe and moderated?",
-    a: "Yes. Every active conversation includes direct, prominent Block and Report buttons. When you block a user, our bidirectional block exclusion guarantees you will never be matched with them again. We also enforce rate-limits and cold-message gating to prevent spam."
-  },
-  {
-    q: "Can I do both Text and Voice chat?",
-    a: "Yes! You can chat anonymously via text or toggle peer-to-peer WebRTC voice chat with crystal-clear audio and zero server audio recordings."
-  }
-];
+const currentLang = 'en';
 ---
 
 <BaseLayout
@@ -37,161 +18,539 @@ const faqItems = [
 >
   <LandingNavbar lang={currentLang} />
 
-  <main class="flex-1 w-full flex flex-col items-center">
-    <!-- Hero Section -->
-    <section class="w-full py-16 sm:py-24 px-4 max-w-5xl mx-auto flex flex-col items-center text-center gap-8">
-      <!-- Eyebrow Badge -->
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[var(--primary)] text-xs font-bold tracking-wide">
-        <span class="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></span>
-        <span>Over {siteConfig.metrics.onlineUsersEstimate} People Online Now</span>
+  <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-6 sm:py-10 flex flex-col items-center justify-center">
+    <!-- MASTER CONTAINER -->
+    <div id="random-chat-app" class="w-full min-h-[580px] h-[calc(100dvh-180px)] flex flex-col bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-xl relative transition-all">
+
+      <!-- ========================================== -->
+      <!-- VIEW 1: RADAR MATCHMAKING SCREEN (No Filters) -->
+      <!-- ========================================== -->
+      <div id="view-matching" class="flex-1 flex flex-col items-center justify-center p-8 text-center gap-6 relative">
+        <!-- Pulsing Connection Radar / Orb -->
+        <div class="relative w-28 h-28 flex items-center justify-center">
+          <span class="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF808A]/20 via-[#D55882]/20 to-[#492351]/20 animate-ping opacity-60"></span>
+          <span class="absolute w-20 h-20 rounded-full bg-[#FF808A]/15 animate-pulse"></span>
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#FF808A] to-[#D55882] text-white flex items-center justify-center shadow-lg shadow-[#FF808A]/25 z-10">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2 max-w-sm">
+          <h2 class="text-xl sm:text-2xl font-black text-[var(--text-primary)] tracking-tight">
+            Finding someone...
+          </h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+            Matching you with a random available stranger worldwide. No accounts, zero filters, pure serendipity.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button
+            type="button"
+            id="matching-cancel-btn"
+            class="px-6 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer shadow-xs"
+          >
+            Cancel & Back to People
+          </button>
+        </div>
       </div>
 
-      <!-- Main Headline -->
-      <div class="flex flex-col gap-4 max-w-3xl">
-        <h1 class="text-4xl sm:text-6xl font-black text-[var(--text-primary)] tracking-tight leading-[1.1]">
-          Random Chat Without Accounts, Algorithms, or Feeds.
-        </h1>
-        <p class="text-base sm:text-xl text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
-          Experience genuine, spontaneous 1-on-1 conversations with friendly strangers across the globe. Pure text & voice matching in under 2 seconds.
-        </p>
+      <!-- ========================================== -->
+      <!-- VIEW 2: MATCH FOUND TRANSITION SCREEN -->
+      <!-- ========================================== -->
+      <div id="view-match-found" class="hidden flex-1 flex-col items-center justify-center p-8 text-center gap-4 animate-in fade-in duration-200">
+        <div class="w-16 h-16 rounded-full bg-[#10B981]/15 text-[#10B981] flex items-center justify-center">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div class="flex flex-col gap-1">
+          <h3 class="text-xl font-black text-[var(--text-primary)]">Stranger Connected!</h3>
+          <p class="text-xs text-[var(--text-secondary)]">Opening encrypted ephemeral chat...</p>
+        </div>
       </div>
 
-      <!-- Primary Action Island Button -->
-      <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
-        <a
-          href="/start"
-          class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold text-base shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 active:scale-[0.98]"
-        >
-          <span>Start Random Chatting</span>
-          <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-1">
-            <Icon name="arrow-right" class="w-4 h-4 text-white" />
+      <!-- ========================================== -->
+      <!-- VIEW 3: ACTIVE STRANGER CHAT SCREEN -->
+      <!-- ========================================== -->
+      <div id="view-active-chat" class="hidden flex-1 flex-col h-full overflow-hidden">
+        <!-- Chat Header -->
+        <div class="px-4 py-3 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-2 shrink-0">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="relative w-10 h-10 rounded-full shrink-0 border border-[var(--border)] shadow-xs flex items-center justify-center font-bold text-sm bg-gradient-to-br from-[#FF808A]/20 to-[#D55882]/30 text-[#FF808A]">
+              <span id="stranger-initial">S</span>
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10B981] border-2 border-[var(--bg-surface)]"></span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-2">
+                <span id="stranger-name" class="font-bold text-sm text-[var(--text-primary)]">Stranger</span>
+                <span id="stranger-flag-container">
+                  <CountryFlag code="US" size="sm" />
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+                <span class="text-[#10B981] font-medium flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span> Connected
+                </span>
+                <span class="text-[var(--text-muted)]">&bull;</span>
+                <span class="text-[var(--text-muted)] font-mono">0 Logs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="flex items-center gap-2">
+            <!-- Voice Request Trigger -->
+            <button
+              type="button"
+              id="random-request-voice-btn"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#FF808A]/10 border border-[var(--border)] hover:border-[#FF808A]/30 text-xs font-semibold text-[var(--text-primary)] hover:text-[#FF808A] transition-all cursor-pointer shadow-xs"
+              title="Request WebRTC Voice"
+            >
+              <svg class="w-3.5 h-3.5 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+              </svg>
+              <span class="hidden sm:inline">Voice</span>
+            </button>
+
+            <!-- Find Another Stranger Trigger -->
+            <button
+              type="button"
+              id="random-next-btn"
+              class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#FF808A] to-[#D55882] text-white hover:opacity-95 text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+              title="Find Another Stranger"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              <span>Next Stranger</span>
+            </button>
+
+            <!-- Safety Menu Toggle -->
+            <div class="relative">
+              <button
+                type="button"
+                id="random-safety-btn"
+                class="w-8 h-8 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Moderation Options"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+              </button>
+              <div
+                id="random-safety-dropdown"
+                class="hidden absolute right-0 top-10 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-2xl p-1.5 z-50 flex-col gap-1"
+              >
+                <button
+                  type="button"
+                  id="random-report-action"
+                  class="w-full px-3 py-2 text-left text-xs font-semibold text-rose-500 hover:bg-rose-500/10 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                  <span>Report Stranger</span>
+                </button>
+                <button
+                  type="button"
+                  id="random-block-action"
+                  class="w-full px-3 py-2 text-left text-xs font-semibold text-[var(--text-secondary)] hover:text-rose-500 hover:bg-rose-500/10 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                  <span>Block Stranger</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cold Gate Status Banner -->
+        <div id="random-cold-gate" class="hidden bg-[#FF808A]/10 border-b border-[#FF808A]/25 px-4 py-2.5 flex items-center justify-between gap-3 text-xs text-[var(--text-primary)]">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#FF808A] animate-ping shrink-0"></span>
+            <span>You've sent 2 messages. Wait for a reply before sending another.</span>
+          </div>
+          <button
+            type="button"
+            id="random-simulate-reply"
+            class="px-2.5 py-1 rounded-lg bg-[#FF808A] hover:bg-[#D55882] text-white text-[11px] font-bold transition-all shadow-xs cursor-pointer shrink-0"
+          >
+            Simulate Reply
+          </button>
+        </div>
+
+        <!-- Messages Stream -->
+        <div class="relative flex-1 min-h-0">
+          <div id="random-messages-list" class="w-full h-full overflow-y-auto p-4 flex flex-col gap-3.5 bg-[var(--bg-page)] scroll-smooth">
+            <div class="my-2 flex flex-col items-center justify-center text-center gap-1 p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs max-w-sm mx-auto">
+              <span class="text-xs font-bold text-[var(--text-primary)]">You are connected to a random stranger</span>
+              <p class="text-[11px] text-[var(--text-secondary)]">Say hello! Be polite, respectful, and safe.</p>
+            </div>
+          </div>
+
+          <!-- Floating Scroll-To-Bottom Pill -->
+          <button
+            type="button"
+            id="random-scroll-bottom"
+            class="hidden absolute bottom-3 right-4 px-3 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] text-xs font-semibold shadow-lg items-center gap-1.5 transition-all cursor-pointer z-10 animate-bounce"
+          >
+            <svg class="w-3.5 h-3.5 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <span>New messages</span>
+            <span id="random-unseen-count" class="px-1.5 py-0.2 rounded-full bg-[#FF808A] text-white text-[10px] font-bold">1</span>
+          </button>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="random-typing" class="hidden px-5 py-1 text-xs text-[var(--text-secondary)] flex items-center gap-2 bg-[var(--bg-page)] border-t border-[var(--border)]/30">
+          <span>Stranger is typing</span>
+          <span class="inline-flex gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce" style="animation-delay: 0.15s"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce" style="animation-delay: 0.3s"></span>
           </span>
-        </a>
-        <a
-          href="/chat-rooms"
-          class="px-6 py-4 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-bold text-sm transition-colors"
-        >
-          Explore Topic Rooms &rarr;
-        </a>
-      </div>
-
-      <!-- Trust Metrics -->
-      <div class="grid grid-cols-3 gap-6 sm:gap-12 pt-8 border-t border-[var(--border)] w-full max-w-xl text-center">
-        <div class="flex flex-col">
-          <span class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">{siteConfig.metrics.averageMatchSeconds}</span>
-          <span class="text-xs text-[var(--text-muted)]">Average Match</span>
-        </div>
-        <div class="flex flex-col">
-          <span class="text-2xl sm:text-3xl font-black text-[var(--primary)]">{siteConfig.metrics.retentionPolicy}</span>
-          <span class="text-xs text-[var(--text-muted)]">Privacy Guaranteed</span>
-        </div>
-        <div class="flex flex-col">
-          <span class="text-2xl sm:text-3xl font-black text-[var(--success)]">100% Free</span>
-          <span class="text-xs text-[var(--text-muted)]">No Signup</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Double-Bezel Value Proposition Cards -->
-    <section class="w-full py-16 px-4 bg-[var(--bg-surface-elevated)] border-y border-[var(--border)]">
-      <div class="max-w-5xl mx-auto flex flex-col gap-12">
-        <div class="text-center flex flex-col gap-2 max-w-xl mx-auto">
-          <h2 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">Why Millions Choose RandomChat</h2>
-          <p class="text-sm text-[var(--text-secondary)]">Engineered from the ground up for speed, privacy, and meaningful human connection.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Card 1: Double Bezel Architecture -->
-          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
-            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
-              <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
-                <Icon name="zap" class="w-6 h-6" />
-              </div>
-              <h3 class="text-lg font-bold text-[var(--text-primary)]">Zero Wait Times</h3>
-              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
-                Our Cloudflare edge network matches you instantly with compatible peers globally. No loading delays or matchmaking queues.
-              </p>
-            </div>
+        <!-- Composer Bar -->
+        <div class="p-3 bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-end gap-2 shrink-0">
+          <div class="relative flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] overflow-hidden focus-within:ring-2 focus-within:ring-[#FF808A] focus-within:border-transparent transition-all">
+            <textarea
+              id="random-textarea"
+              rows="1"
+              placeholder="Type a message... (Enter to send)"
+              class="w-full resize-none bg-transparent py-2.5 px-3.5 text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none max-h-32"
+            ></textarea>
           </div>
-
-          <!-- Card 2: Double Bezel -->
-          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
-            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
-              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
-                <Icon name="shield-check" class="w-6 h-6" />
-              </div>
-              <h3 class="text-lg font-bold text-[var(--text-primary)]">Absolute Anonymity</h3>
-              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
-                No profiles, no registration, and no tracking cookies. Once you disconnect, your conversation history disappears forever.
-              </p>
-            </div>
-          </div>
-
-          <!-- Card 3: Double Bezel -->
-          <div class="p-2 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-[var(--border)] ring-1 ring-black/5">
-            <div class="h-full p-6 rounded-[calc(2rem-0.5rem)] bg-[var(--bg-surface)] flex flex-col gap-4 shadow-sm">
-              <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center font-bold">
-                <Icon name="user-x" class="w-6 h-6" />
-              </div>
-              <h3 class="text-lg font-bold text-[var(--text-primary)]">Smart Block & Safety</h3>
-              <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
-                Block toxic users with 1 click. Our bidirectional safety matrix ensures you will never encounter the same blocked user again.
-              </p>
-            </div>
-          </div>
+          <button
+            type="button"
+            id="random-send-btn"
+            class="w-10 h-10 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] text-white flex items-center justify-center transition-all shadow-md cursor-pointer shrink-0 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Send"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
         </div>
       </div>
-    </section>
 
-    <!-- FAQ & Structured Data Section -->
-    <section class="w-full py-16 px-4 max-w-4xl mx-auto flex flex-col gap-10">
-      <div class="text-center flex flex-col gap-2">
-        <h2 class="text-2xl sm:text-3xl font-black text-[var(--text-primary)]">Frequently Asked Questions</h2>
-        <p class="text-sm text-[var(--text-secondary)]">Everything you need to know about starting a random chat on {siteConfig.name}.</p>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        {faqItems.map((item) => (
-          <div class="p-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] flex flex-col gap-2 shadow-xs">
-            <h3 class="font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
-              <span class="text-[var(--primary)]">Q:</span> {item.q}
-            </h3>
-            <p class="text-sm text-[var(--text-secondary)] leading-relaxed pl-6">
-              {item.a}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <!-- Bottom CTA Banner -->
-      <div class="p-8 rounded-[2rem] bg-[var(--primary)] text-white flex flex-col sm:flex-row items-center justify-between gap-6 mt-8 shadow-xl">
-        <div class="flex flex-col gap-1 text-center sm:text-left">
-          <h3 class="text-2xl font-black">Ready to meet someone new?</h3>
-          <p class="text-xs text-white/80">Connect immediately. No signup required.</p>
+      <!-- ========================================== -->
+      <!-- VIEW 4: STRANGER DISCONNECTED SCREEN -->
+      <!-- ========================================== -->
+      <div id="view-disconnected" class="hidden flex-1 flex-col items-center justify-center p-8 text-center gap-6 animate-in fade-in duration-200">
+        <div class="w-16 h-16 rounded-3xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)] shadow-xs">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="18" y1="8" x2="23" y2="13"></line>
+            <line x1="23" y1="8" x2="18" y2="13"></line>
+          </svg>
         </div>
-        <a
-          href="/start"
-          class="px-8 py-3.5 rounded-full bg-white text-[var(--primary)] font-bold text-sm shadow-md hover:bg-slate-100 transition-colors shrink-0"
-        >
-          Start Chat Now &rarr;
-        </a>
+        <div class="flex flex-col gap-2 max-w-sm">
+          <h3 class="text-xl font-black text-[var(--text-primary)]">Stranger left the conversation</h3>
+          <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+            Your conversation history has been wiped. You can instantly find another stranger or head back to the People lobby.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 pt-2 w-full max-w-xs">
+          <button
+            type="button"
+            id="rematch-btn"
+            class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white font-bold text-sm shadow-md transition-all cursor-pointer active:scale-95"
+          >
+            Find Another Stranger
+          </button>
+          <a
+            href="/people"
+            class="w-full py-3 px-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] font-bold text-xs text-center transition-all cursor-pointer"
+          >
+            Back to People
+          </a>
+        </div>
       </div>
-    </section>
+
+    </div>
   </main>
 
-  <!-- JSON-LD FAQ Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqItems.map(item => ({
-      "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.a
-      }
-    }))
-  })} />
-
+  <CallModals />
   <LandingFooter />
 </BaseLayout>
+
+<script>
+  function initRandomChatPage() {
+    // Route guard: mandatory username, age 18+, and country required
+    const session = sessionStorage.getItem('rc_guest_session');
+    let hasValidSession = false;
+    if (session) {
+      try {
+        const p = JSON.parse(session);
+        if (p.nickname && p.nickname.trim().length >= 3 && p.age && Number(p.age) >= 18 && p.country && p.country !== 'all') {
+          hasValidSession = true;
+        }
+      } catch {}
+    }
+
+    if (!hasValidSession) {
+      window.location.replace('/?openSetup=true&target=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
+    const viewMatching = document.getElementById('view-matching');
+    const viewMatchFound = document.getElementById('view-match-found');
+    const viewActiveChat = document.getElementById('view-active-chat');
+    const viewDisconnected = document.getElementById('view-disconnected');
+
+    const cancelBtn = document.getElementById('matching-cancel-btn');
+    const nextBtn = document.getElementById('random-next-btn');
+    const rematchBtn = document.getElementById('rematch-btn');
+
+    const strangerInitial = document.getElementById('stranger-initial');
+    const strangerName = document.getElementById('stranger-name');
+    const strangerFlag = document.getElementById('stranger-flag-container');
+
+    const messagesList = document.getElementById('random-messages-list');
+    const textarea = document.getElementById('random-textarea') as HTMLTextAreaElement | null;
+    const sendBtn = document.getElementById('random-send-btn') as HTMLButtonElement | null;
+    const coldGate = document.getElementById('random-cold-gate');
+    const simulateReply = document.getElementById('random-simulate-reply');
+    const typingIndicator = document.getElementById('random-typing');
+
+    const safetyBtn = document.getElementById('random-safety-btn');
+    const safetyDropdown = document.getElementById('random-safety-dropdown');
+    const reportAction = document.getElementById('random-report-action');
+    const blockAction = document.getElementById('random-block-action');
+
+    const scrollBottomBtn = document.getElementById('random-scroll-bottom');
+    const unseenBadge = document.getElementById('random-unseen-count');
+
+    let outgoingCount = 0;
+    let unseenCount = 0;
+    let isAtBottom = true;
+    let matchTimeout: any = null;
+
+    const sampleCountries = ['US', 'IN', 'GB', 'CA', 'DE', 'FR', 'ES', 'BR', 'JP', 'AU'];
+
+    function showView(view: 'matching' | 'found' | 'chat' | 'disconnected') {
+      [viewMatching, viewMatchFound, viewActiveChat, viewDisconnected].forEach(el => {
+        el?.classList.add('hidden');
+        el?.classList.remove('flex');
+      });
+
+      if (view === 'matching') {
+        viewMatching?.classList.remove('hidden');
+        viewMatching?.classList.add('flex');
+      } else if (view === 'found') {
+        viewMatchFound?.classList.remove('hidden');
+        viewMatchFound?.classList.add('flex');
+      } else if (view === 'chat') {
+        viewActiveChat?.classList.remove('hidden');
+        viewActiveChat?.classList.add('flex');
+      } else if (view === 'disconnected') {
+        viewDisconnected?.classList.remove('hidden');
+        viewDisconnected?.classList.add('flex');
+      }
+    }
+
+    function startMatchmaking() {
+      showView('matching');
+      if (matchTimeout) clearTimeout(matchTimeout);
+
+      // Serendipitous match transition (1000 - 1800ms)
+      matchTimeout = setTimeout(() => {
+        showView('found');
+
+        setTimeout(() => {
+          connectToStranger();
+        }, 600); // 600ms match found transition
+      }, 1400);
+    }
+
+    function connectToStranger() {
+      showView('chat');
+      const countryCode = sampleCountries[Math.floor(Math.random() * sampleCountries.length)];
+      if (strangerFlag) {
+        strangerFlag.innerHTML = `<span class="inline-flex items-center shrink-0 w-4 h-3 rounded-[2px] overflow-hidden border border-white/10"><img src="/flags/${countryCode.toLowerCase()}.svg" class="w-full h-full object-cover" width="16" height="12" /></span>`;
+      }
+
+      outgoingCount = 0;
+      updateColdGate();
+      clearMessages();
+      textarea?.focus();
+    }
+
+    function updateColdGate() {
+      const isLocked = outgoingCount >= 2;
+      if (coldGate) {
+        if (isLocked) {
+          coldGate.classList.remove('hidden');
+          coldGate.classList.add('flex');
+        } else {
+          coldGate.classList.add('hidden');
+          coldGate.classList.remove('flex');
+        }
+      }
+
+      if (textarea) textarea.disabled = isLocked;
+      if (sendBtn) sendBtn.disabled = isLocked;
+    }
+
+    function clearMessages() {
+      if (!messagesList) return;
+      messagesList.innerHTML = `
+        <div class="my-2 flex flex-col items-center justify-center text-center gap-1 p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs max-w-sm mx-auto">
+          <span class="text-xs font-bold text-[var(--text-primary)]">You are connected to a random stranger</span>
+          <p class="text-[11px] text-[var(--text-secondary)]">Say hello! Be polite, respectful, and safe.</p>
+        </div>
+      `;
+    }
+
+    function appendMessage(text: string, isMe: boolean) {
+      if (!messagesList) return;
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[75%] ${isMe ? 'self-end' : 'self-start'} animate-in fade-in duration-150`;
+
+      const bubble = document.createElement('div');
+      bubble.className = `p-3 rounded-2xl text-xs sm:text-sm leading-relaxed break-words shadow-2xs ${
+        isMe
+          ? 'bg-gradient-to-r from-[#FF808A] to-[#D55882] text-white rounded-tr-xs'
+          : 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] border border-[var(--border)] rounded-tl-xs'
+      }`;
+      bubble.textContent = text;
+
+      const time = document.createElement('span');
+      time.className = `text-[10px] mt-1 text-[var(--text-muted)] font-mono ${isMe ? 'text-right' : 'text-left'}`;
+      time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      msgDiv.appendChild(bubble);
+      msgDiv.appendChild(time);
+      messagesList.appendChild(msgDiv);
+
+      if (isAtBottom) {
+        messagesList.scrollTo({ top: messagesList.scrollHeight, behavior: 'smooth' });
+      } else {
+        unseenCount++;
+        if (scrollBottomBtn && unseenBadge) {
+          unseenBadge.textContent = String(unseenCount);
+          scrollBottomBtn.classList.remove('hidden');
+          scrollBottomBtn.classList.add('inline-flex');
+        }
+      }
+    }
+
+    function sendTextMessage() {
+      if (!textarea) return;
+      const text = textarea.value.trim();
+      if (!text) return;
+      if (outgoingCount >= 2) return;
+
+      appendMessage(text, true);
+      outgoingCount++;
+      updateColdGate();
+      textarea.value = '';
+      textarea.style.height = 'auto';
+
+      setTimeout(() => {
+        if (typingIndicator) typingIndicator.classList.remove('hidden');
+      }, 1000);
+    }
+
+    textarea?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendTextMessage();
+      }
+    });
+
+    sendBtn?.addEventListener('click', sendTextMessage);
+
+    simulateReply?.addEventListener('click', () => {
+      if (typingIndicator) typingIndicator.classList.add('hidden');
+      const replies = [
+        "Hey! Greetings from across the world.",
+        "Hi! Nice connecting with you here.",
+        "Hey there! What are you up to today?",
+        "Hello! Fun to meet randomly."
+      ];
+      appendMessage(replies[Math.floor(Math.random() * replies.length)], false);
+      outgoingCount = 0;
+      updateColdGate();
+    });
+
+    messagesList?.addEventListener('scroll', () => {
+      if (!messagesList) return;
+      isAtBottom = messagesList.scrollHeight - messagesList.scrollTop - messagesList.clientHeight <= 80;
+      if (isAtBottom && scrollBottomBtn) {
+        unseenCount = 0;
+        scrollBottomBtn.classList.add('hidden');
+        scrollBottomBtn.classList.remove('inline-flex');
+      }
+    });
+
+    scrollBottomBtn?.addEventListener('click', () => {
+      if (messagesList) {
+        messagesList.scrollTo({ top: messagesList.scrollHeight, behavior: 'smooth' });
+        unseenCount = 0;
+        scrollBottomBtn.classList.add('hidden');
+        scrollBottomBtn.classList.remove('inline-flex');
+      }
+    });
+
+    // Cancel matching -> Go back to People Lobby
+    cancelBtn?.addEventListener('click', () => {
+      if (matchTimeout) clearTimeout(matchTimeout);
+      window.location.href = '/people';
+    });
+
+    // Next Stranger -> Rematch immediately
+    nextBtn?.addEventListener('click', () => {
+      startMatchmaking();
+    });
+
+    rematchBtn?.addEventListener('click', () => {
+      startMatchmaking();
+    });
+
+    // Safety menu
+    safetyBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      safetyDropdown?.classList.toggle('hidden');
+      safetyDropdown?.classList.toggle('flex');
+    });
+
+    document.addEventListener('click', () => {
+      safetyDropdown?.classList.add('hidden');
+      safetyDropdown?.classList.remove('flex');
+    });
+
+    // Request Voice escalation
+    const voiceReqBtn = document.getElementById('random-request-voice-btn');
+    voiceReqBtn?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('rc:voice-request-triggered', { detail: { username: 'Stranger' } }));
+    });
+
+    reportAction?.addEventListener('click', () => {
+      alert("Stranger reported. Thank you for helping keep RandomChat safe.");
+      showView('disconnected');
+    });
+
+    blockAction?.addEventListener('click', () => {
+      alert("Stranger blocked. You will never be matched with them again.");
+      showView('disconnected');
+    });
+
+    // Kick off matching upon entering Random Chat
+    startMatchmaking();
+  }
+
+  initRandomChatPage();
+  document.addEventListener('astro:page-load', initRandomChatPage);
+</script>

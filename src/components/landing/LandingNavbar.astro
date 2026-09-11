@@ -1,5 +1,6 @@
 ---
 import Icon from '../icons/Icon.astro';
+import Logo from '../Logo.astro';
 import LanguagePicker from '../LanguagePicker.astro';
 import { siteConfig } from '../../config/site';
 import { getLangFromUrl, useTranslatedPath, useTranslations } from '../../i18n/utils';
@@ -37,14 +38,8 @@ const t = useTranslations(currentLang);
         </button>
 
         <!-- Brand Logo -->
-        <a href={translatePath('/')} class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg p-1" aria-label="RandomChat Home">
-          <div class="w-8 h-8 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-            <Icon name="message-square" class="w-4.5 h-4.5" />
-          </div>
-          <div class="flex items-baseline font-bold text-xl tracking-tight">
-            <span class="text-[var(--text-primary)]">Random</span>
-            <span class="text-[var(--primary)]">Chat</span>
-          </div>
+        <a href={translatePath('/')} class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[#E11D48] rounded-lg p-1" aria-label="RandomChat Home">
+          <Logo class="w-8 h-8" withText={true} />
         </a>
       </div>
 
@@ -79,8 +74,9 @@ const t = useTranslations(currentLang);
 
         <!-- Primary CTA -->
         <a
-          href={translatePath('/chat')}
-          class="btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 shadow-xs"
+          id="nav-start-chat-btn"
+          href={translatePath('/start')}
+          class="btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 shadow-xs cursor-pointer"
         >
           <span class="hidden sm:inline">{t.nav.startChat}</span>
           <span class="sm:hidden">Chat</span>
@@ -97,7 +93,7 @@ const t = useTranslations(currentLang);
     aria-label="Mobile Navigation"
   >
     <nav class="flex flex-col gap-1 text-sm font-semibold text-[var(--text-primary)]">
-      <a href={translatePath('/chat')} class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] text-[var(--primary)] font-bold transition-colors">
+      <a id="mobile-nav-start-link" href={translatePath('/start')} class="mobile-nav-link flex items-center justify-between p-3 rounded-xl hover:bg-[var(--bg-surface-elevated)] text-[var(--primary)] font-bold transition-colors">
         <span>1-on-1 Text Chat</span>
         <Icon name="chevron-right" class="w-4 h-4 text-[var(--primary)]" />
       </a>
@@ -120,7 +116,7 @@ const t = useTranslations(currentLang);
     </nav>
 
     <div class="pt-3 border-t border-[var(--border)] flex flex-col gap-2.5">
-      <a href={translatePath('/chat')} class="btn-primary text-sm py-3 text-center w-full">
+      <a id="mobile-nav-start-chat-btn" href={translatePath('/start')} class="btn-primary text-sm py-3 text-center w-full cursor-pointer">
         <span>{t.hero.cta}</span>
         <Icon name="arrow-right" class="w-4 h-4" />
       </a>

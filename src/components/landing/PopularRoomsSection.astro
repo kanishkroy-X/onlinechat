@@ -15,29 +15,29 @@ const FEATURED_ROOMS = [
     slug: 'dating',
     title: 'Dating & Romance',
     icon: '💖',
-    desc: 'Meet singles, find chemistry, and talk to people looking for connection.',
-    online: 2410
+    tag: 'Trending',
+    desc: 'Meet singles, find chemistry, and talk to people looking for connection.'
   },
   {
     slug: 'gaming',
     title: 'Gaming & Esports',
     icon: '🎮',
-    desc: 'Steam, Valorant, GTA, RPGs, and favorite gameplay chatter.',
-    online: 1840
+    tag: 'Active',
+    desc: 'Steam, Valorant, GTA, RPGs, and favorite gameplay chatter.'
   },
   {
     slug: 'music',
     title: 'Music & Vibes',
     icon: '🎵',
-    desc: 'Track recommendations, genres, playlist sharing, and chill moods.',
-    online: 1290
+    tag: 'Community',
+    desc: 'Track recommendations, genres, playlist sharing, and chill moods.'
   },
   {
     slug: 'movies',
     title: 'Cinema & Anime',
     icon: '🍿',
-    desc: 'Discussions on blockbusters, anime seasons, series, and reviews.',
-    online: 980
+    tag: 'Discussion',
+    desc: 'Discussions on blockbusters, anime seasons, series, and reviews.'
   }
 ];
 ---
@@ -48,17 +48,17 @@ const FEATURED_ROOMS = [
     <div class="flex items-center justify-between">
       <div class="flex flex-col gap-0.5">
         <h2 class="text-lg sm:text-xl font-black text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-          <span>Popular Chat Rooms</span>
+          <span>Topic-Based Community Channels</span>
         </h2>
         <p class="text-xs text-[var(--text-secondary)]">
-          Jump into active community channels matching your interests.
+          Jump directly into topic channels matching your immediate interests.
         </p>
       </div>
       <a
         href={translatePath('/chat-rooms')}
         class="text-xs font-bold text-[var(--primary)] hover:underline flex items-center gap-1 shrink-0"
       >
-        <span>View All</span>
+        <span>Explore All</span>
         <Icon name="arrow-right" class="w-3.5 h-3.5" />
       </a>
     </div>
@@ -85,11 +85,9 @@ const FEATURED_ROOMS = [
           </div>
 
           <div class="flex flex-col items-end shrink-0">
-            <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              {room.online.toLocaleString()}
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border border-[var(--border)]">
+              {room.tag}
             </span>
-            <span class="text-[10px] text-[var(--text-subtle)]">online</span>
           </div>
         </a>
       ))}

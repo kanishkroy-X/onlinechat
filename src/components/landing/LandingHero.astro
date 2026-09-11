@@ -12,332 +12,74 @@ const translatePath = useTranslatedPath(currentLang);
 const t = useTranslations(currentLang);
 ---
 
-<section class="w-full pt-4 sm:pt-8 pb-12 sm:pb-16 px-4 flex flex-col items-center justify-center">
-  <div class="w-full max-w-md mx-auto flex flex-col items-center gap-4">
+<section class="w-full pt-12 sm:pt-20 pb-16 sm:pb-24 px-4 flex flex-col items-center justify-center text-center relative overflow-hidden">
+  <!-- Subtle Background Sunset Glow -->
+  <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[650px] h-[380px] bg-gradient-to-b from-[#FF808A]/15 via-[#D55882]/10 to-transparent blur-3xl pointer-events-none rounded-full -z-10"></div>
 
-    <!-- Main Clean Card -->
-    <div class="w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col gap-5 text-left transition-all">
-      
-      <!-- Brand Logo Header & Title -->
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2 mb-1">
-          <div class="w-7 h-7 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center shadow-xs">
-            <Icon name="message-square" class="w-4 h-4" />
-          </div>
-          <span class="font-bold text-base tracking-tight text-[var(--text-primary)]">
-            Random<span class="text-[var(--primary)]">Chat</span>
-          </span>
-        </div>
+  <div class="w-full max-w-3xl mx-auto flex flex-col items-center gap-6">
 
-        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)] leading-tight">
-          {t.setup.title}
-        </h1>
-        <p class="text-xs sm:text-sm text-[var(--text-secondary)] font-normal">
-          {t.hero.subheadline}
-        </p>
-      </div>
-
-      <!-- Quick Setup Form -->
-      <form id="hero-quick-join-form" action={translatePath('/chat')} method="GET" class="flex flex-col gap-4.5">
-        <!-- Hidden Inputs for Form State -->
-        <input type="hidden" name="gender" id="input-gender" value="male" />
-        <input type="hidden" name="pref" id="input-pref" value="anyone" />
-
-        <!-- 1. Username Input with Embedded Shuffle / Dice Icon -->
-        <div class="flex flex-col gap-1.5">
-          <label for="input-nickname" class="text-xs font-bold text-[var(--text-secondary)]">
-            {t.setup.nicknameLabel}
-          </label>
-          <div class="relative flex items-center">
-            <input
-              id="input-nickname"
-              type="text"
-              name="nick"
-              maxlength="20"
-              placeholder={t.setup.nicknamePlaceholder}
-              autocomplete="off"
-              required
-              class="w-full pl-3.5 pr-11 py-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-semibold placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-sm"
-            />
-            <!-- Embedded Inside Shuffle / Dice Button -->
-            <button
-              type="button"
-              id="btn-randomize-nick"
-              class="absolute right-2 w-7 h-7 rounded-xl bg-[var(--bg-surface)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--primary)] flex items-center justify-center transition-all cursor-pointer active:rotate-45"
-              title="Shuffle / Generate Random Nickname"
-              aria-label="Generate Random Nickname"
-            >
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="4" />
-                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
-                <circle cx="16" cy="8" r="1.5" fill="currentColor" />
-                <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                <circle cx="8" cy="16" r="1.5" fill="currentColor" />
-                <circle cx="16" cy="16" r="1.5" fill="currentColor" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- 2. Gender Selection (High-Contrast Active State with Checkmarks) -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-[var(--text-secondary)]">
-            {t.setup.genderLabel}
-          </label>
-          <div class="grid grid-cols-2 gap-2.5">
-            <!-- Male Button -->
-            <button
-              type="button"
-              id="gender-btn-male"
-              class="hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--primary)] text-white border-[var(--primary)] ring-2 ring-[var(--primary)]/20 shadow-sm"
-              data-gender="male"
-              aria-pressed="true"
-            >
-              <span class="gender-check inline-flex items-center justify-center w-4 h-4 rounded-full bg-white/20">
-                <svg class="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </span>
-              <span>{t.setup.male}</span>
-            </button>
-
-            <!-- Female Button -->
-            <button
-              type="button"
-              id="gender-btn-female"
-              class="hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]"
-              data-gender="female"
-              aria-pressed="false"
-            >
-              <span class="gender-check hidden items-center justify-center w-4 h-4 rounded-full bg-white/20">
-                <svg class="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </span>
-              <span>{t.setup.female}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 3. Country / Location (Smart Auto-Detection Pre-filled) -->
-        <div class="flex flex-col gap-1.5">
-          <div class="flex items-center justify-between">
-            <label for="input-country" class="text-xs font-bold text-[var(--text-secondary)]">
-              {t.setup.countryLabel}
-            </label>
-            <span id="country-auto-detected-badge" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span>Auto-detected</span>
-            </span>
-          </div>
-          <div class="relative">
-            <select
-              id="input-country"
-              name="country"
-              class="w-full pl-3.5 pr-10 py-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-semibold focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all text-sm appearance-none cursor-pointer"
-            >
-              <option value="anywhere">🌐 Global (Worldwide)</option>
-              <option value="IN">🇮🇳 India</option>
-              <option value="US">🇺🇸 United States</option>
-              <option value="GB">🇬🇧 United Kingdom</option>
-              <option value="CA">🇨🇦 Canada</option>
-              <option value="AU">🇦🇺 Australia</option>
-              <option value="DE">🇩🇪 Germany</option>
-              <option value="FR">🇫🇷 France</option>
-              <option value="ES">🇪🇸 Spain</option>
-              <option value="IT">🇮🇹 Italy</option>
-              <option value="BR">🇧🇷 Brazil</option>
-              <option value="MX">🇲🇽 Mexico</option>
-              <option value="JP">🇯🇵 Japan</option>
-              <option value="KR">🇰🇷 South Korea</option>
-              <option value="PH">🇵🇭 Philippines</option>
-              <option value="ID">🇮🇩 Indonesia</option>
-              <option value="NL">🇳🇱 Netherlands</option>
-              <option value="SG">🇸🇬 Singapore</option>
-              <option value="AE">🇦🇪 United Arab Emirates</option>
-              <option value="ZA">🇿🇦 South Africa</option>
-            </select>
-            <div class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]">
-              <Icon name="chevron-down" class="w-4 h-4" />
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Solid Primary Action Button -->
-        <button
-          type="submit"
-          id="hero-find-match-btn"
-          class="w-full mt-1.5 py-3.5 sm:py-4 px-6 rounded-2xl bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-        >
-          <span>{t.setup.cta}</span>
-          <Icon name="arrow-right" class="w-4.5 h-4.5" />
-        </button>
-      </form>
-
-      <!-- Micro Info & Legal / TOS Placement Directly Below CTA -->
-      <div class="pt-2 border-t border-[var(--border)] flex flex-col items-center gap-1.5 text-center text-xs text-[var(--text-muted)]">
-        <div class="flex items-center gap-1.5 font-semibold text-[var(--text-secondary)]">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span id="live-online-num">4,800+</span>
-          <span>online now</span>
-          <span>&bull;</span>
-          <span>18+ only</span>
-        </div>
-        <p class="text-[11px] text-[var(--text-subtle)] leading-relaxed">
-          By continuing, you agree to our
-          <a href={translatePath('/terms')} class="text-[var(--text-secondary)] hover:underline font-medium">{t.nav.terms}</a>
-          &
-          <a href={translatePath('/privacy')} class="text-[var(--text-secondary)] hover:underline font-medium">{t.nav.privacy}</a>.
-        </p>
-      </div>
-
+    <!-- 1. Live Activity Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs text-xs font-semibold text-[var(--text-secondary)]">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="text-[var(--text-primary)] font-bold">4,568 strangers</span>
+      <span>online right now</span>
     </div>
+
+    <!-- 2. Headline & Subheading -->
+    <div class="flex flex-col gap-4 max-w-2xl">
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-[var(--text-primary)] leading-[1.1]">
+        Meet someone new. <br class="hidden sm:inline" />
+        <span class="bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] bg-clip-text text-transparent">
+          Start a conversation.
+        </span>
+      </h1>
+      <p class="text-base sm:text-lg text-[var(--text-secondary)] font-normal leading-relaxed max-w-xl mx-auto">
+        Free, anonymous-by-default instant text & voice chat with people worldwide. No accounts, no personal tracking, zero friction.
+      </p>
+    </div>
+
+    <!-- 3. Primary Dual Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto mt-2">
+      <!-- Start Chat CTA -->
+      <a
+        id="hero-start-random-btn"
+        href={translatePath('/people')}
+        class="w-full sm:w-auto py-3.5 px-7 rounded-2xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white font-bold text-sm sm:text-base shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.98]"
+      >
+        <Icon name="sparkles" class="w-4.5 h-4.5" />
+        <span>Start Chatting Now</span>
+        <Icon name="arrow-right" class="w-4.5 h-4.5" />
+      </a>
+
+      <!-- Browse People Lobby CTA -->
+      <a
+        id="hero-browse-people-btn"
+        href={translatePath('/people')}
+        class="w-full sm:w-auto py-3.5 px-6 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text-primary)] font-bold text-sm sm:text-base shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+      >
+        <Icon name="users" class="w-4.5 h-4.5 text-[var(--text-secondary)]" />
+        <span>Browse People Lobby</span>
+      </a>
+    </div>
+
+    <!-- 4. Trust Badges & Guarantee -->
+    <div class="mt-4 pt-6 border-t border-[var(--border)]/80 flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-[var(--text-muted)]">
+      <span class="flex items-center gap-1.5 font-medium text-[var(--text-secondary)]">
+        <Icon name="shield-check" class="w-3.5 h-3.5 text-emerald-500" />
+        100% Anonymous (No Login)
+      </span>
+      <span class="flex items-center gap-1.5 font-medium text-[var(--text-secondary)]">
+        <Icon name="lock" class="w-3.5 h-3.5 text-emerald-500" />
+        Direct RAM Routing (Zero Logs)
+      </span>
+      <span class="flex items-center gap-1.5 font-medium text-[var(--text-secondary)]">
+        <Icon name="zap" class="w-3.5 h-3.5 text-amber-500" />
+        Instant 1-on-1 Matching
+      </span>
+      <span class="flex items-center gap-1.5 font-bold text-rose-500">
+        18+ Adults Only
+      </span>
+    </div>
+
   </div>
 </section>
-
-<script>
-  // Nickname randomizer words
-  const ADJECTIVES = ['Cosmic', 'Neon', 'Silent', 'Lucky', 'Pixel', 'Shadow', 'Mystic', 'Sunny', 'Brave', 'Wild', 'Chill', 'Urban', 'Velvet', 'Frost', 'Amber', 'Nova'];
-  const NOUNS = ['Falcon', 'Tiger', 'Panda', 'Rider', 'Voyager', 'Nomad', 'Star', 'Wolf', 'Echo', 'Drifter', 'Wave', 'Phoenix', 'Knight', 'Fox', 'Hawk', 'Otter'];
-
-  function getRandomNickname() {
-    const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
-    const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
-    const num = Math.floor(100 + Math.random() * 900);
-    return `${adj}_${noun}${num}`;
-  }
-
-  // Country Auto-Detection via Timezone & Browser Locale
-  function detectCountry(): string {
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-      if (tz.includes('Calcutta') || tz.includes('Kolkata') || tz.includes('India')) return 'IN';
-      if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Los_Angeles') || tz.includes('Denver')) return 'US';
-      if (tz.includes('London')) return 'GB';
-      if (tz.includes('Toronto') || tz.includes('Vancouver')) return 'CA';
-      if (tz.includes('Sydney') || tz.includes('Melbourne')) return 'AU';
-      if (tz.includes('Berlin') || tz.includes('Frankfurt')) return 'DE';
-      if (tz.includes('Paris')) return 'FR';
-      if (tz.includes('Madrid')) return 'ES';
-      if (tz.includes('Rome')) return 'IT';
-      if (tz.includes('Tokyo')) return 'JP';
-      if (tz.includes('Seoul')) return 'KR';
-      if (tz.includes('Manila')) return 'PH';
-      if (tz.includes('Jakarta')) return 'ID';
-      if (tz.includes('Amsterdam')) return 'NL';
-      if (tz.includes('Singapore')) return 'SG';
-      if (tz.includes('Dubai')) return 'AE';
-      if (tz.includes('Sao_Paulo')) return 'BR';
-      if (tz.includes('Mexico')) return 'MX';
-    } catch (e) {}
-
-    // Fallback to navigator.language
-    try {
-      const lang = navigator.language || '';
-      const parts = lang.split('-');
-      if (parts.length > 1) {
-        return parts[1].toUpperCase();
-      }
-    } catch (e) {}
-
-    return 'anywhere';
-  }
-
-  // DOM Elements
-  const nickInput = document.getElementById('input-nickname') as HTMLInputElement;
-  const randomizeBtn = document.getElementById('btn-randomize-nick');
-  const genderInput = document.getElementById('input-gender') as HTMLInputElement;
-  const prefInput = document.getElementById('input-pref') as HTMLInputElement;
-  const countrySelect = document.getElementById('input-country') as HTMLSelectElement;
-  const form = document.getElementById('hero-quick-join-form') as HTMLFormElement;
-  const genderBtns = document.querySelectorAll('.hero-gender-btn');
-
-  // 1. Nickname Prepopulation
-  const storedNick = localStorage.getItem('rc_nickname');
-  if (nickInput) {
-    nickInput.value = storedNick || getRandomNickname();
-  }
-
-  // 2. Country Smart Default / Detection
-  const storedCountry = localStorage.getItem('rc_country');
-  const detected = detectCountry();
-  const initialCountry = storedCountry || (detected !== 'anywhere' ? detected : 'IN');
-
-  if (countrySelect) {
-    if (initialCountry && countrySelect.querySelector(`option[value="${initialCountry}"]`)) {
-      countrySelect.value = initialCountry;
-    } else {
-      countrySelect.value = 'anywhere';
-    }
-  }
-
-  // 3. High-Contrast Gender Selection State with Checkmark
-  function updateGenderSelection(val: string) {
-    if (genderInput) genderInput.value = val;
-    genderBtns.forEach(btn => {
-      const b = btn as HTMLButtonElement;
-      const isSelected = b.getAttribute('data-gender') === val;
-      const checkEl = b.querySelector('.gender-check');
-
-      if (isSelected) {
-        b.className = 'hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--primary)] text-white border-[var(--primary)] ring-2 ring-[var(--primary)]/20 shadow-sm';
-        b.setAttribute('aria-pressed', 'true');
-        if (checkEl) {
-          checkEl.classList.remove('hidden');
-          checkEl.classList.add('inline-flex');
-        }
-      } else {
-        b.className = 'hero-gender-btn py-3 px-4 rounded-2xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer select-none bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]';
-        b.setAttribute('aria-pressed', 'false');
-        if (checkEl) {
-          checkEl.classList.add('hidden');
-          checkEl.classList.remove('inline-flex');
-        }
-      }
-    });
-  }
-
-  const storedGender = localStorage.getItem('rc_gender') || 'male';
-  updateGenderSelection(storedGender);
-
-  // 4. Randomize Button Interaction with slight dice spin
-  randomizeBtn?.addEventListener('click', () => {
-    if (nickInput) {
-      nickInput.value = getRandomNickname();
-      nickInput.focus();
-    }
-  });
-
-  // 5. Gender button clicks
-  genderBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const g = btn.getAttribute('data-gender') || 'male';
-      updateGenderSelection(g);
-    });
-  });
-
-  // 6. Form Submission
-  form?.addEventListener('submit', () => {
-    const finalNick = nickInput?.value.trim() || getRandomNickname();
-    const finalGender = genderInput?.value || 'male';
-    const finalPref = prefInput?.value || 'anyone';
-    const finalCountry = countrySelect?.value || 'anywhere';
-
-    localStorage.setItem('rc_nickname', finalNick);
-    localStorage.setItem('rc_gender', finalGender);
-    localStorage.setItem('rc_pref', finalPref);
-    localStorage.setItem('rc_country', finalCountry);
-    localStorage.setItem('rc_age_verified_18', 'true');
-  });
-
-  // 7. Subtle live user count fluctuation
-  const liveCountEl = document.getElementById('live-online-num');
-  if (liveCountEl) {
-    let count = 4820;
-    setInterval(() => {
-      const delta = Math.floor(Math.random() * 5) - 2;
-      count = Math.max(4200, count + delta);
-      liveCountEl.textContent = count.toLocaleString() + '+';
-    }, 4500);
-  }
-</script>

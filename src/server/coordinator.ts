@@ -47,6 +47,31 @@ export class ChatCoordinator {
     }
   }
 
+  public getPresence(): {
+    onlineCount: number;
+    clients: Array<{
+      sessionId: string;
+      nickname: string;
+      gender: Gender;
+      country: Country;
+      age: number;
+      online: boolean;
+    }>;
+  } {
+    const list = Array.from(this.clients.values()).map(c => ({
+      sessionId: c.sessionId,
+      nickname: c.nickname,
+      gender: c.gender,
+      country: c.country,
+      age: 24,
+      online: true
+    }));
+    return {
+      onlineCount: this.clients.size,
+      clients: list
+    };
+  }
+
   public registerClient(
     sessionId: string,
     nickname: string,

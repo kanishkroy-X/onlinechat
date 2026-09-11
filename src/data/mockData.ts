@@ -21,6 +21,25 @@ export const COUNTRY_FLAG_MAP: Record<string, { name: string; flag: string; citi
   NL: { name: 'Netherlands', flag: '🇳🇱', cities: ['Amsterdam', 'Rotterdam', 'Utrecht'] }
 };
 
+export const POPULAR_SKILLS = [
+  'TypeScript',
+  'Astro',
+  'Tailwind CSS',
+  'UI/UX Design',
+  'AI Engineering',
+  'Python',
+  'Music Production',
+  'Photography',
+  'Creative Writing',
+  'Motion Design',
+  '3D Modeling',
+  'Game Dev',
+  'Language Exchange',
+  'Video Editing',
+  'Sound Design',
+  'Philosophy'
+];
+
 export const MOCK_USERS: User[] = [
   {
     id: 'user-1',
@@ -32,7 +51,8 @@ export const MOCK_USERS: User[] = [
     city: 'Barcelona',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Coffee & indie music enthusiast ☕'
+    statusMessage: 'Coffee & indie music enthusiast ☕',
+    skills: ['UI/UX Design', 'Photography', 'Tailwind CSS']
   },
   {
     id: 'user-2',
@@ -44,7 +64,8 @@ export const MOCK_USERS: User[] = [
     city: 'Dublin',
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Always down for deep talks & rock playlists'
+    statusMessage: 'Always down for deep talks & rock playlists',
+    skills: ['Music Production', 'Sound Design', 'Guitar']
   },
   {
     id: 'user-3',
@@ -56,7 +77,8 @@ export const MOCK_USERS: User[] = [
     city: 'Lahore',
     avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Architectural designer & tea lover'
+    statusMessage: 'Architectural designer & tea lover',
+    skills: ['3D Modeling', 'Architecture', 'Digital Art']
   },
   {
     id: 'user-4',
@@ -68,7 +90,8 @@ export const MOCK_USERS: User[] = [
     city: 'Seoul',
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Night photography & ambient lo-fi vibes'
+    statusMessage: 'Night photography & ambient lo-fi vibes',
+    skills: ['Photography', 'Motion Design', 'Video Editing']
   },
   {
     id: 'user-5',
@@ -80,7 +103,8 @@ export const MOCK_USERS: User[] = [
     city: 'Milan',
     avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Exploring vintage cinema & art history'
+    statusMessage: 'Exploring vintage cinema & art history',
+    skills: ['Creative Writing', 'Philosophy', 'Language Exchange']
   },
   {
     id: 'user-6',
@@ -92,7 +116,8 @@ export const MOCK_USERS: User[] = [
     city: 'Toronto',
     avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Hiking enthusiast, looking for travel recommendations'
+    statusMessage: 'Hiking enthusiast, looking for travel recommendations',
+    skills: ['TypeScript', 'Astro', 'Python']
   },
   {
     id: 'user-7',
@@ -104,7 +129,8 @@ export const MOCK_USERS: User[] = [
     city: 'Bengaluru',
     avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Tech explorer, bookworm & culinary experimentalist'
+    statusMessage: 'Tech explorer, bookworm & culinary experimentalist',
+    skills: ['AI Engineering', 'Python', 'TypeScript']
   },
   {
     id: 'user-8',
@@ -116,7 +142,8 @@ export const MOCK_USERS: User[] = [
     city: 'Rio de Janeiro',
     avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Bossa nova, beach volleyball & language exchange'
+    statusMessage: 'Bossa nova, beach volleyball & language exchange',
+    skills: ['Music Production', 'Language Exchange', 'Guitar']
   },
   {
     id: 'user-9',
@@ -128,7 +155,8 @@ export const MOCK_USERS: User[] = [
     city: 'Prague',
     avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Graphic illustrator & European backpacker'
+    statusMessage: 'Graphic illustrator & European backpacker',
+    skills: ['Digital Art', 'UI/UX Design', '3D Modeling']
   },
   {
     id: 'user-10',
@@ -140,7 +168,8 @@ export const MOCK_USERS: User[] = [
     city: 'London',
     avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Vinyl collector, podcast host & coffee snob'
+    statusMessage: 'Vinyl collector, podcast host & coffee snob',
+    skills: ['Sound Design', 'Creative Writing', 'Podcast Production']
   },
   {
     id: 'user-11',
@@ -152,7 +181,8 @@ export const MOCK_USERS: User[] = [
     city: 'Singapore',
     avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Street food lover & UI designer'
+    statusMessage: 'Street food lover & UI designer',
+    skills: ['UI/UX Design', 'Tailwind CSS', 'Motion Design']
   },
   {
     id: 'user-12',
@@ -164,7 +194,8 @@ export const MOCK_USERS: User[] = [
     city: 'Berlin',
     avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
     isOnline: true,
-    statusMessage: 'Electronic music producer & cycling fanatic'
+    statusMessage: 'Electronic music producer & cycling fanatic',
+    skills: ['Music Production', 'Sound Design', 'Game Dev']
   }
 ];
 

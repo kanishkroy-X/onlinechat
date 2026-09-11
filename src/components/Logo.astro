@@ -1,0 +1,44 @@
+---
+interface Props {
+  class?: string;
+  size?: number | string;
+  withText?: boolean;
+  textColor?: string;
+}
+
+const {
+  class: className = 'w-9 h-9',
+  size,
+  withText = false,
+  textColor = 'text-[var(--text-primary)]'
+} = Astro.props;
+
+const style = size ? `width: ${size}px; height: ${size}px;` : undefined;
+---
+
+<div class={`inline-flex items-center gap-2.5 ${withText ? '' : className}`} style={withText ? undefined : style}>
+  <!-- Logo Icon Badge matching exact brand mark -->
+  <div
+    class={`rounded-xl bg-[#E11D48] flex items-center justify-center shadow-xs transition-transform group-hover:scale-105 shrink-0 overflow-hidden ${withText ? className : 'w-full h-full'}`}
+    style={withText ? style : undefined}
+  >
+    <svg viewBox="0 0 64 64" fill="none" class="w-full h-full p-1" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M22 18 h20 a4 4 0 0 1 4 4 v16 a4 4 0 0 1 -4 4 H26 l-8 7 V22 a4 4 0 0 1 4 -4 z"
+        stroke="#FFFFFF"
+        stroke-width="5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
+      />
+    </svg>
+  </div>
+
+  <!-- Wordmark -->
+  {withText && (
+    <div class="flex items-baseline font-black text-xl tracking-tight select-none">
+      <span class={textColor}>Random</span>
+      <span class="text-[#E11D48] ml-0.5">Chat</span>
+    </div>
+  )}
+</div>

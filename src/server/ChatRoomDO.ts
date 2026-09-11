@@ -317,13 +317,11 @@ export class ChatRoomDO {
       const [clientWs, serverWs] = Object.values(pair);
 
       // In Cloudflare Workers WebSocket accept
-      // @ts-expect-error WebSocket accept is Cloudflare DO specific
       serverWs.accept();
       this.handleWebSocket(sessionId, serverWs as unknown as WebSocket);
 
       return new Response(null, {
         status: 101,
-        // @ts-expect-error Cloudflare webSocket response
         webSocket: clientWs
       });
     }

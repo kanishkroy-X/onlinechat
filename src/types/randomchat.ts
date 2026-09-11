@@ -11,6 +11,7 @@ export interface User {
   avatarUrl: string;
   isOnline: boolean;
   statusMessage?: string;
+  skills?: string[];
 }
 
 export type MessageType = 'text' | 'png' | 'mp4' | 'voice';
@@ -69,6 +70,7 @@ export interface FilterState {
   maxAge: number;
   countryCode: string;
   city: string;
+  selectedSkills?: string[];
 }
 
 export type ReportReason =

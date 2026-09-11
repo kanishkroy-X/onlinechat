@@ -1,0 +1,43 @@
+---
+import { getCountryByCode } from '../data/countries';
+
+interface Props {
+  code: string; // ISO 3166-1 alpha-2, e.g. "US", "IN"
+  name?: string;
+  class?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  code,
+  name,
+  class: className = '',
+  size = 'md'
+} = Astro.props;
+
+const codeLower = (code || '').toLowerCase().trim();
+const country = getCountryByCode(code);
+const displayName = name || country?.name || code?.toUpperCase() || 'Country';
+
+const sizeClasses = {
+  sm: 'w-4 h-3 rounded-[2px]',
+  md: 'w-5 h-3.5 rounded-[2px]',
+  lg: 'w-6 h-4 rounded-[3px]'
+};
+---
+
+<span class={`inline-flex items-center shrink-0 overflow-hidden shadow-xs border border-white/10 dark:border-white/15 bg-black/10 ${sizeClasses[size]} ${className}`} title={displayName}>
+  {codeLower && codeLower !== 'anywhere' && codeLower !== 'all' ? (
+    <img
+      src={`/flags/${codeLower}.svg`}
+      alt={`${displayName} flag`}
+      class="w-full h-full object-cover"
+      loading="lazy"
+      width="24"
+      height="16"
+      onerror="this.style.display='none'"
+    />
+  ) : (
+    <span class="w-full h-full flex items-center justify-center text-[10px]">🌐</span>
+  )}
+</span>

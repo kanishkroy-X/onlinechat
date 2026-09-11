@@ -86,9 +86,61 @@ const t = getTranslations(lang);
           <span class="text-[10px] text-[var(--text-subtle)] text-right">Max 200 characters</span>
         </div>
 
+        <!-- Skills & Expertise Editor -->
+        <div class="flex flex-col gap-3 p-4 rounded-2xl bg-[var(--bg-page)] border border-[var(--border-color)]">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-[#6C4DFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              Skills & Expertise
+            </label>
+            <span class="text-[10px] text-[var(--text-subtle)]">Add skills to attract like-minded chat partners</span>
+          </div>
+
+          <!-- Active Skills Tags List -->
+          <div id="active-skills-container" class="flex flex-wrap gap-2 min-h-[36px] items-center">
+            <!-- Rendered dynamically by script -->
+          </div>
+
+          <!-- Add Custom Skill Input -->
+          <div class="flex gap-2">
+            <input
+              id="custom-skill-input"
+              type="text"
+              placeholder="Add a custom skill or talent..."
+              maxlength="30"
+              class="flex-1 px-3.5 py-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs text-[var(--text-main)] placeholder-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-[#6C4DFF]"
+            />
+            <button
+              type="button"
+              id="add-custom-skill-btn"
+              class="px-3.5 py-2 rounded-xl bg-[#6C4DFF] hover:bg-[#7B61FF] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+            >
+              + Add
+            </button>
+          </div>
+
+          <!-- Popular Skills Suggestions -->
+          <div class="flex flex-col gap-1.5 pt-1 border-t border-[var(--border-subtle)]">
+            <span class="text-[10px] font-semibold text-[var(--text-subtle)] uppercase tracking-wider">Suggested Presets:</span>
+            <div id="preset-skills-container" class="flex flex-wrap gap-1.5">
+              {['TypeScript', 'UI/UX Design', 'Astro', 'Tailwind CSS', 'AI Engineering', 'Music Production', 'Photography', 'Creative Writing', 'Motion Design', 'Sound Design'].map((s) => (
+                <button
+                  type="button"
+                  class="preset-skill-chip px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[var(--bg-surface)] hover:bg-[#6C4DFF]/10 text-[var(--text-muted)] hover:text-[#6C4DFF] border border-[var(--border-color)] hover:border-[#6C4DFF]/40 transition-all cursor-pointer"
+                  data-skill={s}
+                >
+                  + {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <!-- Save Button -->
         <div class="pt-2 flex items-center justify-between">
-          <span id="save-status-msg" class="hidden text-xs text-emerald-600 font-semibold">✓ Profile changes saved locally!</span>
+          <span id="save-status-msg" class="hidden text-xs text-emerald-600 font-semibold">✓ Profile & skills saved locally!</span>
           <button
             type="submit"
             id="save-profile-btn"
@@ -107,9 +159,110 @@ const t = getTranslations(lang);
 <script>
   const form = document.getElementById('profile-edit-form');
   const statusMsg = document.getElementById('save-status-msg');
+  const usernameInput = document.getElementById('edit-username') as HTMLInputElement | null;
+  const bioInput = document.getElementById('edit-bio') as HTMLTextAreaElement | null;
+  const countryInput = document.getElementById('edit-country') as HTMLInputElement | null;
+  const activeSkillsContainer = document.getElementById('active-skills-container');
+  const customSkillInput = document.getElementById('custom-skill-input') as HTMLInputElement | null;
+  const addCustomSkillBtn = document.getElementById('add-custom-skill-btn');
+  const presetChips = document.querySelectorAll('.preset-skill-chip');
+
+  const DEFAULT_SKILLS = ['TypeScript', 'UI/UX Design', 'Astro', 'Tailwind CSS', 'Sound Design'];
+  let currentSkills: string[] = [];
+
+  // Load existing data
+  try {
+    const saved = localStorage.getItem('randomchat_profile_skills');
+    currentSkills = saved ? JSON.parse(saved) : [...DEFAULT_SKILLS];
+    
+    const savedUsername = localStorage.getItem('randomchat_profile_username');
+    if (savedUsername && usernameInput) usernameInput.value = savedUsername;
+
+    const savedBio = localStorage.getItem('randomchat_profile_bio');
+    if (savedBio && bioInput) bioInput.value = savedBio;
+
+    const savedCountry = localStorage.getItem('randomchat_profile_country');
+    if (savedCountry && countryInput) countryInput.value = savedCountry;
+  } catch {
+    currentSkills = [...DEFAULT_SKILLS];
+  }
+
+  function renderActiveSkills() {
+    if (!activeSkillsContainer) return;
+    activeSkillsContainer.innerHTML = '';
+
+    if (currentSkills.length === 0) {
+      activeSkillsContainer.innerHTML = '<span class="text-xs text-[var(--text-subtle)] italic">No skills added yet. Click suggested presets below or type your own.</span>';
+      return;
+    }
+
+    currentSkills.forEach((skill) => {
+      const pill = document.createElement('span');
+      pill.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#6C4DFF]/15 border border-[#6C4DFF]/30 text-xs font-bold text-[#6C4DFF] dark:text-[#A78BFA] shadow-2xs';
+      pill.innerHTML = `
+        <span>${skill}</span>
+        <button type="button" class="remove-skill-btn text-[#6C4DFF] hover:text-red-500 font-bold ml-1 cursor-pointer" data-skill="${skill}" aria-label="Remove ${skill}">✕</button>
+      `;
+      activeSkillsContainer.appendChild(pill);
+    });
+
+    // Attach remove listeners
+    activeSkillsContainer.querySelectorAll('.remove-skill-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const skillToRemove = (e.currentTarget as HTMLElement).dataset.skill;
+        if (skillToRemove) {
+          currentSkills = currentSkills.filter(s => s !== skillToRemove);
+          renderActiveSkills();
+        }
+      });
+    });
+  }
+
+  function addSkill(skill: string) {
+    const trimmed = skill.trim();
+    if (trimmed && !currentSkills.some(s => s.toLowerCase() === trimmed.toLowerCase())) {
+      currentSkills.push(trimmed);
+      renderActiveSkills();
+    }
+  }
+
+  addCustomSkillBtn?.addEventListener('click', () => {
+    if (customSkillInput && customSkillInput.value) {
+      addSkill(customSkillInput.value);
+      customSkillInput.value = '';
+    }
+  });
+
+  customSkillInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (customSkillInput.value) {
+        addSkill(customSkillInput.value);
+        customSkillInput.value = '';
+      }
+    }
+  });
+
+  presetChips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const skill = (chip as HTMLElement).dataset.skill;
+      if (skill) {
+        addSkill(skill);
+      }
+    });
+  });
 
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
+    try {
+      localStorage.setItem('randomchat_profile_skills', JSON.stringify(currentSkills));
+      if (usernameInput) localStorage.setItem('randomchat_profile_username', usernameInput.value);
+      if (bioInput) localStorage.setItem('randomchat_profile_bio', bioInput.value);
+      if (countryInput) localStorage.setItem('randomchat_profile_country', countryInput.value);
+    } catch (err) {
+      console.error('Failed to save profile:', err);
+    }
+
     if (statusMsg) {
       statusMsg.classList.remove('hidden');
       setTimeout(() => {
@@ -117,4 +270,6 @@ const t = getTranslations(lang);
       }, 3000);
     }
   });
+
+  renderActiveSkills();
 </script>

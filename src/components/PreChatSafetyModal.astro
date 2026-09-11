@@ -1,0 +1,135 @@
+---
+import Icon from './icons/Icon.astro';
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(currentLang);
+const t = useTranslations(currentLang);
+---
+
+<!-- PRE-CHAT SAFETY & COMMUNITY GUIDELINES MODAL -->
+<div
+  id="pre-chat-safety-modal"
+  class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pre-chat-safety-title"
+>
+  <div class="w-full max-w-lg bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 flex flex-col gap-6 shadow-2xl animate-modal-in text-left">
+    
+    <!-- Modal Header -->
+    <div class="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center font-bold shrink-0 text-sm">
+          18+
+        </div>
+        <div>
+          <h2 id="pre-chat-safety-title" class="text-lg sm:text-xl font-black text-[var(--text-primary)] tracking-tight">
+            18+ only
+          </h2>
+          <p class="text-xs text-[var(--text-secondary)] font-medium">
+            RandomChat is for adults.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety Rules & Privacy Checklist -->
+    <div class="flex flex-col gap-3.5 text-xs text-[var(--text-secondary)] leading-relaxed">
+      <p class="font-bold text-sm text-[var(--text-primary)]">
+        Do not share:
+      </p>
+      
+      <div class="p-3.5 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border)] flex flex-col gap-2 font-medium">
+        <div class="flex items-center gap-2 text-[var(--text-primary)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span>Your real name</span>
+        </div>
+        <div class="flex items-center gap-2 text-[var(--text-primary)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span>Address</span>
+        </div>
+        <div class="flex items-center gap-2 text-[var(--text-primary)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span>Phone number</span>
+        </div>
+        <div class="flex items-center gap-2 text-[var(--text-primary)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span>Passwords</span>
+        </div>
+        <div class="flex items-center gap-2 text-[var(--text-primary)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span>Payment information</span>
+        </div>
+        <div class="flex items-center gap-2 text-[var(--text-primary)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span>Other private information</span>
+        </div>
+      </div>
+
+      <!-- Zero tolerance notice -->
+      <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-[11px] leading-relaxed">
+        <strong>Zero Tolerance Policy:</strong> Any harassment, CSAM, illegal content, or hate speech will result in an immediate permanent ban and referral to authorities.
+      </div>
+    </div>
+
+    <!-- Acknowledgement CTA -->
+    <div class="flex flex-col gap-3 pt-2 border-t border-[var(--border)]">
+      <div class="flex items-center gap-3 mt-1">
+        <button
+          type="button"
+          id="safety-modal-decline-btn"
+          class="w-1/3 py-3 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] text-xs font-bold border border-[var(--border)] transition-colors cursor-pointer"
+        >
+          Exit
+        </button>
+        <button
+          type="button"
+          id="safety-modal-accept-btn"
+          class="w-2/3 py-3 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
+        >
+          <span>I am 18+ and understand</span>
+          <Icon name="arrow-right" class="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const safetyModal = document.getElementById('pre-chat-safety-modal');
+  const acceptBtn = document.getElementById('safety-modal-accept-btn') as HTMLButtonElement | null;
+  const declineBtn = document.getElementById('safety-modal-decline-btn');
+
+  acceptBtn?.addEventListener('click', () => {
+    localStorage.setItem('rc_safety_agreed', 'true');
+    localStorage.setItem('rc_age_verified_18', 'true');
+    safetyModal?.classList.add('hidden');
+    window.dispatchEvent(new CustomEvent('rc:safety_agreed'));
+  });
+
+  declineBtn?.addEventListener('click', () => {
+    window.location.href = '/';
+  });
+
+  // Global helper to check or open safety gate
+  (window as any).checkOrShowSafetyGate = function(onAgreed: () => void) {
+    const agreed = localStorage.getItem('rc_safety_agreed') === 'true';
+    if (agreed) {
+      onAgreed();
+    } else {
+      safetyModal?.classList.remove('hidden');
+      const handler = () => {
+        window.removeEventListener('rc:safety_agreed', handler);
+        onAgreed();
+      };
+      window.addEventListener('rc:safety_agreed', handler);
+    }
+  };
+</script>

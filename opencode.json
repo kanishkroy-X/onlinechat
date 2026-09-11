@@ -5,6 +5,12 @@
       "headers": {
         "x-consumer-api-key": "ck_rrxiMjkzdac0RQWJ0Z7i"
       }
+    },
+    "uxpilot": {
+      "serverUrl": "https://mcp.uxpilot.net/mcp",
+      "headers": {
+        "Authorization": "Bearer ep_your_api_key"
+      }
     }
   }
 }

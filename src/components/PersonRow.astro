@@ -1,0 +1,96 @@
+---
+import CountryFlag from './CountryFlag.astro';
+
+export interface PersonItem {
+  id: string;
+  username: string;
+  age: number;
+  gender: 'male' | 'female';
+  countryCode: string; // ISO alpha-2, e.g. "US", "IN"
+  countryName?: string;
+  online?: boolean;
+}
+
+interface Props {
+  person: PersonItem;
+  isSelected?: boolean;
+  class?: string;
+}
+
+const {
+  person,
+  isSelected = false,
+  class: className = ''
+} = Astro.props;
+
+const initial = (person.username || 'S').charAt(0).toUpperCase();
+
+// Generate a deterministic soft pastel gradient background for the avatar based on name
+const avatarColors = [
+  'from-[#FF808A]/20 to-[#D55882]/30 text-[#FF808A]',
+  'from-[#7F376D]/20 to-[#492351]/30 text-[#D55882]',
+  'from-[#6366F1]/20 to-[#4F46E5]/30 text-[#818CF8]',
+  'from-[#10B981]/20 to-[#059669]/30 text-[#34D399]',
+  'from-[#F59E0B]/20 to-[#D97706]/30 text-[#FBBF24]',
+  'from-[#EC4899]/20 to-[#BE185D]/30 text-[#F472B6]'
+];
+const colorIndex = person.username.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % avatarColors.length;
+const avatarColor = avatarColors[colorIndex];
+---
+
+<div
+  class={`person-row group w-full h-[68px] px-3.5 sm:px-4 py-2.5 rounded-2xl border transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 shadow-2xs relative select-none ${
+    isSelected
+      ? 'bg-[#FF808A]/10 border-[#FF808A]/40 ring-1 ring-[#FF808A]/20'
+      : 'bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border-[var(--border)] hover:border-[var(--border-strong)]'
+  } ${className}`}
+  data-id={person.id}
+  data-username={person.username}
+  data-age={person.age}
+  data-gender={person.gender}
+  data-country={person.countryCode.toLowerCase()}
+  data-country-name={person.countryName || person.countryCode}
+  role="button"
+  tabindex="0"
+  aria-label={`Chat with ${person.username}, ${person.age} years old from ${person.countryName || person.countryCode}`}
+>
+  <!-- Left: Initial Avatar + Identity Meta -->
+  <div class="flex items-center gap-3 min-w-0">
+    <!-- Initial-Based Anonymous Avatar (40-44px) -->
+    <div class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full shrink-0 border border-[var(--border)] shadow-xs flex items-center justify-center font-bold text-sm bg-gradient-to-br bg-[var(--bg-surface-elevated)] overflow-hidden">
+      <div class={`w-full h-full flex items-center justify-center bg-gradient-to-br ${avatarColor}`}>
+        <span>{initial}</span>
+      </div>
+      <!-- Subtle Online Pulse Dot -->
+      <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10B981] border-2 border-[var(--bg-surface)]"></span>
+    </div>
+
+    <!-- Metadata: Name, Age, Gender, Online -->
+    <div class="flex flex-col min-w-0">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-sm text-[var(--text-primary)] group-hover:text-[#FF808A] transition-colors truncate">
+          {person.username}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] truncate mt-0.5">
+        <span>{person.age} yrs</span>
+        <span class="text-[var(--text-muted)]">&bull;</span>
+        <span class="capitalize">{person.gender}</span>
+        <span class="text-[var(--text-muted)]">&bull;</span>
+        <span class="text-[#10B981] font-medium inline-flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+          Online
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Country Flag & Arrow -->
+  <div class="flex items-center gap-2.5 shrink-0">
+    <CountryFlag code={person.countryCode} name={person.countryName} size="md" />
+    <svg class="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--text-primary)] group-hover:translate-x-0.5 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </div>
+</div>
