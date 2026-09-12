@@ -39,7 +39,7 @@ const avatarColor = avatarColors[colorIndex];
 ---
 
 <div
-  class={`person-row group w-full h-[68px] px-3.5 sm:px-4 py-2.5 rounded-2xl border transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 shadow-2xs relative select-none ${
+  class={`person-row group w-full min-h-[66px] h-[68px] px-3.5 sm:px-4 py-2.5 rounded-2xl border transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 shadow-2xs relative select-none active:scale-[0.99] active:bg-[var(--bg-surface-elevated)] ${
     isSelected
       ? 'bg-[#FF808A]/10 border-[#FF808A]/40 ring-1 ring-[#FF808A]/20'
       : 'bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-elevated)] border-[var(--border)] hover:border-[var(--border-strong)]'

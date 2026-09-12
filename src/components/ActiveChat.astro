@@ -23,13 +23,13 @@ import CountryFlag from './CountryFlag.astro';
   <!-- State B: Active Conversation View -->
   <div id="chat-selected-state" class="hidden flex-1 flex-col h-full overflow-hidden">
     <!-- 1. CHAT HEADER -->
-    <div class="px-4 py-3 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-2 shrink-0 transition-colors">
+    <div class="px-3 sm:px-4 py-2.5 sm:py-3 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-2 shrink-0 transition-colors">
       <!-- Left: Mobile Back + Partner Info -->
-      <div class="flex items-center gap-2.5 min-w-0">
+      <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
         <button
           type="button"
           id="chat-back-btn"
-          class="lg:hidden p-1.5 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors cursor-pointer"
+          class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors cursor-pointer touch-target shrink-0"
           aria-label="Back to People List"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -38,7 +38,7 @@ import CountryFlag from './CountryFlag.astro';
         </button>
 
         <!-- Initial-based Avatar -->
-        <div class="relative w-10 h-10 rounded-full shrink-0 border border-[var(--border)] shadow-xs flex items-center justify-center font-bold text-sm bg-gradient-to-br from-[#FF808A]/20 to-[#D55882]/30 text-[#FF808A] overflow-hidden">
+        <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full shrink-0 border border-[var(--border)] shadow-xs flex items-center justify-center font-bold text-sm bg-gradient-to-br from-[#FF808A]/20 to-[#D55882]/30 text-[#FF808A] overflow-hidden">
           <span id="active-chat-initial">S</span>
           <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10B981] border-2 border-[var(--bg-surface)]"></span>
         </div>
@@ -66,7 +66,7 @@ import CountryFlag from './CountryFlag.astro';
         <button
           type="button"
           id="chat-request-voice-btn"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#FF808A]/10 border border-[var(--border)] hover:border-[#FF808A]/30 text-xs font-semibold text-[var(--text-primary)] hover:text-[#FF808A] transition-all cursor-pointer shadow-xs"
+          class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#FF808A]/10 border border-[var(--border)] hover:border-[#FF808A]/30 text-xs font-semibold text-[var(--text-primary)] hover:text-[#FF808A] transition-all cursor-pointer shadow-xs min-h-[38px] sm:min-h-[40px]"
           title="Request WebRTC Voice Chat"
         >
           <svg class="w-3.5 h-3.5 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -82,7 +82,7 @@ import CountryFlag from './CountryFlag.astro';
         <button
           type="button"
           id="chat-next-stranger-btn"
-          class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+          class="p-2 sm:px-3 sm:py-2 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer shadow-xs flex items-center gap-1.5 min-h-[38px] sm:min-h-[40px]"
           title="Find Another Stranger"
         >
           <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -92,12 +92,12 @@ import CountryFlag from './CountryFlag.astro';
           <span class="hidden sm:inline">Next</span>
         </button>
 
-        <!-- Safety / More Menu Trigger -->
+        <!-- Safety / More Menu Trigger (40px touch area) -->
         <div class="relative">
           <button
             type="button"
             id="chat-safety-menu-btn"
-            class="w-8 h-8 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs"
+            class="w-10 h-10 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shadow-xs touch-target"
             aria-label="Safety & Moderation Options"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -110,7 +110,7 @@ import CountryFlag from './CountryFlag.astro';
           <!-- Dropdown Menu: Report & Block -->
           <div
             id="chat-safety-dropdown"
-            class="hidden absolute right-0 top-10 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-2xl p-1.5 z-50 flex-col gap-1"
+            class="hidden absolute right-0 top-12 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-2xl p-1.5 z-50 flex-col gap-1"
           >
             <button
               type="button"
@@ -188,8 +188,8 @@ import CountryFlag from './CountryFlag.astro';
       </span>
     </div>
 
-    <!-- 5. COMPOSER BAR (chatcn multi-line useAutoResize pattern) -->
-    <div class="p-3 bg-[var(--bg-surface)] border-t border-[var(--border)] flex flex-col gap-2 shrink-0 transition-colors">
+    <!-- 5. COMPOSER BAR (chatcn multi-line useAutoResize pattern) with Safe-Area padding -->
+    <div class="p-2.5 sm:p-3 pb-[max(0.65rem,env(safe-area-inset-bottom,0px))] bg-[var(--bg-surface)] border-t border-[var(--border)] flex flex-col gap-2 shrink-0 transition-colors">
       <!-- Media Attachment Preview Bar -->
       <div id="chat-media-preview" class="hidden items-center justify-between p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border)]">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -205,11 +205,11 @@ import CountryFlag from './CountryFlag.astro';
       </div>
 
       <div class="flex items-end gap-2">
-        <!-- Attach Media Trigger -->
+        <!-- Attach Media Trigger (44px touch area) -->
         <button
           type="button"
           id="chat-attach-btn"
-          class="w-10 h-10 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shrink-0 shadow-xs"
+          class="w-11 h-11 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shrink-0 shadow-xs touch-target"
           title="Attach Image"
           aria-label="Attach file"
         >
@@ -219,24 +219,24 @@ import CountryFlag from './CountryFlag.astro';
         </button>
         <input type="file" id="chat-file-input" accept="image/png, image/jpeg, video/mp4" class="hidden" />
 
-        <!-- Auto-Resizing Textarea -->
+        <!-- Auto-Resizing Textarea with 16px Mobile Font Size to prevent iOS auto-zoom -->
         <div class="relative flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] overflow-hidden focus-within:ring-2 focus-within:ring-[#FF808A] focus-within:border-transparent transition-all">
           <textarea
             id="chat-textarea"
             rows="1"
-            placeholder="Type a message... (Enter to send, Shift+Enter for newline)"
-            class="w-full resize-none bg-transparent py-2.5 px-3.5 text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none max-h-36 leading-relaxed"
+            placeholder="Type a message..."
+            class="w-full resize-none bg-transparent py-2.5 px-3 text-base sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none max-h-36 leading-relaxed"
           ></textarea>
         </div>
 
-        <!-- Send Button -->
+        <!-- Send Button (44px touch area) -->
         <button
           type="button"
           id="chat-send-btn"
-          class="w-10 h-10 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white flex items-center justify-center transition-all shadow-md cursor-pointer shrink-0 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-11 h-11 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white flex items-center justify-center transition-all shadow-md cursor-pointer shrink-0 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
           aria-label="Send message"
         >
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
@@ -540,6 +540,15 @@ import CountryFlag from './CountryFlag.astro';
     requestVoiceBtn?.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('rc:voice-request-triggered', { detail: currentPartner }));
     });
+
+    // Handle mobile virtual keyboard resize
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (selectedState && !selectedState.classList.contains('hidden') && messagesList) {
+          messagesList.scrollTop = messagesList.scrollHeight;
+        }
+      });
+    }
   }
 
   initActiveChat();

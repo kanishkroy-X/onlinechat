@@ -79,7 +79,7 @@ const { activeTab = 'online' } = Astro.props;
     <button
       type="button"
       id="theme-toggle-btn"
-      class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+      class="btn btn-secondary btn-icon text-[var(--text-secondary)] hover:text-[var(--text-primary)] touch-target"
       title="Toggle Light / Dark Mode"
       aria-label="Toggle Theme"
     >
@@ -105,7 +105,7 @@ const { activeTab = 'online' } = Astro.props;
     <button
       type="button"
       id="header-profile-btn"
-      class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] transition-colors cursor-pointer text-left shadow-xs"
+      class="btn btn-secondary px-3 py-1.5 text-left min-h-[40px] gap-2"
       title="View/Edit Profile"
     >
       <div class="relative w-6 h-6 rounded-full overflow-hidden bg-[var(--border)]">
@@ -126,7 +126,7 @@ const { activeTab = 'online' } = Astro.props;
     <button
       type="button"
       id="header-settings-btn"
-      class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer shadow-xs"
+      class="btn btn-secondary btn-icon text-[var(--text-secondary)] hover:text-[var(--text-primary)] touch-target"
       title="Settings"
       aria-label="Settings"
     >

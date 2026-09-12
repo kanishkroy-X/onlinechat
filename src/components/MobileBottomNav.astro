@@ -1,0 +1,143 @@
+---
+// MobileBottomNav.astro - Modern, Tactile Bottom Navigation for Mobile Viewports
+// Built for RandomChat Mobile-First Responsive Plan (Section 8)
+import Icon from './icons/Icon.astro';
+import { getLangFromUrl, useTranslatedPath } from '../i18n/utils';
+
+interface Props {
+  lang?: string;
+}
+
+const { lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(currentLang);
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = pathname === '/' || pathname === `/${currentLang}`;
+const isPeople = pathname.includes('/people');
+const isRandomChat = pathname.includes('/random-chat') || pathname.includes('/start');
+const isTopics = pathname.includes('/chat-rooms');
+---
+
+<nav
+  id="mobile-bottom-nav"
+  class="md:hidden fixed inset-x-0 bottom-0 z-40 bg-[var(--bg-surface)]/95 backdrop-blur-md border-t border-[var(--border)] transition-transform duration-200 ease-out select-none shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
+  aria-label="Mobile Navigation"
+>
+  <div class="max-w-lg mx-auto px-3 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] flex items-center justify-around gap-1">
+    <!-- 1. Home Tab -->
+    <a
+      href={translatePath('/')}
+      class={`flex flex-col items-center justify-center min-w-[56px] h-12 py-1 px-2 rounded-xl transition-all cursor-pointer ${
+        isHome
+          ? 'text-[#FF808A] font-bold'
+          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+      }`}
+      aria-current={isHome ? 'page' : undefined}
+    >
+      <div class="relative flex items-center justify-center">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        {isHome && <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-[#FF808A]"></span>}
+      </div>
+      <span class="text-[10px] mt-0.5 tracking-tight">Home</span>
+    </a>
+
+    <!-- 2. People Tab -->
+    <a
+      href={translatePath('/people')}
+      class={`flex flex-col items-center justify-center min-w-[56px] h-12 py-1 px-2 rounded-xl transition-all cursor-pointer ${
+        isPeople
+          ? 'text-[#FF808A] font-bold'
+          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+      }`}
+      aria-current={isPeople ? 'page' : undefined}
+    >
+      <div class="relative flex items-center justify-center">
+        <Icon name="users" class="w-5 h-5" />
+        {isPeople && <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-[#FF808A]"></span>}
+      </div>
+      <span class="text-[10px] mt-0.5 tracking-tight">People</span>
+    </a>
+
+    <!-- 3. Random Chat Tab (Accent Highlight) -->
+    <a
+      href={translatePath('/random-chat')}
+      class={`flex flex-col items-center justify-center min-w-[62px] h-12 py-1 px-2 rounded-xl transition-all cursor-pointer ${
+        isRandomChat
+          ? 'text-[#FF808A] font-bold'
+          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+      }`}
+      aria-current={isRandomChat ? 'page' : undefined}
+    >
+      <div class="relative flex items-center justify-center">
+        <div class={`w-7 h-7 rounded-lg flex items-center justify-center ${
+          isRandomChat
+            ? 'bg-gradient-to-br from-[#FF808A] to-[#D55882] text-white shadow-xs'
+            : 'bg-[var(--bg-surface-elevated)] border border-[var(--border)] text-[#FF808A]'
+        }`}>
+          <Icon name="sparkles" class="w-4 h-4" />
+        </div>
+      </div>
+      <span class="text-[10px] mt-0.5 tracking-tight">Random</span>
+    </a>
+
+    <!-- 4. Topics Tab -->
+    <a
+      href={translatePath('/chat-rooms')}
+      class={`flex flex-col items-center justify-center min-w-[56px] h-12 py-1 px-2 rounded-xl transition-all cursor-pointer ${
+        isTopics
+          ? 'text-[#FF808A] font-bold'
+          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+      }`}
+      aria-current={isTopics ? 'page' : undefined}
+    >
+      <div class="relative flex items-center justify-center">
+        <Icon name="message-square" class="w-5 h-5" />
+        {isTopics && <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-[#FF808A]"></span>}
+      </div>
+      <span class="text-[10px] mt-0.5 tracking-tight">Topics</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+  function initMobileBottomNav() {
+    const nav = document.getElementById('mobile-bottom-nav');
+    if (!nav) return;
+
+    let isChatActive = false;
+
+    // Listen for custom chat state events to hide bottom nav during active chat
+    window.addEventListener('rc:chat-active', () => {
+      isChatActive = true;
+      nav.classList.add('translate-y-full', 'pointer-events-none');
+    });
+
+    window.addEventListener('rc:chat-inactive', () => {
+      isChatActive = false;
+      nav.classList.remove('translate-y-full', 'pointer-events-none');
+    });
+
+    // Handle virtual keyboard: hide bottom nav when software keyboard is visible
+    if (window.visualViewport) {
+      const handleViewportResize = () => {
+        if (!window.visualViewport) return;
+        const isKeyboardOpen = window.visualViewport.height < window.innerHeight * 0.78;
+        if (isKeyboardOpen || isChatActive) {
+          nav.classList.add('translate-y-full', 'pointer-events-none');
+        } else {
+          nav.classList.remove('translate-y-full', 'pointer-events-none');
+        }
+      };
+
+      window.visualViewport.addEventListener('resize', handleViewportResize);
+      window.visualViewport.addEventListener('scroll', handleViewportResize);
+    }
+  }
+
+  initMobileBottomNav();
+  document.addEventListener('astro:page-load', initMobileBottomNav);
+</script>

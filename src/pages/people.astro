@@ -19,14 +19,14 @@ const currentLang = 'en';
   <LandingNavbar lang={currentLang} />
 
   <!-- MAIN APP CONTAINER -->
-  <main class="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6 flex flex-col min-h-0">
+  <main class="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4 pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] lg:pb-6 flex flex-col min-h-0">
     <!-- Top Navigation Sub-Bar (People vs. Random Chat) -->
-    <div class="w-full flex items-center justify-between pb-3 px-1 border-b border-[var(--border)] mb-3">
+    <div class="w-full flex items-center justify-between pb-2.5 px-1 border-b border-[var(--border)] mb-2.5">
       <!-- Mode Tabs -->
       <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs">
         <a
           href="/people"
-          class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[var(--bg-surface-elevated)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs"
+          class="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-[var(--bg-surface-elevated)] text-[#FF808A] border border-[#FF808A]/30 shadow-xs"
         >
           <svg class="w-4 h-4 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -39,7 +39,7 @@ const currentLang = 'en';
 
         <a
           href="/random-chat"
-          class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
+          class="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
         >
           <svg class="w-4 h-4 text-[#D55882]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -51,7 +51,7 @@ const currentLang = 'en';
 
         <a
           href="/chat-rooms"
-          class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
+          class="hidden sm:flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
         >
           <span>Topics</span>
         </a>
@@ -65,7 +65,7 @@ const currentLang = 'en';
     </div>
 
     <!-- RESPONSIVE 2/3 COLUMN LAYOUT -->
-    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 h-[calc(100dvh-180px)] min-h-[560px]">
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 h-full lg:h-[calc(100dvh-170px)] min-h-0 lg:min-h-[560px]">
       <!-- Column 1: Filters Sidebar (Desktop) -->
       <div class="hidden lg:block lg:col-span-3 h-full overflow-y-auto pr-1">
         <FilterPanel />
@@ -85,7 +85,7 @@ const currentLang = 'en';
 
   <!-- MOBILE FILTER BOTTOM SHEET DRAWER -->
   <div id="mobile-filter-backdrop" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center transition-opacity">
-    <div class="w-full max-w-lg bg-[var(--bg-surface)] border-t border-[var(--border)] rounded-t-3xl p-5 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom duration-200 max-h-[85dvh] overflow-y-auto">
+    <div class="w-full max-w-lg bg-[var(--bg-surface)] border-t border-[var(--border)] rounded-t-3xl p-5 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom duration-200 max-h-[85dvh] overflow-y-auto">
       <div class="w-12 h-1.5 rounded-full bg-[var(--border)] mx-auto mb-1"></div>
       <div class="flex items-center justify-between border-b border-[var(--border)] pb-2">
         <h3 class="text-base font-bold text-[var(--text-primary)]">Filter Online People</h3>
@@ -132,6 +132,7 @@ const currentLang = 'en';
         peoplePane?.classList.add('hidden');
         chatPane?.classList.remove('hidden');
         chatPane?.classList.add('flex');
+        window.dispatchEvent(new CustomEvent('rc:chat-active'));
       }
     });
 
@@ -140,6 +141,7 @@ const currentLang = 'en';
         chatPane?.classList.add('hidden');
         chatPane?.classList.remove('flex');
         peoplePane?.classList.remove('hidden');
+        window.dispatchEvent(new CustomEvent('rc:chat-inactive'));
       }
     });
 

@@ -10,7 +10,7 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 ---
 
-<footer class="w-full border-t border-[var(--border)] bg-[var(--bg-surface)] py-12 px-4 mt-auto">
+<footer class="w-full border-t border-[var(--border)] bg-[var(--bg-surface)] pt-12 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-12 px-4 mt-auto">
   <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-secondary)]">
     <!-- Brand Info & 18+ Badge -->
     <div class="flex flex-col gap-3">

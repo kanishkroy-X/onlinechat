@@ -20,11 +20,11 @@ const t = useTranslations(currentLang);
     <div class="max-w-6xl mx-auto h-full flex items-center justify-between gap-3">
       <!-- Left: Mobile Menu Trigger + Brand Logo -->
       <div class="flex items-center gap-2.5">
-        <!-- Mobile Hamburger Toggle -->
+        <!-- Mobile Hamburger Toggle (44px touch area) -->
         <button
           id="landing-mobile-menu-toggle"
           type="button"
-          class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          class="md:hidden btn btn-secondary btn-icon text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
           aria-controls="landing-mobile-drawer"
@@ -60,7 +60,7 @@ const t = useTranslations(currentLang);
         <button
           type="button"
           id="landing-theme-toggle"
-          class="w-9 h-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+          class="btn btn-secondary btn-icon text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           title="Toggle Theme"
           aria-label="Toggle Theme"
         >
@@ -76,7 +76,7 @@ const t = useTranslations(currentLang);
         <a
           id="nav-start-chat-btn"
           href={translatePath('/start')}
-          class="btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 shadow-xs cursor-pointer"
+          class="btn btn-primary text-xs sm:text-sm py-2 px-3.5 sm:px-4 min-h-[40px] flex items-center gap-1.5"
         >
           <span class="hidden sm:inline">{t.nav.startChat}</span>
           <span class="sm:hidden">Chat</span>
@@ -89,7 +89,7 @@ const t = useTranslations(currentLang);
   <!-- Mobile Slide-out Drawer Menu with High Z-Index -->
   <div
     id="landing-mobile-drawer"
-    class="hidden md:hidden fixed inset-x-0 top-16 bg-[var(--bg-surface)] border-b border-[var(--border)] p-5 shadow-2xl z-[9999] flex flex-col gap-4 animate-drawer-in"
+    class="hidden md:hidden fixed inset-x-0 top-16 bg-[var(--bg-surface)] border-b border-[var(--border)] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] shadow-2xl z-[9999] flex flex-col gap-4 animate-drawer-in"
     aria-label="Mobile Navigation"
   >
     <nav class="flex flex-col gap-1 text-sm font-semibold text-[var(--text-primary)]">
@@ -116,7 +116,7 @@ const t = useTranslations(currentLang);
     </nav>
 
     <div class="pt-3 border-t border-[var(--border)] flex flex-col gap-2.5">
-      <a id="mobile-nav-start-chat-btn" href={translatePath('/start')} class="btn-primary text-sm py-3 text-center w-full cursor-pointer">
+      <a id="mobile-nav-start-chat-btn" href={translatePath('/start')} class="btn btn-primary text-sm py-3 text-center w-full cursor-pointer flex items-center justify-center gap-2">
         <span>{t.hero.cta}</span>
         <Icon name="arrow-right" class="w-4 h-4" />
       </a>

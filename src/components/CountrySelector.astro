@@ -41,7 +41,7 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
   <button
     type="button"
     id={`${id}-trigger`}
-    class="country-selector-trigger w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] flex items-center justify-between gap-2 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--primary)] shadow-xs cursor-pointer"
+    class="country-selector-trigger btn btn-secondary w-full px-3.5 py-2.5 flex items-center justify-between gap-2 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--primary)] shadow-xs cursor-pointer min-h-[44px]"
     aria-haspopup="listbox"
     aria-expanded="false"
   >
@@ -64,18 +64,35 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
     value={selectedCode.toLowerCase()}
   />
 
-  <!-- Dropdown Panel / Dialog -->
+  <!-- Mobile Backdrop -->
+  <div
+    id={`${id}-backdrop`}
+    class="country-backdrop hidden fixed inset-0 z-[9998] bg-black/60 backdrop-blur-xs sm:hidden transition-opacity"
+  ></div>
+
+  <!-- Dropdown Panel / Mobile Bottom Sheet Dialog -->
   <div
     id={`${id}-dropdown`}
-    class="country-dropdown-panel hidden absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-2xl overflow-hidden flex-col max-h-72 transition-all"
+    class="country-dropdown-panel hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:z-[9999] max-sm:rounded-t-3xl max-sm:max-h-[82dvh] max-sm:border-t max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-safe sm:absolute sm:left-0 sm:right-0 sm:top-full sm:mt-1.5 sm:z-50 sm:rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-2xl overflow-hidden flex-col sm:max-h-72 transition-all animate-sheet-up sm:animate-none"
     role="listbox"
   >
+    <!-- Mobile Sheet Header -->
+    <div class="sm:hidden pt-3 px-4 pb-2 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-surface)]">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-1 rounded-full bg-[var(--border)] mx-auto absolute left-1/2 -translate-x-1/2 top-2"></div>
+        <span class="text-sm font-bold text-[var(--text-primary)] mt-1">Select Country</span>
+      </div>
+      <button type="button" class="country-sheet-close btn btn-ghost btn-icon text-[var(--text-secondary)] hover:text-[var(--text-primary)] mt-1" aria-label="Close country selector">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
     <!-- Search Field -->
     <div class="p-2.5 border-b border-[var(--border)] bg-[var(--bg-surface-elevated)] sticky top-0 z-10">
       <div class="relative w-full">
         <input
           type="text"
-          class="country-search-input w-full px-3 py-1.5 pl-8 rounded-lg bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+          class="country-search-input input-field w-full py-2 sm:py-1.5 pl-8 text-base sm:text-xs"
           placeholder="Search country..."
           autocomplete="off"
         />
@@ -91,7 +108,7 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
       {allowAll && (
         <button
           type="button"
-          class="country-option w-full px-3 py-2 text-left text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer"
+          class="country-option btn btn-ghost w-full px-3.5 py-3 sm:py-2 text-left text-sm sm:text-xs font-semibold justify-start rounded-xl flex items-center gap-3 transition-colors cursor-pointer min-h-[44px] sm:min-h-0"
           data-code="all"
           data-name="All Countries"
         >
@@ -103,7 +120,7 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
       {ALL_COUNTRIES.map((country) => (
         <button
           type="button"
-          class="country-option w-full px-3 py-2 text-left text-xs text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer"
+          class="country-option btn btn-ghost w-full px-3.5 py-3 sm:py-2 text-left text-sm sm:text-xs justify-start text-[var(--text-primary)] rounded-xl flex items-center gap-3 transition-colors cursor-pointer min-h-[44px] sm:min-h-0"
           data-code={country.code.toLowerCase()}
           data-name={country.name}
         >
@@ -124,6 +141,8 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
       const trigger = widget.querySelector('.country-selector-trigger') as HTMLButtonElement;
       const chevron = widget.querySelector('.country-chevron') as HTMLElement;
       const dropdown = widget.querySelector('.country-dropdown-panel') as HTMLElement;
+      const backdrop = widget.querySelector('.country-backdrop') as HTMLElement;
+      const sheetClose = widget.querySelector('.country-sheet-close') as HTMLElement;
       const searchInput = widget.querySelector('.country-search-input') as HTMLInputElement;
       const hiddenInput = widget.querySelector('input[type="hidden"]') as HTMLInputElement;
       const triggerText = widget.querySelector('.country-trigger-text') as HTMLElement;
@@ -137,6 +156,7 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
         if (shouldOpen) {
           dropdown.classList.remove('hidden');
           dropdown.classList.add('flex');
+          backdrop?.classList.remove('hidden');
           trigger.setAttribute('aria-expanded', 'true');
           chevron?.classList.add('rotate-180');
           searchInput.value = '';
@@ -145,10 +165,14 @@ const initialFlagCode = (initialSelectedCountry && selectedCode !== 'ALL' && sel
         } else {
           dropdown.classList.add('hidden');
           dropdown.classList.remove('flex');
+          backdrop?.classList.add('hidden');
           trigger.setAttribute('aria-expanded', 'false');
           chevron?.classList.remove('rotate-180');
         }
       }
+
+      backdrop?.addEventListener('click', () => toggle(false));
+      sheetClose?.addEventListener('click', () => toggle(false));
 
       function filterOptions(query: string) {
         const q = query.toLowerCase().trim();

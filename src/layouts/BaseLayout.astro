@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import AgeGateModal from '../components/AgeGateModal.astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import MobileBottomNav from '../components/MobileBottomNav.astro';
 import { siteConfig } from '../config/site';
 import { getLangFromUrl, getHreflangLinks } from '../i18n/utils';
 import { languageOgLocales, type SupportedLang } from '../i18n/ui';
@@ -38,7 +39,7 @@ const alternateOgLocales = Object.entries(languageOgLocales)
 <html lang={currentLang} dir={isRtl ? 'rtl' : 'ltr'}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
@@ -158,6 +159,9 @@ const alternateOgLocales = Object.entries(languageOgLocales)
     <CookieConsent lang={currentLang} />
 
     <slot />
+
+    <!-- Mobile Bottom Navigation Bar (Appears on mobile screens < 768px) -->
+    <MobileBottomNav lang={currentLang} />
 
     <!-- Client-side script initialization -->
     <script>

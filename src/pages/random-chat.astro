@@ -18,14 +18,14 @@ const currentLang = 'en';
 >
   <LandingNavbar lang={currentLang} />
 
-  <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-6 sm:py-10 flex flex-col items-center justify-center">
+  <main class="flex-1 w-full max-w-4xl mx-auto p-0 sm:px-4 sm:py-6 flex flex-col items-center justify-center min-h-0">
     <!-- MASTER CONTAINER -->
-    <div id="random-chat-app" class="w-full min-h-[580px] h-[calc(100dvh-180px)] flex flex-col bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-xl relative transition-all">
+    <div id="random-chat-app" class="w-full h-[calc(100dvh-4rem)] sm:h-[calc(100dvh-140px)] sm:min-h-[580px] flex flex-col bg-[var(--bg-surface)] sm:border border-[var(--border)] sm:rounded-3xl overflow-hidden sm:shadow-xl relative transition-all">
 
       <!-- ========================================== -->
       <!-- VIEW 1: RADAR MATCHMAKING SCREEN (No Filters) -->
       <!-- ========================================== -->
-      <div id="view-matching" class="flex-1 flex flex-col items-center justify-center p-8 text-center gap-6 relative">
+      <div id="view-matching" class="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 text-center gap-6 relative">
         <!-- Pulsing Connection Radar / Orb -->
         <div class="relative w-28 h-28 flex items-center justify-center">
           <span class="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF808A]/20 via-[#D55882]/20 to-[#492351]/20 animate-ping opacity-60"></span>
@@ -37,7 +37,7 @@ const currentLang = 'en';
           </div>
         </div>
 
-        <div class="flex flex-col gap-2 max-w-sm">
+        <div class="flex flex-col gap-2 max-w-sm px-4">
           <h2 class="text-xl sm:text-2xl font-black text-[var(--text-primary)] tracking-tight">
             Finding someone...
           </h2>
@@ -50,7 +50,7 @@ const currentLang = 'en';
           <button
             type="button"
             id="matching-cancel-btn"
-            class="px-6 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer shadow-xs"
+            class="px-6 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer shadow-xs min-h-[44px]"
           >
             Cancel & Back to People
           </button>
@@ -77,14 +77,14 @@ const currentLang = 'en';
       <!-- ========================================== -->
       <div id="view-active-chat" class="hidden flex-1 flex-col h-full overflow-hidden">
         <!-- Chat Header -->
-        <div class="px-4 py-3 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-2 shrink-0">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="relative w-10 h-10 rounded-full shrink-0 border border-[var(--border)] shadow-xs flex items-center justify-center font-bold text-sm bg-gradient-to-br from-[#FF808A]/20 to-[#D55882]/30 text-[#FF808A]">
+        <div class="px-3 sm:px-4 py-2.5 sm:py-3 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-2 shrink-0">
+          <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full shrink-0 border border-[var(--border)] shadow-xs flex items-center justify-center font-bold text-sm bg-gradient-to-br from-[#FF808A]/20 to-[#D55882]/30 text-[#FF808A]">
               <span id="stranger-initial">S</span>
               <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10B981] border-2 border-[var(--bg-surface)]"></span>
             </div>
             <div class="flex flex-col min-w-0">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 sm:gap-2">
                 <span id="stranger-name" class="font-bold text-sm text-[var(--text-primary)]">Stranger</span>
                 <span id="stranger-flag-container">
                   <CountryFlag code="US" size="sm" />
@@ -101,12 +101,12 @@ const currentLang = 'en';
           </div>
 
           <!-- Header Actions -->
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 sm:gap-2">
             <!-- Voice Request Trigger -->
             <button
               type="button"
               id="random-request-voice-btn"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#FF808A]/10 border border-[var(--border)] hover:border-[#FF808A]/30 text-xs font-semibold text-[var(--text-primary)] hover:text-[#FF808A] transition-all cursor-pointer shadow-xs"
+              class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#FF808A]/10 border border-[var(--border)] hover:border-[#FF808A]/30 text-xs font-semibold text-[var(--text-primary)] hover:text-[#FF808A] transition-all cursor-pointer shadow-xs min-h-[38px] sm:min-h-[40px]"
               title="Request WebRTC Voice"
             >
               <svg class="w-3.5 h-3.5 text-[#FF808A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -122,22 +122,22 @@ const currentLang = 'en';
             <button
               type="button"
               id="random-next-btn"
-              class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#FF808A] to-[#D55882] text-white hover:opacity-95 text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+              class="px-3 sm:px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#FF808A] to-[#D55882] text-white hover:opacity-95 text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95 min-h-[38px] sm:min-h-[40px]"
               title="Find Another Stranger"
             >
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="23 4 23 10 17 10"></polyline>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
               </svg>
-              <span>Next Stranger</span>
+              <span>Next</span>
             </button>
 
-            <!-- Safety Menu Toggle -->
+            <!-- Safety Menu Toggle (40px touch area) -->
             <div class="relative">
               <button
                 type="button"
                 id="random-safety-btn"
-                class="w-8 h-8 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer"
+                class="w-10 h-10 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer touch-target"
                 aria-label="Moderation Options"
               >
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -148,7 +148,7 @@ const currentLang = 'en';
               </button>
               <div
                 id="random-safety-dropdown"
-                class="hidden absolute right-0 top-10 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-2xl p-1.5 z-50 flex-col gap-1"
+                class="hidden absolute right-0 top-12 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-2xl p-1.5 z-50 flex-col gap-1"
               >
                 <button
                   type="button"
@@ -208,7 +208,7 @@ const currentLang = 'en';
         </div>
 
         <!-- Typing Indicator -->
-        <div id="random-typing" class="hidden px-5 py-1 text-xs text-[var(--text-secondary)] flex items-center gap-2 bg-[var(--bg-page)] border-t border-[var(--border)]/30">
+        <div id="random-typing" class="hidden px-4 sm:px-5 py-1 text-xs text-[var(--text-secondary)] flex items-center gap-2 bg-[var(--bg-page)] border-t border-[var(--border)]/30">
           <span>Stranger is typing</span>
           <span class="inline-flex gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-[#FF808A] animate-bounce"></span>
@@ -217,23 +217,23 @@ const currentLang = 'en';
           </span>
         </div>
 
-        <!-- Composer Bar -->
-        <div class="p-3 bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-end gap-2 shrink-0">
+        <!-- Composer Bar with Safe-Area aware padding -->
+        <div class="p-2.5 sm:p-3 pb-[max(0.65rem,env(safe-area-inset-bottom,0px))] bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-end gap-2 shrink-0 transition-all">
           <div class="relative flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] overflow-hidden focus-within:ring-2 focus-within:ring-[#FF808A] focus-within:border-transparent transition-all">
             <textarea
               id="random-textarea"
               rows="1"
-              placeholder="Type a message... (Enter to send)"
-              class="w-full resize-none bg-transparent py-2.5 px-3.5 text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none max-h-32"
+              placeholder="Type a message..."
+              class="w-full resize-none bg-transparent py-2.5 px-3.5 text-base sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none max-h-32 leading-relaxed"
             ></textarea>
           </div>
           <button
             type="button"
             id="random-send-btn"
-            class="w-10 h-10 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] text-white flex items-center justify-center transition-all shadow-md cursor-pointer shrink-0 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-11 h-11 rounded-xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] text-white flex items-center justify-center transition-all shadow-md cursor-pointer shrink-0 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
             aria-label="Send"
           >
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
@@ -264,13 +264,13 @@ const currentLang = 'en';
           <button
             type="button"
             id="rematch-btn"
-            class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white font-bold text-sm shadow-md transition-all cursor-pointer active:scale-95"
+            class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-[#FF808A] via-[#D55882] to-[#7F376D] hover:opacity-95 text-white font-bold text-sm shadow-md transition-all cursor-pointer active:scale-95 min-h-[44px]"
           >
             Find Another Stranger
           </button>
           <a
             href="/people"
-            class="w-full py-3 px-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] font-bold text-xs text-center transition-all cursor-pointer"
+            class="w-full py-3 px-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-elevated)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)] font-bold text-xs text-center transition-all cursor-pointer min-h-[44px] flex items-center justify-center"
           >
             Back to People
           </a>
@@ -281,7 +281,10 @@ const currentLang = 'en';
   </main>
 
   <CallModals />
-  <LandingFooter />
+  <!-- Hide footer on mobile inside random chat so it doesn't crowd the conversation -->
+  <div class="hidden sm:block w-full">
+    <LandingFooter />
+  </div>
 </BaseLayout>
 
 <script>
@@ -347,16 +350,28 @@ const currentLang = 'en';
       if (view === 'matching') {
         viewMatching?.classList.remove('hidden');
         viewMatching?.classList.add('flex');
+        window.dispatchEvent(new CustomEvent('rc:chat-inactive'));
       } else if (view === 'found') {
         viewMatchFound?.classList.remove('hidden');
         viewMatchFound?.classList.add('flex');
       } else if (view === 'chat') {
         viewActiveChat?.classList.remove('hidden');
         viewActiveChat?.classList.add('flex');
+        window.dispatchEvent(new CustomEvent('rc:chat-active'));
       } else if (view === 'disconnected') {
         viewDisconnected?.classList.remove('hidden');
         viewDisconnected?.classList.add('flex');
+        window.dispatchEvent(new CustomEvent('rc:chat-inactive'));
       }
+    }
+
+    // Software keyboard and viewport tracking
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (viewActiveChat && !viewActiveChat.classList.contains('hidden') && messagesList) {
+          messagesList.scrollTop = messagesList.scrollHeight;
+        }
+      });
     }
 
     function startMatchmaking() {
