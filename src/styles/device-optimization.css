@@ -1,0 +1,212 @@
+/* RandomChat Device Optimization Layer
+ * Derived from the project's responsive/mobile specification and established
+ * Astro/Tailwind accessibility + performance patterns.
+ * Keep this layer framework-agnostic: no React/Next runtime is required.
+ */
+
+:root {
+  --rc-touch-target: 44px;
+  --rc-mobile-gutter: clamp(0.75rem, 3.5vw, 1.25rem);
+}
+
+html {
+  min-width: 320px;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+/* Safe-area support for notched phones and gesture-navigation devices. */
+.rc-safe-area {
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-right: max(0px, env(safe-area-inset-right));
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+  padding-left: max(0px, env(safe-area-inset-left));
+}
+
+.rc-safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/* App shells should follow dynamic browser viewport height. */
+.rc-device-shell,
+.rc-chat-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-width: 0;
+}
+
+/* Mobile chat must be a bounded flex column so the message stream is the
+ * scrolling region rather than the entire page. */
+#active-chat-container {
+  min-width: 0;
+  min-height: 0;
+}
+
+#chat-selected-state {
+  min-width: 0;
+  min-height: 0;
+}
+
+#chat-messages-list {
+  min-width: 0;
+  min-height: 0;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  overflow-anchor: none;
+  scrollbar-gutter: stable;
+  overflow-wrap: anywhere;
+}
+
+/* Avoid accidental horizontal overflow from long usernames, URLs or tokens. */
+#active-chat-container,
+#active-chat-container * {
+  overflow-wrap: anywhere;
+}
+
+#active-chat-username,
+#active-chat-age-gender,
+#typing-user-name,
+#preview-file-name {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Touch controls: preserve usability even where existing utility classes use
+ * compact desktop dimensions. */
+@media (pointer: coarse) {
+  #active-chat-container button,
+  #active-chat-container [role="button"] {
+    min-width: var(--rc-touch-target);
+    min-height: var(--rc-touch-target);
+  }
+
+  #active-chat-container textarea,
+  #active-chat-container input,
+  #active-chat-container select {
+    min-height: var(--rc-touch-target);
+  }
+}
+
+/* 320–374px: compact header treatment. Hide text labels that are already
+ * visually optional while keeping icons available. */
+@media (max-width: 374px) {
+  #active-chat-container .sm\:inline {
+    display: none !important;
+  }
+
+  #active-chat-container > #chat-selected-state > div:first-child {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+
+  #active-chat-container #chat-messages-list {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  #active-chat-container #chat-cold-gate-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* 375–430px: comfortable phone spacing. */
+@media (min-width: 375px) and (max-width: 430px) {
+  #active-chat-container #chat-messages-list {
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+}
+
+/* Prevent fixed desktop corner radii from wasting the entire compact phone
+ * viewport. The shell still has a card treatment on larger screens. */
+@media (max-width: 767px) {
+  #active-chat-container {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+  }
+
+  #active-chat-container #chat-scroll-bottom-pill {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+
+  #active-chat-container .rc-chat-composer,
+  #active-chat-container > #chat-selected-state > div:last-child {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  /* Native mobile scrolling feels better than forced smooth scrolling while
+   * the user is reading older messages. */
+  #chat-messages-list {
+    scroll-behavior: auto;
+  }
+}
+
+/* Tablet: use available width but keep the active conversation readable. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #active-chat-container {
+    border-radius: 1.25rem;
+  }
+
+  #chat-messages-list {
+    scrollbar-gutter: stable both-edges;
+  }
+}
+
+/* Desktop content should not become excessively wide on large monitors. */
+@media (min-width: 1024px) {
+  .rc-content-width {
+    width: min(100% - 2rem, 72rem);
+    margin-inline: auto;
+  }
+}
+
+/* Respect reduced data where supported; this only targets optional decorative
+ * content and never removes essential controls. */
+@media (prefers-reduced-data: reduce) {
+  .rc-optional-media,
+  .rc-data-heavy-decoration {
+    content-visibility: auto;
+  }
+}
+
+/* Reduce motion for users who request it, including component animations that
+ * are outside the global Tailwind utility layer. */
+@media (prefers-reduced-motion: reduce) {
+  #active-chat-container *,
+  #active-chat-container *::before,
+  #active-chat-container *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Prevent iOS Safari from auto-zooming small form controls. */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1rem);
+  }
+}
+
+/* Print should not inherit app viewport constraints. */
+@media print {
+  html,
+  body {
+    min-width: 0;
+    min-height: 0;
+    overflow: visible;
+  }
+}
